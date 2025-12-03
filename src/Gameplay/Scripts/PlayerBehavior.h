@@ -26,6 +26,13 @@ inline void SetCam(ArenaCamera* pCamera)
 
 inline void HandleInput()
 {
+	if (pPhysic == nullptr)
+	{
+		return;
+	}
+
+	pPhysic->SetVelocity({ 0, pPhysic->GetVelocity().y, 0 });
+
 	float dt = GameManager::DeltaTime();
 	float speed = 2.f;
 
@@ -42,17 +49,14 @@ inline void HandleInput()
 
 	if (GetKeyDown(Keyboard::SPACE))
 	{
-		if (pPhysic)
-		{
-			gce::Force f;
+		gce::Force f;
 
-			f.direction = { 0, 1, 0 };
-			f.norm = 15000;
-			f.useApplicationPoint = true; 
-			f.relativeApplicationPoint = { 0, 0, 0 };
+		f.direction = { 0, 1, 0 };
+		f.norm = 15000;
+		f.useApplicationPoint = true;
+		f.relativeApplicationPoint = { 0, 0, 0 };
 
-			pPhysic->AddForce(f);
-		}
+		pPhysic->AddForce(f);
 	}
 
 	dir.SelfNormalize();
@@ -64,11 +68,6 @@ inline void HandleInput()
 inline void Start()
 {
 	m_pOwner->transform.SetWorldPosition({ 0, 0, 0 });
-
-	if (pPhysic)
-	{
-		
-	}
 }
 
 inline void Update()
@@ -80,7 +79,6 @@ inline void Update()
 
 		pCam->GetGameObject()->transform.SetWorldPosition(newPos);
 	}
-
 
 	HandleInput();
 }
