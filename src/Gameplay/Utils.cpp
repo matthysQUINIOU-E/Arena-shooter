@@ -1,16 +1,18 @@
 #include <Engine.h>
 #include <fstream>
+#include <RenderContext.h>
 #include "json.h"
+#include "Utils.h"
 
-void ImportBlenderScene()
+
+void ImportBlenderScene(std::wstring jsonFile)
 {
-	const std::string pathTexture = "";
-	const std::string pathObj = "";
+	const std::string pathTexture = "res/Texture/";
 	
 	gce::GameManager* pGameManager = gce::GameManager::s_pInstance;
-	gce::Scene* pScene = pGameManager->m_scenes[0]; // TODO :: changer la manière dont récupérer la scene avec le SceneManager
+	gce::Scene* pScene = pGameManager->m_scenes[0]; // TODO :: changer la maniere dont recuperer la scene avec le SceneManager
 
-	std::ifstream f(WRES_PATH L"res/BlenderScene/blender_scene_v3.json");
+	std::ifstream f(WRES_PATH L"res/BlenderScene/" + jsonFile);
 	nlohmann::json data;
 
 	try {
@@ -30,7 +32,6 @@ void ImportBlenderScene()
         bool hasCollider = obj.value("hasCollider", false);
         std::string material = obj.value("material", "");
 
-        // Position
         gce::Vector3f32 position;
         if (obj.contains("position"))
         {
@@ -39,23 +40,56 @@ void ImportBlenderScene()
             position.z = obj["position"][2];
         }
 
-        // Rotation (quaternion)
         gce::Quaternion rotation;
         if (obj.contains("rotation"))
             rotation = gce::Quaternion{ obj["rotation"][0], obj["rotation"][1], obj["rotation"][2], obj["rotation"][3] };
         else
             rotation = gce::Quaternion{ 0.f, 0.f, 0.f, 0.f };
 
-        // Scale
         gce::Vector3f32 scale;
         if (obj.contains("scale"))
             scale = gce::Vector3f32{ obj["scale"][0], obj["scale"][1], obj["scale"][2] };
         else
             scale = gce::Vector3f32{ 1.f, 1.f, 1.f };
 
-        // -------------------------------------
-        // 2. Lecture du Mesh
-        // -------------------------------------
+        std::string baseColorTex = "";
+        std::string metallicTex = "";
+        std::string roughnessTex = "";
+        std::string normalMapTex = "";
+        std::string emissionTex = "";
+
+        if (obj.contains("textures"))
+        {
+            auto& tex = obj["textures"];
+
+            if (tex.contains("base_color") && !tex["base_color"].is_null())
+                baseColorTex = tex["base_color"].get<std::string>();
+
+            if (tex.contains("metallic") && !tex["metallic"].is_null())
+                normalMapTex = tex["metallic"].get<std::string>();
+
+            if (tex.contains("roughness") && !tex["roughness"].is_null())
+                normalMapTex = tex["roughness"].get<std::string>();
+
+            if (tex.contains("normal_map") && !tex["normal_map"].is_null())
+                normalMapTex = tex["normal_map"].get<std::string>();
+        }
+
+        gce::GameObject& gameObject = gce::GameObject::Create(*pScene);
+        gameObject.SetName("importedScene"); // maybe change later just taging everything with the same name
+        gameObject.transform.SetWorldPosition(position);
+        gameObject.transform.SetWorldRotation(rotation);
+        gameObject.transform.SetWorldScale(scale);
+
+
+        gce::D12PipelineObject* defaultPso = new gce::D12PipelineObject( // TODO :: Change this 
+            gce::SHADERS.VERTEX,
+            gce::SHADERS.PIXEL_TEXTURE,
+            gce::SHADERS.HULL,
+            gce::SHADERS.DOMAIN_,
+            gce::SHADERS.ROOT_SIGNATURE_TEXTURE
+        );
+
         std::vector<float> vertices;
         std::vector<uint32_t> indices;
         std::vector<float> uvs;
@@ -74,64 +108,83 @@ void ImportBlenderScene()
                 uvs = mesh["uvs"].get<std::vector<float>>();
         }
 
-        // -------------------------------------
-        // 3. Lecture des textures (si présentes)
-        // -------------------------------------
-        std::string baseColorTex = "";
-        std::string normalMapTex = "";
+        gce::MeshRenderer* pMeshRenderer = gameObject.AddComponent<gce::MeshRenderer>();
+        pMeshRenderer->pGeometry = MakeCustomGeometry(vertices, indices, uvs);
+        pMeshRenderer->pPso = defaultPso;
+        
 
-        if (obj.contains("textures"))
-        {
-            auto& tex = obj["textures"];
-
-            if (tex.contains("base_color") && !tex["base_color"].is_null())
-                baseColorTex = tex["base_color"].get<std::string>();
-
-            if (tex.contains("normal_map") && !tex["normal_map"].is_null())
-                normalMapTex = tex["normal_map"].get<std::string>();
-        }
-
-        // -------------------------------------
-        // 4. Création de l’objet dans ton moteur
-        // -------------------------------------
-
-
-        gce::GameObject& gameObject = gce::GameObject::Create(*pScene); // TODO :: tag later
-
-        gameObject.transform.SetWorldPosition(position);
-        gameObject.transform.SetWorldRotation(rotation);
-        gameObject.transform.SetWorldScale(scale);
-
-        // Ajouter mesh renderer
-        if (!vertices.empty())
-        {
-            gce::MeshRenderer* pMeshRenderer = gameObject.AddComponent<gce::MeshRenderer>();
-            pMeshRenderer->pGeometry = new Geometry(Vertex const* vertex, uint64 vertexCount, uint32 const* indices, uint64 indicesCount);
-            m->SetVertices(vertices);
-            m->SetIndices(indices);
-            m->SetUVs(uvs);
-
-            go->AddComponent<mce::MeshRenderer>(m);
-        }
-
-        // Ajouter textures
         if (!baseColorTex.empty())
         {
-            go->GetComponent<mce::MeshRenderer>()->SetTexture(pathTexture + baseColorTex);
+            gce::Texture* pNewTexture = new gce::Texture(pathTexture + baseColorTex + ".png");
+            pMeshRenderer->pMaterial->albedoTextureID = pNewTexture->GetTextureID();
+            pMeshRenderer->pMaterial->useTextureAlbedo = 1;
+        }
+
+        if (!metallicTex.empty())
+        {
+            gce::Texture* pNewTexture = new gce::Texture(pathTexture + metallicTex + ".png");
+            pMeshRenderer->pMaterial->metalnessTextureID = pNewTexture->GetTextureID();
+            pMeshRenderer->pMaterial->useTextureMetalness = 1;
+        }
+
+        if (!roughnessTex.empty())
+        {
+            gce::Texture* pNewTexture = new gce::Texture(pathTexture + roughnessTex + ".png");
+            pMeshRenderer->pMaterial->roughnessTextureID = pNewTexture->GetTextureID();
+            pMeshRenderer->pMaterial->useTextureRoughness = 1;
         }
 
         if (!normalMapTex.empty())
         {
-            go->GetComponent<mce::MeshRenderer>()->SetNormalMap(pathTexture + normalMapTex);
+            gce::Texture* pNewTexture = new gce::Texture(pathTexture + normalMapTex + ".png");
+            pMeshRenderer->pMaterial->normalTextureID = pNewTexture->GetTextureID();
+            pMeshRenderer->pMaterial->useTextureNormal = 1;
         }
 
-        // Collider / Physic
         if (hasCollider)
-            go->AddComponent<gce::Collider>();
+            gce::BoxCollider* pBoxCollider = gameObject.AddComponent<gce::BoxCollider>();
 
         if (hasPhysic)
-            go->AddComponent<gce::RigidBody>();
+            gce::PhysicComponent* pPhysic = gameObject.AddComponent<gce::PhysicComponent>();
 
-        std::cout << "Object imported: " << name << std::endl;
     }
+}
+
+gce::Geometry* MakeCustomGeometry(std::vector<float> vertices, std::vector<uint32_t> indices, std::vector<float> uvs)
+{
+    gce::Geometry* customGeo = nullptr;
+    gce::Vector<gce::Vertex> gceVertices;
+    gce::Vector<uint32> gceIndices;
+
+    size_t vertexCount = vertices.size() / 3;
+    size_t uvCount = uvs.size() / 2;
+
+    gceVertices.Resize(vertexCount);
+
+    for (size_t i = 0; i < vertexCount; i++)
+    {
+        gce::Vertex v;
+        v.pos = {
+            vertices[i * 3 + 0],
+            vertices[i * 3 + 1],
+            vertices[i * 3 + 2]
+        };
+
+        v.normal = { 0.f, 0.f, 0.f }; // i don't know if it's right... but i have hopes :)
+
+        v.uv = {
+            uvs[i * 2 + 0],
+            1.f - uvs[i * 2 + 1] 
+        };
+
+        gceVertices[i] = v;
+    }
+
+    gceIndices.Resize(indices.size());
+
+    for (size_t i = 0; i < indices.size(); ++i)
+        gceIndices[i] = indices[i];
+
+    customGeo = new gce::Geometry(gceVertices.Data(), gceVertices.Size(), gceIndices.Data(), gceIndices.Size());
+    return customGeo;
 }
