@@ -1,5 +1,5 @@
 #include "ArenaCamera.h"
-#include "Scripts/CameraBehavior.h"
+#include "Scripts/CameraBehavior.hpp"
 
 gce::GameObject* ArenaCamera::Create(gce::Scene& scene)
 {

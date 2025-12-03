@@ -6,6 +6,7 @@
 
 #include "Prefabs/ArenaCamera.h"
 #include "Scripts/PlayerBehavior.hpp"
+#include "Scripts/CameraBehavior.hpp"
 
 int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
 {
@@ -19,8 +20,8 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
 	ac.SetParams(XM_PIDIV4, 0.001f, 500.0f, 1000.0f / 800.0f);
 
 	gce::WindowParam param;
-	param.width = 1920;
-	param.height = 1080;
+	param.width = WINDOW_WIDTH;
+	param.height = WINDOW_HEIGHT;
 	param.title = L"Arena Shooter";
 	param.isFullScreen = false;
 	param.isSplitScreen = false;
@@ -41,29 +42,27 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
 
 	gce::GameObject& player = gce::GameObject::Create(scene1);
 	player.SetName("Player");
-
+	player.transform.SetWorldScale({ 1, 2, 1 });
 	gce::PhysicComponent* pPhysic = player.AddComponent<gce::PhysicComponent>();
 	gce::MeshRenderer* pPlayerMesh = player.AddComponent<gce::MeshRenderer>();
-	pPlayerMesh->pGeometry = gce::SHAPES.SPHERE;
+	pPlayerMesh->pGeometry = gce::SHAPES.CUBE;
 
 	pPlayerMesh->pMaterial->albedoTextureID = pRockTexture->GetTextureID();
 	pPlayerMesh->pMaterial->useTextureAlbedo = 1;
 	pPlayerMesh->pMaterial->subsurface = 1;
 	pPlayerMesh->pPso = &pso;
 
-	gce::SphereCollider* sCollider = player.AddComponent<gce::SphereCollider>();
+	gce::BoxCollider* bCollider = player.AddComponent<gce::BoxCollider>();
 
 	PlayerBehavior* pScript = player.AddScript<PlayerBehavior>();
-	pScript->SetCam(&ac);
 
-	///
+	ac.GetScript<CameraBehavior>()->SetGameObjectToFollow(&player);
 
-
-	gce::GameObject& player2 = gce::GameObject::Create(scene1);
-	player2.SetName("Player");
-	player2.transform.WorldTranslate({ 3, 0, 0 });
-	gce::PhysicComponent* pPhysic2 = player2.AddComponent<gce::PhysicComponent>();
-	gce::MeshRenderer* pPlayerMesh2 = player2.AddComponent<gce::MeshRenderer>();
+	gce::GameObject& enemy = gce::GameObject::Create(scene1);
+	enemy.SetName("Enemy");
+	enemy.transform.WorldTranslate({ 3, 0, 0 });
+	gce::PhysicComponent* pPhysic2 = enemy.AddComponent<gce::PhysicComponent>();
+	gce::MeshRenderer* pPlayerMesh2 = enemy.AddComponent<gce::MeshRenderer>();
 	pPlayerMesh2->pGeometry = gce::SHAPES.SPHERE;
 
 	pPlayerMesh2->pMaterial->albedoTextureID = pRockTexture->GetTextureID();
@@ -72,7 +71,7 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
 	pPlayerMesh2->pMaterial->subsurface = 1;
 	pPlayerMesh2->pPso = &pso;
 
-	gce::SphereCollider* sCollider2 = player2.AddComponent<gce::SphereCollider>();
+	gce::SphereCollider* sCollider2 = enemy.AddComponent<gce::SphereCollider>();
 
 	gce::GameObject& floor = gce::GameObject::Create(scene1);
 	floor.transform.SetLocalScale({ 10, 1, 10 });

@@ -10,7 +10,6 @@ using namespace gce;
 DECLARE_SCRIPT(PlayerBehavior, ScriptFlag::Start | ScriptFlag::Update | ScriptFlag::CollisionEnter | ScriptFlag::CollisionStay | ScriptFlag::CollisionExit | ScriptFlag::Destroy)
 
 //Members
-ArenaCamera* pCam = nullptr;
 PhysicComponent* pPhysic = nullptr;
 
 int jumpsAmount = 0;
@@ -19,14 +18,6 @@ int maxJumpsAmount = 2;
 bool isJumping = false;
 
 //Functions
-void SetCam(ArenaCamera* pCamera)
-{
-	pCam = pCamera;
-
-	pPhysic = m_pOwner->GetComponent<PhysicComponent>();
-	pPhysic->SetBounciness(0.f);
-}
-
 void HandleInput()
 {
 	if (pPhysic == nullptr)
@@ -49,6 +40,10 @@ void HandleInput()
 	if (GetKey(Keyboard::S))
 		dir.z -= 1;
 
+	dir.SelfNormalize();
+
+	gce::Vector3f32 finalDir = m_pOwner->transform.GetWorldForward() * dir.z + m_pOwner->transform.GetWorldRight() * dir.x; // Redirect Direction By Rotation
+
 	if (GetKeyDown(Keyboard::SPACE))
 	{
 		if (jumpsAmount > 0)
@@ -68,29 +63,19 @@ void HandleInput()
 		}
 	}
 
-	dir.SelfNormalize();
-
-	m_pOwner->transform.WorldTranslate((dir * speed * dt));
+	m_pOwner->transform.LocalTranslate((finalDir * speed * dt));
 }
-
 
 void Start()
 {
+	pPhysic = m_pOwner->GetComponent<PhysicComponent>();
+	pPhysic->SetBounciness(0.f);
 	m_pOwner->transform.SetWorldPosition({ 0, 0, 0 });
 }
 
 void Update()
 {
-	if (pCam != nullptr)
-	{
-		gce::Vector3f32 newPos = m_pOwner->transform.GetWorldPosition();
-		newPos.z -= 10.f;
-
-		pCam->GetGameObject()->transform.SetWorldPosition(newPos);
-	}
-
 	HandleInput();
-	std::cout << jumpsAmount << std::endl;
 }
 
 void Destroy()
