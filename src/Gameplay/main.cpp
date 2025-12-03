@@ -5,7 +5,7 @@
 #include <Engine.h>
 
 #include "Prefabs/ArenaCamera.h"
-#include "Scripts/PlayerBehavior.h"
+#include "Scripts/PlayerBehavior.hpp"
 
 int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
 {
