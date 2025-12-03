@@ -3,6 +3,8 @@
 
 #include <SplitScreenWindow.h>
 #include <Shader.h>
+#include <Render.h>
+#include <Engine.h>
 #include "define.h"
 
 #include "Chrono.h"
@@ -52,7 +54,7 @@ public:
 
 public: // Temporary (should be named and used as private)
     inline static GameManager* s_pInstance = nullptr;
-
+    
     void HandleFPS();
 
     Window* m_pWindow;

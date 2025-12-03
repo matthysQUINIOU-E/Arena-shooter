@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <Render.h>
 #include <Engine.h>
+#include "Utils.h"
 
 int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
 {
@@ -25,13 +26,7 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
 	pCamera->perspective.aspectRatio = 1000.0f / 800.0f;
 	pCamera->perspective.up = { 0.0f, 1.0f, 0.0f };
 
-	gce::D12PipelineObject defaultPso(
-		gce::SHADERS.VERTEX,
-		gce::SHADERS.PIXEL,
-		gce::SHADERS.HULL,
-		gce::SHADERS.DOMAIN_,
-		gce::SHADERS.ROOT_SIGNATURE
-	);
+	ImportBlenderScene();
 
 	gce::WindowParam param;
 
