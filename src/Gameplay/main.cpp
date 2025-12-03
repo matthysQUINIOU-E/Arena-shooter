@@ -67,6 +67,7 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
 	pPlayerMesh2->pGeometry = gce::SHAPES.SPHERE;
 
 	pPlayerMesh2->pMaterial->albedoTextureID = pRockTexture->GetTextureID();
+
 	pPlayerMesh2->pMaterial->useTextureAlbedo = 1;
 	pPlayerMesh2->pMaterial->subsurface = 1;
 	pPlayerMesh2->pPso = &pso;

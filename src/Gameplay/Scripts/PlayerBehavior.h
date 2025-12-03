@@ -14,7 +14,6 @@ ArenaCamera* pCam = nullptr;
 
 PhysicComponent* pPhysic = nullptr;
 
-
 //Functions
 inline void SetCam(ArenaCamera* pCamera)
 {
