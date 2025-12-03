@@ -47,7 +47,7 @@ inline void HandleInput()
 			gce::Force f;
 
 			f.direction = { 0, 1, 0 };
-			f.norm = 10000;
+			f.norm = 15000;
 			f.useApplicationPoint = true; 
 			f.relativeApplicationPoint = { 0, 0, 0 };
 
