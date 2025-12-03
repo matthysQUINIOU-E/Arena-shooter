@@ -7,6 +7,8 @@
 #include "Prefabs/ArenaCamera.h"
 #include "Scripts/PlayerBehavior.hpp"
 #include "Scripts/CameraBehavior.hpp"
+#include "Scripts/FpsBehavior.hpp"
+#include <iostream>
 
 int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
 {
@@ -73,23 +75,31 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
 
 	ac.GetGameObject()->AddChild(playerArms);
 
-	gce::GameObject& enemy = gce::GameObject::Create(scene1);
-	enemy.SetName("Enemy");
-	enemy.transform.WorldTranslate({ 3, 0, 0 });
-	gce::PhysicComponent* pPhysic2 = enemy.AddComponent<gce::PhysicComponent>();
-	gce::MeshRenderer* pPlayerMesh2 = enemy.AddComponent<gce::MeshRenderer>();
-	pPlayerMesh2->pGeometry = gce::SHAPES.SPHERE;
+	Geometry* mogwai = gce::GeometryFactory::LoadGeometry("res/Assets/mogwai/mogwai.obj");
+	Texture* pMogwaiBaseColor = new Texture("res/Assets/mogwai/mogwai_base_color.png");
 
-	pPlayerMesh2->pMaterial->albedoTextureID = pRockTexture->GetTextureID();
+	for (int i = -4; i < 5; i++)
+	{
+		gce::GameObject& enemy = gce::GameObject::Create(scene1);
+		enemy.SetName("Enemy");
+		enemy.transform.WorldTranslate({ (float)i, 0, 0 });
+		gce::PhysicComponent* pPhysic2 = enemy.AddComponent<gce::PhysicComponent>();
+		pPhysic2->SetBounciness(0);
 
-	pPlayerMesh2->pMaterial->useTextureAlbedo = 1;
-	pPlayerMesh2->pMaterial->subsurface = 1;
-	pPlayerMesh2->pPso = &pso;
+		gce::MeshRenderer* pPlayerMesh2 = enemy.AddComponent<gce::MeshRenderer>();
+		pPlayerMesh2->pGeometry = mogwai;
 
-	gce::SphereCollider* sCollider2 = enemy.AddComponent<gce::SphereCollider>();
+		pPlayerMesh2->pMaterial->albedoTextureID = pMogwaiBaseColor->GetTextureID();
 
+		pPlayerMesh2->pMaterial->useTextureAlbedo = 1;
+		pPlayerMesh2->pMaterial->subsurface = 1;
+		pPlayerMesh2->pPso = &pso;
+
+		gce::BoxCollider* bCollider2 = enemy.AddComponent<gce::BoxCollider>();
+	}
+	
 	gce::GameObject& floor = gce::GameObject::Create(scene1);
-	floor.transform.SetLocalScale({ 10, 1, 10 });
+	floor.transform.SetLocalScale({ 50, 1, 50 });
 	floor.transform.SetWorldPosition({ 0, -2, 0 });
 	floor.SetName("Floor");
 	gce::MeshRenderer* pFloorMesh = floor.AddComponent<gce::MeshRenderer>();
@@ -101,6 +111,15 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
 	pFloorMesh->pPso = &pso;
 
 	BoxCollider* pFloorBox = floor.AddComponent<BoxCollider>();
+
+
+	gce::GameObject& fps = gce::GameObject::Create(scene1);
+	auto txt = fps.AddComponent<TextRenderer>();
+	txt->pFont = new Font(L"Arial");
+	txt->pBrush = new ColorBrush(Color::Red);
+	txt->text = L"FPS";
+	txt->rectPosF = new RectanglePosF(0.0f, 0.0f, 200.0f, 50.0f);
+	fps.AddScript<FpsBehavior>();
 
 	gce::GameManager::Run(param);
 	gce::GameManager::Destroy();

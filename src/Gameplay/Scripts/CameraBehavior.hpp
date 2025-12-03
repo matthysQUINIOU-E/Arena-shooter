@@ -73,7 +73,7 @@ void Start()
 
 void Update()
 {
-	if (GetKeyDown(Keyboard::LSHIFT))
+	if (GetKeyDown(Keyboard::NUMPAD0))
 	{
 		fpsMode = !fpsMode;
 	}
