@@ -17,11 +17,7 @@ namespace gce
 		RenderContext& context = Instance();
 		HRESULT res; 
 
-	#ifdef _DEBUG
-		res = CreateDXGIFactory2(DXGI_CREATE_FACTORY_DEBUG, IID_PPV_ARGS(&context.m_pDxgiFactory));
-	#else
 		res = CreateDXGIFactory(IID_PPV_ARGS(&context.m_pDxgiFactory));
-	#endif
 
 		if (FAILED(res))
 		{
@@ -115,7 +111,7 @@ namespace gce
 
 		HRESULT res = D3D11On12CreateDevice(
 			RenderContext::GetDevice(),
-			D3D11_CREATE_DEVICE_DEBUG | D3D11_CREATE_DEVICE_BGRA_SUPPORT,
+			D3D11_CREATE_DEVICE_BGRA_SUPPORT,
 			nullptr,
 			0,
 			reinterpret_cast<IUnknown**>(&cmdQueue),

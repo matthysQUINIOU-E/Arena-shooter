@@ -6,7 +6,8 @@
                 "mf.lib",
                 "mfreadwrite.lib",
                 "mfuuid.lib",
-                "xapobase.lib"
+                "xapobase.lib",
+                "winmm.lib"
 		],
             "additionalIncludeDirectories": [],
             "additionalLibraryDirectories": [],
