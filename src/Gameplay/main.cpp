@@ -58,6 +58,21 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
 
 	ac.GetScript<CameraBehavior>()->SetGameObjectToFollow(&player);
 
+	Texture* pArmsBaseColor = new Texture("res/Assets/zhu_rong_arms/Arms_Base_Color.png");
+
+	gce::GameObject& playerArms = gce::GameObject::Create(scene1);
+	playerArms.SetName("Player_Arms");
+	playerArms.transform.SetLocalPosition(ac.GetGameObject()->transform.GetWorldPosition());
+	playerArms.transform.SetWorldScale({ 3, 3, 3 });
+	gce::MeshRenderer* pArmsMesh = playerArms.AddComponent<gce::MeshRenderer>();
+	pArmsMesh->pGeometry = gce::GeometryFactory::LoadGeometry("res/Assets/zhu_rong_arms/Arms.obj");
+	pArmsMesh->pMaterial->albedoTextureID = pArmsBaseColor->GetTextureID();
+	pArmsMesh->pMaterial->useTextureAlbedo = 1;
+	pArmsMesh->pMaterial->subsurface = 1;
+	pArmsMesh->pPso = &pso;
+
+	ac.GetGameObject()->AddChild(playerArms);
+
 	gce::GameObject& enemy = gce::GameObject::Create(scene1);
 	enemy.SetName("Enemy");
 	enemy.transform.WorldTranslate({ 3, 0, 0 });
