@@ -30,7 +30,7 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
 	gce::LightData directionalLight = gce::LightManager::CreateDirectionalLight(gce::Vector3f32(0.0f, 0.0f, 1.0f), gce::Vector4(1.0f, 1.0f, 1.0f, 1.0f), 1.0f, 1.0f);
 	gce::LightManager::AddLight(directionalLight);
 
-	ImportBlenderScene(L"blender_scene.json");
+	ImportBlenderScene(L"scene_base.json");
 
 	gce::WindowParam param;
 

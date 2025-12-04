@@ -115,28 +115,28 @@ void ImportBlenderScene(std::wstring jsonFile)
 
         if (!baseColorTex.empty())
         {
-            gce::Texture* pNewTexture = new gce::Texture(pathTexture + baseColorTex + ".png");
+            gce::Texture* pNewTexture = new gce::Texture(pathTexture + baseColorTex);
             pMeshRenderer->pMaterial->albedoTextureID = pNewTexture->GetTextureID();
             pMeshRenderer->pMaterial->useTextureAlbedo = 1;
         }
 
         if (!metallicTex.empty())
         {
-            gce::Texture* pNewTexture = new gce::Texture(pathTexture + metallicTex + ".png");
+            gce::Texture* pNewTexture = new gce::Texture(pathTexture + metallicTex);
             pMeshRenderer->pMaterial->metalnessTextureID = pNewTexture->GetTextureID();
             pMeshRenderer->pMaterial->useTextureMetalness = 1;
         }
 
         if (!roughnessTex.empty())
         {
-            gce::Texture* pNewTexture = new gce::Texture(pathTexture + roughnessTex + ".png");
+            gce::Texture* pNewTexture = new gce::Texture(pathTexture + roughnessTex);
             pMeshRenderer->pMaterial->roughnessTextureID = pNewTexture->GetTextureID();
             pMeshRenderer->pMaterial->useTextureRoughness = 1;
         }
 
         if (!normalMapTex.empty())
         {
-            gce::Texture* pNewTexture = new gce::Texture(pathTexture + normalMapTex + ".png");
+            gce::Texture* pNewTexture = new gce::Texture(pathTexture + normalMapTex);
             pMeshRenderer->pMaterial->normalTextureID = pNewTexture->GetTextureID();
             pMeshRenderer->pMaterial->useTextureNormal = 1;
         }
