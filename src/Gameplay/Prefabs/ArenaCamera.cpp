@@ -1,9 +1,10 @@
 #include "ArenaCamera.h"
 #include "Scripts/CameraBehavior.hpp"
+#include "EntityWrapper.h"
 
-gce::GameObject* ArenaCamera::Create(gce::Scene& scene)
+gce::GameObject* ArenaCamera::Create()
 {
-	m_pGameObject = &gce::GameObject::Create(scene);
+	m_pGameObject = &EntityWrapper::Create();
 	m_pGameObject->transform.LocalTranslate({ 0, 0, -10 });
 
 	m_pCamera = m_pGameObject->AddComponent<gce::Camera>();

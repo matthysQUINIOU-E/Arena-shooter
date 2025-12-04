@@ -17,6 +17,7 @@ enum  SceneType
 	Options,
 	Count
 };
+
 namespace gce {
 	class Scene;
 	class GameObject;

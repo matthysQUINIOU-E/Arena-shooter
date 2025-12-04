@@ -4,6 +4,8 @@
 #include "define.h"
 #include "Containers/Queue.hpp"
 
+class EntityWrapper;
+
 namespace gce {
 
 class GameObject;
@@ -26,6 +28,7 @@ class LifespanSystem final
     } m_toDelete;
 
     friend class GameObject;
+    friend class EntityWrapper;
     friend class GameManager;
 };
 

@@ -6,6 +6,20 @@
 #include "Components.h"
 #include "Maths/Vector3.h"
 
+enum Tag : uint32_t
+{
+    None,
+    TPlayer,
+    TWeapon,
+    TCollectible,
+    TAmmo,
+    TGround,
+    TEnemy,
+    TProjectile,
+
+    TMiscellaneous
+};
+
 template <typename ...Args>
 struct Event;
 
@@ -28,8 +42,10 @@ public:
 
     [[nodiscard]] uint32 GetID() const;
     [[nodiscard]] cstr GetName() const;
-    void SetName(cstr name);
+    [[nodiscard]] int GetTag() const { return m_Tag; }
 
+    void SetName(cstr name);
+    void SetTag(Tag tag) { m_Tag = tag; }
     [[nodiscard]] bool IsActive() const;
     void SetActive( bool active );
 
@@ -61,7 +77,7 @@ public:
 
     Event<GameObject*>* pCollisionEvents = nullptr;
     Event<GameObject*>* pCollision2DEvents = nullptr;
-private:
+protected:
     explicit GameObject( cstr name = "GameObject" );
     // GameObject( GameObject const& ) = default;
     ~GameObject() = default;
@@ -74,6 +90,7 @@ private:
     inline static uint32 s_nextID = 0;
     uint32 m_id = s_nextID++;
     cstr m_name;
+    Tag m_Tag = Tag::None;
 
     Scene* m_pScene = nullptr;
     

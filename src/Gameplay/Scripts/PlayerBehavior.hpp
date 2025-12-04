@@ -15,6 +15,7 @@ PhysicComponent* pPhysic = nullptr;
 
 GameObject* pGun = nullptr;
 
+float speed = 5.f;
 int jumpsAmount = 0;
 int maxJumpsAmount = 2;
 
@@ -30,7 +31,6 @@ void HandleInput()
 	pPhysic->SetVelocity({ 0, velocity.y, 0 });
 
 	float dt = GameManager::DeltaTime();
-	float speed = 2.f;
 
 	gce::Vector3f32 dir = {};
 
@@ -97,7 +97,7 @@ void Destroy()
 
 void CollisionStay(GameObject* other)
 {
-	if (other->GetName() == "Floor")
+	if (other->GetTag() == Tag::TGround)
 	{
 		if (isJumping == false)
 		{
@@ -108,7 +108,7 @@ void CollisionStay(GameObject* other)
 
 void CollisionEnter(GameObject* other)
 {
-	if (other->GetName() == "Floor")
+	if (other->GetTag() == Tag::TGround)
 	{
 		if (isJumping)
 		{
@@ -123,7 +123,7 @@ void CollisionEnter(GameObject* other)
 
 void CollisionExit(GameObject* other) override
 {
-	if (other->GetName() == "Floor" && isJumping == false)
+	if (other->GetTag() == Tag::TGround && isJumping == false)
 		jumpsAmount = 0;
 }
 
