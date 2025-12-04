@@ -19,9 +19,12 @@ namespace gce {
 class SceneManager
 { 
 	std::unordered_map<SceneType, std::vector<gce::GameObject*> > m_SceneObjectsList;
+
+	gce::GameObject* m_pPlayer = nullptr;
 public:
 	SceneManager() {};
 	void InitGamePlayScene(gce::Scene& scene1);
 	void Init();
+	gce::GameObject* GetPlayer() { return m_pPlayer; }
 };
 

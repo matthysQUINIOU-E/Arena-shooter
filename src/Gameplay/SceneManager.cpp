@@ -7,6 +7,7 @@
 #include "Scripts/PlayerBehavior.hpp"
 #include "Scripts/CameraBehavior.hpp"
 #include "Scripts/FpsBehavior.hpp"
+#include "Scripts/EnemiBehavior.hpp"
 #include "Utils.h"
 
 
@@ -42,7 +43,7 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 	pPlayerMesh->pMaterial->useTextureAlbedo = 1;
 	pPlayerMesh->pMaterial->subsurface = 1;
 	pPlayerMesh->pPso = pso;
-
+	m_pPlayer = &player;
 	gce::BoxCollider* bCollider = player.AddComponent<gce::BoxCollider>();
 
 	PlayerBehavior* pScript = player.AddScript<PlayerBehavior>();
@@ -76,6 +77,22 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 	pFloorMesh->pMaterial->subsurface = 1;
 	pFloorMesh->pPso = pso;
 
+	Texture* pMogwaiBaseColor = new Texture("res/Assets/mogwai/mogwai_Base_Color.png");
+
+	gce::GameObject& Ennemi = gce::GameObject::Create(scene);
+	Ennemi.transform.SetLocalPosition({ 1,3,1 });
+	Ennemi.SetName("Mogwai");
+
+	gce::MeshRenderer* pEnnemiMesh = Ennemi.AddComponent<gce::MeshRenderer>();
+	gce::PhysicComponent* pEnnemiPhysic = Ennemi.AddComponent<gce::PhysicComponent>();
+	EnemiBehavior* pEnnemiBehavior = Ennemi.AddScript<EnemiBehavior>();
+	pEnnemiMesh->pGeometry = gce::GeometryFactory::LoadGeometry("res/Assets/mogwai/mogwai.obj");
+	pEnnemiMesh->pMaterial->albedoTextureID = pMogwaiBaseColor->GetTextureID();
+	pEnnemiMesh->pMaterial->useTextureAlbedo = 1;
+	pEnnemiMesh->pMaterial->subsurface = 1;
+	pEnnemiMesh->pPso = pso;
+
+	gce::BoxCollider* EnnemibCollider = Ennemi.AddComponent<gce::BoxCollider>();
 	BoxCollider* pFloorBox = floor.AddComponent<BoxCollider>();
 
 

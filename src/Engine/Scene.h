@@ -12,7 +12,6 @@ class Scene final
 {
 public:
     static Scene& Create();
-
 private:
     Scene() = default;
     ~Scene() = default;
