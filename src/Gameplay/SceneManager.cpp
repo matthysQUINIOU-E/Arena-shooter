@@ -4,7 +4,8 @@
 #include <Render.h>
 #include <Engine.h>
 #include "Prefabs/ArenaCamera.h"
-#include "Scripts/PlayerBehavior.hpp"
+#include "Prefabs/Player.h"
+
 #include "Scripts/CameraBehavior.hpp"
 #include "Scripts/FpsBehavior.hpp"
 #include "Utils.h"
@@ -17,7 +18,7 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 	ac.SetParams(XM_PIDIV4, 0.001f, 500.0f, 1000.0f / 800.0f);
 
 
-	gce::D12PipelineObject* pso = new gce::D12PipelineObject( // TODO ::change
+	pPso = new gce::D12PipelineObject( // TODO ::change
 		gce::SHADERS.VERTEX,
 		gce::SHADERS.PIXEL,
 		gce::SHADERS.HULL,
@@ -31,39 +32,14 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 	gce::LightData directionalLight = gce::LightManager::CreateDirectionalLight(gce::Vector3f32(0.0f, 0.0f, 1.0f), gce::Vector4(1.0f, 1.0f, 1.0f, 1.0f), 1.0f, 1.0f);
 	gce::LightManager::AddLight(directionalLight);
 
-	gce::GameObject& player = gce::GameObject::Create(scene);
-	player.SetName("Player");
-	player.transform.SetWorldScale({ 1, 2, 1 });
-	gce::PhysicComponent* pPhysic = player.AddComponent<gce::PhysicComponent>();
-	gce::MeshRenderer* pPlayerMesh = player.AddComponent<gce::MeshRenderer>();
-	pPlayerMesh->pGeometry = gce::SHAPES.CUBE;
+	Player player;
+	player.Create(scene);
+	player.TestMusket(scene);
 
-	pPlayerMesh->pMaterial->albedoTextureID = pWhiteTexture->GetTextureID();
-	pPlayerMesh->pMaterial->useTextureAlbedo = 1;
-	pPlayerMesh->pMaterial->subsurface = 1;
-	pPlayerMesh->pPso = pso;
+	ac.GetScript<CameraBehavior>()->SetGameObjectToFollow(player.GetGameObject());
 
-	gce::BoxCollider* bCollider = player.AddComponent<gce::BoxCollider>();
-
-	PlayerBehavior* pScript = player.AddScript<PlayerBehavior>();
-
-	ac.GetScript<CameraBehavior>()->SetGameObjectToFollow(&player);
-
-	Texture* pArmsBaseColor = new Texture("res/Assets/zhu_rong_arms/Arms_Base_Color.png");
-
-	gce::GameObject& playerArms = gce::GameObject::Create(scene);
-	playerArms.SetName("Player_Arms");
-	playerArms.transform.SetLocalPosition(ac.GetGameObject()->transform.GetWorldPosition());
-	playerArms.transform.SetWorldScale({ 3, 3, 3 });
-	gce::MeshRenderer* pArmsMesh = playerArms.AddComponent<gce::MeshRenderer>();
-	pArmsMesh->pGeometry = gce::GeometryFactory::LoadGeometry("res/Assets/zhu_rong_arms/Arms.obj");
-	pArmsMesh->pMaterial->albedoTextureID = pArmsBaseColor->GetTextureID();
-	pArmsMesh->pMaterial->useTextureAlbedo = 1;
-	pArmsMesh->pMaterial->subsurface = 1;
-	pArmsMesh->pPso = pso;
-
-	ac.GetGameObject()->AddChild(playerArms);
-
+	ac.GetGameObject()->AddChild(*player.GetWeapon("musket"));
+	
 	gce::GameObject& floor = gce::GameObject::Create(scene);
 	floor.transform.SetLocalScale({ 50, 1, 50 });
 	floor.transform.SetWorldPosition({ 0, -2, 0 });
@@ -74,7 +50,7 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 	pFloorMesh->pMaterial->albedoTextureID = pWhiteTexture->GetTextureID();
 	pFloorMesh->pMaterial->useTextureAlbedo = 1;
 	pFloorMesh->pMaterial->subsurface = 1;
-	pFloorMesh->pPso = pso;
+	pFloorMesh->pPso = pPso;
 
 	BoxCollider* pFloorBox = floor.AddComponent<BoxCollider>();
 

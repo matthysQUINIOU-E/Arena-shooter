@@ -4,6 +4,7 @@
 #include <Script.h>
 #include "Prefabs/ArenaCamera.h"
 #include "Components.h"
+#include "GunBehavior.hpp"
 
 using namespace gce;
 
@@ -11,6 +12,8 @@ DECLARE_SCRIPT(PlayerBehavior, ScriptFlag::Start | ScriptFlag::Update | ScriptFl
 
 //Members
 PhysicComponent* pPhysic = nullptr;
+
+GameObject* pGun = nullptr;
 
 int jumpsAmount = 0;
 int maxJumpsAmount = 2;
@@ -64,13 +67,22 @@ void HandleInput()
 	}
 
 	m_pOwner->transform.LocalTranslate((finalDir * speed * dt));
+
+	if (pGun != nullptr)
+	{
+		if (GetButtonDown(Mouse::LEFT))
+		{
+			pGun->GetScript<GunBehavior>()->Shoot();
+		}
+	}
 }
+
+void SetCurrentGun(GameObject* go) { pGun = go; }
 
 void Start()
 {
 	pPhysic = m_pOwner->GetComponent<PhysicComponent>();
 	pPhysic->SetBounciness(0.f);
-	m_pOwner->transform.SetWorldPosition({ 0, 0, 0 });
 }
 
 void Update()
