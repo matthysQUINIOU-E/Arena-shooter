@@ -34,6 +34,7 @@ namespace gce {
         // GLOBAL STRUCTS Init
         SHAPES.Init();
         SHADERS.Init();
+        m_pWhiteTexture = new gce::Texture("res/Assets/white.png");
     }
 
     GameManager::~GameManager()
@@ -145,7 +146,7 @@ namespace gce {
                 m_frameCount = 0;
             }
         }
+
+        m_windowParam.title = std::to_wstring((int)GameManager::FPS());
     }
-
-
 }

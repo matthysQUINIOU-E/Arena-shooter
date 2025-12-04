@@ -4,7 +4,8 @@
 #include <Render.h>
 #include <Engine.h>
 #include "Prefabs/ArenaCamera.h"
-#include "Scripts/PlayerBehavior.hpp"
+#include "Prefabs/Player.h"
+
 #include "Scripts/CameraBehavior.hpp"
 #include "Scripts/FpsBehavior.hpp"
 #include "Utils.h"
@@ -17,7 +18,7 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 	ac.SetParams(XM_PIDIV4, 0.001f, 5000.0f, 1000.0f / 800.0f);
 	ac.GetGameObject()->transform.SetWorldPosition({ 0.f,100.f,0.f });
 
-	gce::D12PipelineObject* pso = new gce::D12PipelineObject( // TODO ::change
+	pPso = new gce::D12PipelineObject( // TODO ::change
 		gce::SHADERS.VERTEX,
 		gce::SHADERS.PIXEL,
 		gce::SHADERS.HULL,
