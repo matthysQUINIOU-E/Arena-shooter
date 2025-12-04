@@ -82,7 +82,7 @@ void ImportBlenderScene(std::wstring jsonFile)
         gameObject.transform.SetWorldScale(scale);
 
 
-        gce::D12PipelineObject* defaultPso = new gce::D12PipelineObject( // TODO :: Change this 
+        gce::D12PipelineObject* defaultPso = new gce::D12PipelineObject( // TODO :: Change this because no delete now 
             gce::SHADERS.VERTEX,
             gce::SHADERS.PIXEL_TEXTURE,
             gce::SHADERS.HULL,
