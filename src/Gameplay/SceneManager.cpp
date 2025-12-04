@@ -14,8 +14,8 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 {
 	ArenaCamera ac;
 	ac.Create(scene);
-	ac.SetParams(XM_PIDIV4, 0.001f, 500.0f, 1000.0f / 800.0f);
-
+	ac.SetParams(XM_PIDIV4, 0.001f, 5000.0f, 1000.0f / 800.0f);
+	ac.GetGameObject()->transform.SetWorldPosition({ 0.f,100.f,0.f });
 
 	gce::D12PipelineObject* pso = new gce::D12PipelineObject( // TODO ::change
 		gce::SHADERS.VERTEX,
@@ -34,6 +34,7 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 	gce::GameObject& player = gce::GameObject::Create(scene);
 	player.SetName("Player");
 	player.transform.SetWorldScale({ 1, 2, 1 });
+	player.transform.SetWorldPosition({ 0.f,100.f,0.f });
 	gce::PhysicComponent* pPhysic = player.AddComponent<gce::PhysicComponent>();
 	gce::MeshRenderer* pPlayerMesh = player.AddComponent<gce::MeshRenderer>();
 	pPlayerMesh->pGeometry = gce::SHAPES.CUBE;
@@ -55,30 +56,18 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 	playerArms.SetName("Player_Arms");
 	playerArms.transform.SetLocalPosition(ac.GetGameObject()->transform.GetWorldPosition());
 	playerArms.transform.SetWorldScale({ 3, 3, 3 });
+	
 	gce::MeshRenderer* pArmsMesh = playerArms.AddComponent<gce::MeshRenderer>();
 	pArmsMesh->pGeometry = gce::GeometryFactory::LoadGeometry("res/Assets/zhu_rong_arms/Arms.obj");
 	pArmsMesh->pMaterial->albedoTextureID = pArmsBaseColor->GetTextureID();
 	pArmsMesh->pMaterial->useTextureAlbedo = 1;
 	pArmsMesh->pMaterial->subsurface = 1;
 	pArmsMesh->pPso = pso;
-
+	
 	ac.GetGameObject()->AddChild(playerArms);
+	ImportBlenderScene(L"scene_base.json");
 
-	gce::GameObject& floor = gce::GameObject::Create(scene);
-	floor.transform.SetLocalScale({ 50, 1, 50 });
-	floor.transform.SetWorldPosition({ 0, -2, 0 });
-	floor.SetName("Floor");
-	gce::MeshRenderer* pFloorMesh = floor.AddComponent<gce::MeshRenderer>();
-	pFloorMesh->pGeometry = gce::SHAPES.CUBE;
-
-	pFloorMesh->pMaterial->albedoTextureID = pWhiteTexture->GetTextureID();
-	pFloorMesh->pMaterial->useTextureAlbedo = 1;
-	pFloorMesh->pMaterial->subsurface = 1;
-	pFloorMesh->pPso = pso;
-
-	BoxCollider* pFloorBox = floor.AddComponent<BoxCollider>();
-
-
+	/*
 	gce::GameObject& fps = gce::GameObject::Create(scene);
 	auto txt = fps.AddComponent<TextRenderer>();
 	txt->pFont = new Font(L"Arial");
@@ -86,6 +75,10 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 	txt->text = L"FPS";
 	txt->rectPosF = new RectanglePosF(0.0f, 0.0f, 200.0f, 50.0f);
 	fps.AddScript<FpsBehavior>();
+	*/
+	
+	
+	//shapeCustom.AddComponent<BoxCollider>();
 }
 
 void SceneManager::Init()

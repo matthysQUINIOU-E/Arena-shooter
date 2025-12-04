@@ -70,7 +70,6 @@ void Start()
 {
 	pPhysic = m_pOwner->GetComponent<PhysicComponent>();
 	pPhysic->SetBounciness(0.f);
-	m_pOwner->transform.SetWorldPosition({ 0, 0, 0 });
 }
 
 void Update()
