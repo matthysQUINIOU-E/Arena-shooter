@@ -5,6 +5,7 @@ gce::GameObject* ArenaCamera::Create(gce::Scene& scene)
 {
 	m_pGameObject = &gce::GameObject::Create(scene);
 	m_pGameObject->transform.LocalTranslate({ 0, 0, -10 });
+	m_pGameObject->transform.SetWorldPosition({ 0, 100, 0});
 
 	m_pCamera = m_pGameObject->AddComponent<gce::Camera>();
 	m_pGameObject->AddScript<CameraBehavior>();

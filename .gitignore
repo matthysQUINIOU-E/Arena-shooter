@@ -1,6 +1,7 @@
 # SolutionGen
 ide
 
+.vs
 *.cso
 
 # Softwares related

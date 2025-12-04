@@ -10,7 +10,7 @@ void ImportBlenderScene(std::wstring jsonFile)
 	const std::string pathTexture = "res/Texture/";
 	
 	gce::GameManager* pGameManager = gce::GameManager::s_pInstance;
-	gce::Scene* pScene = pGameManager->m_scenes[0]; // TODO :: changer la maniere dont recuperer la scene avec le SceneManager
+    gce::Scene& pScene = pGameManager->GetScene();
 
 	std::ifstream f(WRES_PATH L"res/BlenderScene/" + jsonFile);
 	nlohmann::json data;
@@ -74,19 +74,11 @@ void ImportBlenderScene(std::wstring jsonFile)
             scale = gce::Vector3f32{ 1.f, 1.f, 1.f };
 
 
-        gce::GameObject& gameObject = gce::GameObject::Create(*pScene);
+        gce::GameObject& gameObject = gce::GameObject::Create(pScene);
         gameObject.SetName("importedScene"); // maybe change later just taging everything with the same name
         gameObject.transform.SetWorldPosition(position);
         gameObject.transform.SetWorldRotation(rotation);
         gameObject.transform.SetWorldScale(scale);
-
-        gce::D12PipelineObject* defaultPso = new gce::D12PipelineObject( // TODO :: Change this because no delete now 
-            gce::SHADERS.VERTEX,
-            gce::SHADERS.PIXEL,
-            gce::SHADERS.HULL,
-            gce::SHADERS.DOMAIN_,
-            gce::SHADERS.ROOT_SIGNATURE
-        );
 
         std::vector<std::vector<float>> vertices;
         std::vector<uint32_t> indices;
@@ -104,7 +96,7 @@ void ImportBlenderScene(std::wstring jsonFile)
 
         gce::MeshRenderer* pMeshRenderer = gameObject.AddComponent<gce::MeshRenderer>();
         pMeshRenderer->pGeometry = MakeCustomGeometry(vertices, indices);
-        pMeshRenderer->pPso = defaultPso;
+        pMeshRenderer->pPso = pGameManager->GetSceneManager().GetPSO();
         pMeshRenderer->pMaterial->subsurface = 1;
         
         if (!baseColorTex.empty())

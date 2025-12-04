@@ -7,7 +7,7 @@ void Player::Create(gce::Scene& scene)
 	m_pGameObject = &gce::GameObject::Create(scene);
 	m_pGameObject->SetName("Player");
 	m_pGameObject->transform.SetWorldScale({ 1, 2, 1 });
-	m_pGameObject->transform.SetWorldPosition({ 0, 0, 0 });
+	m_pGameObject->transform.SetWorldPosition({ 0, 100, 0 });
 	gce::PhysicComponent* pPhysic = m_pGameObject->AddComponent<gce::PhysicComponent>();
 
 	gce::MeshRenderer* pPlayerMesh = m_pGameObject->AddComponent<gce::MeshRenderer>();

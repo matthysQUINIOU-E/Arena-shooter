@@ -25,12 +25,13 @@ class SceneManager
 { 
 	std::unordered_map<SceneType, std::vector<gce::GameObject*> > m_SceneObjectsList;
 
-	gce::D12PipelineObject* pPso = nullptr;
+	gce::D12PipelineObject* m_pPso = nullptr;
 public:
-	SceneManager() {};
+	SceneManager() {}
+	~SceneManager() { delete m_pPso; }
 	void InitGamePlayScene(gce::Scene& scene1);
 	void Init();
 
-	gce::D12PipelineObject* GetPSO() { return pPso; }
+	gce::D12PipelineObject* GetPSO() { return m_pPso; }
 };
 
