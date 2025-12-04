@@ -9,6 +9,9 @@
 #include "Systems.h"
 #include "Components/Camera.h"
 
+constexpr int WINDOW_WIDTH = 1920;
+constexpr int WINDOW_HEIGHT = 1080;
+
 namespace gce {
 
 struct WindowParam
