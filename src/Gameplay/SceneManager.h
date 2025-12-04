@@ -20,7 +20,7 @@ class SceneManager
 { 
 	std::unordered_map<SceneType, std::vector<gce::GameObject*> > m_SceneObjectsList;
 public:
-	SceneManager();
+	SceneManager() {};
 	void InitGamePlayScene(gce::Scene& scene1);
 	void Init();
 };

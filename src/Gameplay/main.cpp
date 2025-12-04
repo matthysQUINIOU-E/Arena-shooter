@@ -3,16 +3,11 @@
 #include <windows.h>
 #include <Render.h>
 #include <Engine.h>
-#include "Utils.h"
 
 int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
 {
 	gce::GameManager::Create();
 	gce::Console::Init();
-	SceneManager sceneM;
-
-
-	ImportBlenderScene(L"scene_base.json");
 
 	gce::WindowParam param;
 	param.width = WINDOW_WIDTH;

@@ -25,7 +25,7 @@ namespace gce {
     {
         // Console Init
         Console::Init();
-
+        
         // Render Init
         RenderContext::Init();
         RenderContext::InitUI();
