@@ -3,84 +3,99 @@
 #include <windows.h>
 #include <Render.h>
 #include <Engine.h>
+#include "Prefabs/ArenaCamera.h"
+#include "Scripts/PlayerBehavior.hpp"
+#include "Scripts/CameraBehavior.hpp"
+#include "Scripts/FpsBehavior.hpp"
 
 
 SceneManager::SceneManager()
 {
 		Init();
 }
-void SceneManager::CreateWindowParam()
-{
-	m_pParam = new gce::WindowParam;
-	m_pParam->width = 1920;
-	m_pParam->height = 1080;
-	m_pParam->title = L"Arena Shooter";
-	m_pParam->isFullScreen = false;
-	m_pParam->isSplitScreen = false;
-}
-void SceneManager::InitScene()
-{
-	gce::Scene& scene = gce::Scene::Create();
-
-	gce::GameObject& cameraObject = gce::GameObject::Create(scene);
-	cameraObject.transform.LocalTranslate({ 0, 0, -10 });
-
-	m_pCamera = cameraObject.AddComponent<gce::Camera>();
-	InitGamePlayScene(scene);
-}
 
 void SceneManager::InitGamePlayScene(gce::Scene& scene)
 {
+	gce::Scene* pScene = gce::GameManager::s_pInstance->m_scenes[0];// TODO ::change
+	ArenaCamera ac;
+	ac.Create(*pScene);
+	ac.SetParams(XM_PIDIV4, 0.001f, 500.0f, 1000.0f / 800.0f);
 
-	static gce::D12PipelineObject s_defaultPso = {
-   gce::SHADERS.VERTEX,
-   gce::SHADERS.PIXEL,
-   gce::SHADERS.HULL,
-   gce::SHADERS.DOMAIN_,
-   gce::SHADERS.ROOT_SIGNATURE
-	};
+
+	gce::D12PipelineObject* pso = new gce::D12PipelineObject( // TODO ::change
+		gce::SHADERS.VERTEX,
+		gce::SHADERS.PIXEL,
+		gce::SHADERS.HULL,
+		gce::SHADERS.DOMAIN_,
+		gce::SHADERS.ROOT_SIGNATURE
+	);
+
+	gce::Texture* pWhiteTexture = new gce::Texture("res/Assets/white.png");
+
 	gce::LightManager::SetLightsProperties(8.0f, 100.0f, 2.0f, 32.0f, 1.f);
 	gce::LightData directionalLight = gce::LightManager::CreateDirectionalLight(gce::Vector3f32(0.0f, 0.0f, 1.0f), gce::Vector4(1.0f, 1.0f, 1.0f, 1.0f), 1.0f, 1.0f);
 	gce::LightManager::AddLight(directionalLight);
-	//Creation d'un objet sans texture
-	gce::GameObject& testObject = gce::GameObject::Create(scene);
-	gce::MeshRenderer* pMeshRenderer = testObject.AddComponent<gce::MeshRenderer>();
-	// SHAPES contient plusieurs shapes de base (je vous laisse regarder) pour faire des formes de bases
-	pMeshRenderer->pGeometry = gce::SHAPES.CUBE;
-	pMeshRenderer->pPso = &s_defaultPso;
-	m_SceneObjectsList[Scene::GamePlayScene].push_back(&testObject);
-	gce::Texture* pNewTexture = new gce::Texture("res/Exemple/mogwai_lowpoly_texture.png");
-	gce::GameObject& shapeCustom = gce::GameObject::Create(scene);
-	shapeCustom.transform.SetWorldPosition({ 0.0f,0.0f,-6.0f });
-	gce::MeshRenderer* pMeshRenderer3 = shapeCustom.AddComponent<gce::MeshRenderer>();
-	// Pensez à inverser l'axe Y des uv quand vous loadez des OBJ (sinon ça casse vos textures)
-shapeCustom.transform.SetLocalRotation(gce::Vector3f32{ shapeCustom.transform.GetLocalRotation().GetX(),shapeCustom.transform.GetLocalRotation().GetY() +.5f,shapeCustom.transform.GetLocalRotation().GetZ() });
-	pMeshRenderer3->pGeometry = gce::GeometryFactory::LoadGeometry("res/Exemple/mogwai_lowpoly.obj");
-	pMeshRenderer3->pPso = &s_defaultPso;
-	pMeshRenderer3->pMaterial->albedoTextureID = pNewTexture->GetTextureID();
-	pMeshRenderer3->pMaterial->useTextureAlbedo = 1;
-	pMeshRenderer3->pMaterial->subsurface = 1;
+
+	gce::GameObject& player = gce::GameObject::Create(*pScene);
+	player.SetName("Player");
+	player.transform.SetWorldScale({ 1, 2, 1 });
+	gce::PhysicComponent* pPhysic = player.AddComponent<gce::PhysicComponent>();
+	gce::MeshRenderer* pPlayerMesh = player.AddComponent<gce::MeshRenderer>();
+	pPlayerMesh->pGeometry = gce::SHAPES.CUBE;
+
+	pPlayerMesh->pMaterial->albedoTextureID = pWhiteTexture->GetTextureID();
+	pPlayerMesh->pMaterial->useTextureAlbedo = 1;
+	pPlayerMesh->pMaterial->subsurface = 1;
+	pPlayerMesh->pPso = pso;
+
+	gce::BoxCollider* bCollider = player.AddComponent<gce::BoxCollider>();
+
+	PlayerBehavior* pScript = player.AddScript<PlayerBehavior>();
+
+	ac.GetScript<CameraBehavior>()->SetGameObjectToFollow(&player);
+
+	Texture* pArmsBaseColor = new Texture("res/Assets/zhu_rong_arms/Arms_Base_Color.png");
+
+	gce::GameObject& playerArms = gce::GameObject::Create(*pScene);
+	playerArms.SetName("Player_Arms");
+	playerArms.transform.SetLocalPosition(ac.GetGameObject()->transform.GetWorldPosition());
+	playerArms.transform.SetWorldScale({ 3, 3, 3 });
+	gce::MeshRenderer* pArmsMesh = playerArms.AddComponent<gce::MeshRenderer>();
+	pArmsMesh->pGeometry = gce::GeometryFactory::LoadGeometry("res/Assets/zhu_rong_arms/Arms.obj");
+	pArmsMesh->pMaterial->albedoTextureID = pArmsBaseColor->GetTextureID();
+	pArmsMesh->pMaterial->useTextureAlbedo = 1;
+	pArmsMesh->pMaterial->subsurface = 1;
+	pArmsMesh->pPso = pso;
+
+	ac.GetGameObject()->AddChild(playerArms);
+
+	gce::GameObject& floor = gce::GameObject::Create(*pScene);
+	floor.transform.SetLocalScale({ 50, 1, 50 });
+	floor.transform.SetWorldPosition({ 0, -2, 0 });
+	floor.SetName("Floor");
+	gce::MeshRenderer* pFloorMesh = floor.AddComponent<gce::MeshRenderer>();
+	pFloorMesh->pGeometry = gce::SHAPES.CUBE;
+
+	pFloorMesh->pMaterial->albedoTextureID = pWhiteTexture->GetTextureID();
+	pFloorMesh->pMaterial->useTextureAlbedo = 1;
+	pFloorMesh->pMaterial->subsurface = 1;
+	pFloorMesh->pPso = pso;
+
+	BoxCollider* pFloorBox = floor.AddComponent<BoxCollider>();
+
+
+	gce::GameObject& fps = gce::GameObject::Create(*pScene);
+	auto txt = fps.AddComponent<TextRenderer>();
+	txt->pFont = new Font(L"Arial");
+	txt->pBrush = new ColorBrush(Color::Red);
+	txt->text = L"FPS";
+	txt->rectPosF = new RectanglePosF(0.0f, 0.0f, 200.0f, 50.0f);
+	fps.AddScript<FpsBehavior>();
 }
 
-void SceneManager::InitCamera()
-{
-	m_pCamera->SetMainCamera();
-	m_pCamera->SetType(gce::PERSPECTIVE);
-
-	m_pCamera->perspective.fov = XM_PIDIV4;
-	m_pCamera->perspective.nearPlane = 0.001f;
-	m_pCamera->perspective.farPlane = 500.0f;
-	m_pCamera->perspective.aspectRatio = 1000.0f / 800.0f;
-	m_pCamera->perspective.up = { 0.0f, 1.0f, 0.0f };
-}
 void SceneManager::Init()
 {
-	gce::GameManager::Create();
-	gce::Console::Init();
-	InitScene();
-	InitCamera();
-	CreateWindowParam();
-	gce::GameManager::Run(*m_pParam);
-
+	gce::Scene& scene = gce::Scene::Create();
+	InitGamePlayScene(scene);
 }
 

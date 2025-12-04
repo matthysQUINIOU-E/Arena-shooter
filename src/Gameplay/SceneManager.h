@@ -2,7 +2,7 @@
 #include <vector>
 #include <unordered_map>
 
-enum  Scene
+enum  SceneType
 {
 	MenuScene,
 	GamePlayScene,
@@ -11,26 +11,17 @@ enum  Scene
 	ArsenalScene,
 	Options,
 	Count
-
 };
 namespace gce {
 	class Scene;
 	class GameObject;
-	class Camera;
-	class WindowParam;
 }
 class SceneManager
 { 
-	std::unordered_map<int, std::vector<gce::GameObject*> > m_SceneObjectsList;
-
-	gce::WindowParam* m_pParam;
-	gce::Camera* m_pCamera;
+	std::unordered_map<SceneType, std::vector<gce::GameObject*> > m_SceneObjectsList;
 public:
 	SceneManager();
-	void CreateWindowParam();
-	void InitScene();
 	void InitGamePlayScene(gce::Scene& scene1);
-	void InitCamera();
 	void Init();
 };
 
