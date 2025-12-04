@@ -13,7 +13,7 @@ DECLARE_SCRIPT(BulletBehavior, ScriptFlag::Start | ScriptFlag::Update | ScriptFl
 //Members
 GameObject* pGun = nullptr;
 
-float lifeTime = 3.f;
+float lifeTime = 5.f;
 float speed = 50.f;
 
 void SetGun(GameObject* go) { pGun = go; }

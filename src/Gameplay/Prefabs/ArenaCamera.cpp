@@ -5,7 +5,6 @@
 gce::GameObject* ArenaCamera::Create()
 {
 	m_pGameObject = &EntityWrapper::Create();
-	m_pGameObject->transform.LocalTranslate({ 0, 0, -10 });
 
 	m_pCamera = m_pGameObject->AddComponent<gce::Camera>();
 	m_pGameObject->AddScript<CameraBehavior>();
