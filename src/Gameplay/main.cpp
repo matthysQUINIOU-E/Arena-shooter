@@ -36,7 +36,7 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
 	gce::SHADERS.ROOT_SIGNATURE
 	};
 
-	gce::Texture* pRockTexture = new gce::Texture("res/Assets/rock/rock_base_color.png");
+	gce::Texture* pWhiteTexture = new gce::Texture("res/Assets/white.png");
 
 	LightManager::SetLightsProperties(8.0f, 100.0f, 2.0f, 32.0f, 1.f);
 	LightData directionalLight = LightManager::CreateDirectionalLight(Vector3f32(0.0f, 0.0f, 1.0f), Vector4(1.0f, 1.0f, 1.0f, 1.0f), 1.0f, 1.0f);
@@ -49,7 +49,7 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
 	gce::MeshRenderer* pPlayerMesh = player.AddComponent<gce::MeshRenderer>();
 	pPlayerMesh->pGeometry = gce::SHAPES.CUBE;
 
-	pPlayerMesh->pMaterial->albedoTextureID = pRockTexture->GetTextureID();
+	pPlayerMesh->pMaterial->albedoTextureID = pWhiteTexture->GetTextureID();
 	pPlayerMesh->pMaterial->useTextureAlbedo = 1;
 	pPlayerMesh->pMaterial->subsurface = 1;
 	pPlayerMesh->pPso = &pso;
@@ -75,29 +75,6 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
 
 	ac.GetGameObject()->AddChild(playerArms);
 
-	Geometry* mogwai = gce::GeometryFactory::LoadGeometry("res/Assets/mogwai/mogwai.obj");
-	Texture* pMogwaiBaseColor = new Texture("res/Assets/mogwai/mogwai_base_color.png");
-
-	for (int i = -4; i < 5; i++)
-	{
-		gce::GameObject& enemy = gce::GameObject::Create(scene1);
-		enemy.SetName("Enemy");
-		enemy.transform.WorldTranslate({ (float)i, 0, 0 });
-		gce::PhysicComponent* pPhysic2 = enemy.AddComponent<gce::PhysicComponent>();
-		pPhysic2->SetBounciness(0);
-
-		gce::MeshRenderer* pPlayerMesh2 = enemy.AddComponent<gce::MeshRenderer>();
-		pPlayerMesh2->pGeometry = mogwai;
-
-		pPlayerMesh2->pMaterial->albedoTextureID = pMogwaiBaseColor->GetTextureID();
-
-		pPlayerMesh2->pMaterial->useTextureAlbedo = 1;
-		pPlayerMesh2->pMaterial->subsurface = 1;
-		pPlayerMesh2->pPso = &pso;
-
-		gce::BoxCollider* bCollider2 = enemy.AddComponent<gce::BoxCollider>();
-	}
-	
 	gce::GameObject& floor = gce::GameObject::Create(scene1);
 	floor.transform.SetLocalScale({ 50, 1, 50 });
 	floor.transform.SetWorldPosition({ 0, -2, 0 });
@@ -105,7 +82,7 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
 	gce::MeshRenderer* pFloorMesh = floor.AddComponent<gce::MeshRenderer>();
 	pFloorMesh->pGeometry = gce::SHAPES.CUBE;
 
-	pFloorMesh->pMaterial->albedoTextureID = pRockTexture->GetTextureID();
+	pFloorMesh->pMaterial->albedoTextureID = pWhiteTexture->GetTextureID();
 	pFloorMesh->pMaterial->useTextureAlbedo = 1;
 	pFloorMesh->pMaterial->subsurface = 1;
 	pFloorMesh->pPso = &pso;
