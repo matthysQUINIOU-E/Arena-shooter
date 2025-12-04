@@ -29,7 +29,10 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
 	GameObject& cameraObject = GameObject::Create(scene1);
 	cameraObject.transform.LocalTranslate({ 0, 0, -10 });
 	// ajout du component Camera sur l'objet puis initialisation des propriétés de la camera
+	Light* pLight = cameraObject.AddComponent<Light>();
+	pLight->DefaultDirectionLight();
 	Camera* pCamera = cameraObject.AddComponent<Camera>();
+
 
 	pCamera->SetMainCamera();
 	pCamera->SetType(PERSPECTIVE);

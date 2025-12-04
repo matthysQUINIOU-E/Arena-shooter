@@ -3,11 +3,17 @@
 
 #include <SplitScreenWindow.h>
 #include <Shader.h>
+#include <Render.h>
+#include <Engine.h>
 #include "define.h"
 
 #include "Chrono.h"
 #include "Systems.h"
 #include "Components/Camera.h"
+#include "Gameplay/SceneManager.h"
+
+constexpr int WINDOW_WIDTH = 1920;
+constexpr int WINDOW_HEIGHT = 1080;
 
 namespace gce {
 
@@ -44,6 +50,8 @@ public:
 	[[nodiscard]] static PhysicSystem& GetPhysicSystem();
 	[[nodiscard]] static UiSystem& GetUiSystem();
     [[nodiscard]] static Vector<Camera*>& GetMainCameras();
+    [[nodiscard]] static SceneManager& GetSceneManager();
+    [[nodiscard]] static Scene& GetScene();
 
     GameManager();
     ~GameManager();
@@ -52,7 +60,7 @@ public:
 
 public: // Temporary (should be named and used as private)
     inline static GameManager* s_pInstance = nullptr;
-
+    
     void HandleFPS();
 
     Window* m_pWindow;
@@ -66,6 +74,8 @@ public: // Temporary (should be named and used as private)
     float32 m_fixedDeltaTime = 1.0f / 120.0f;
     float32 m_timeSinceFixedUpdate;
     float32 m_fps;
+
+    SceneManager m_sceneManager;
 
     RenderSystem m_renderSystem;
     LifespanSystem m_lifespanSystem;

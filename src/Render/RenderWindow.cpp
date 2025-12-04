@@ -42,7 +42,6 @@ namespace gce
 		m_pTarget->Draw(item);
 	}
 
-
 	void RenderWindow::EndDraw()
 	{
 		m_pTarget->End();
