@@ -27,10 +27,18 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 	player.Create();
 	ac.GetScript<CameraBehavior>()->SetGameObjectToFollow(player.GetGameObject());
 
+	{
+		EntityWrapper& eMogwaiBroken = EntityWrapper::Create();
+		eMogwaiBroken.SetProperties("Mogwai", Tag::TEnemy, { 0.5, 2, 0 }, { 0, 0, 0 }, { 1, 1, 1 });
+		eMogwaiBroken.AddMeshRenderer(gce::GeometryFactory::LoadGeometry("res/Assets/mogwai_lowcost/mogwai_lowcost.obj"), "res/Assets/mogwai_lowcost/mogwai_lowcost_base_color.png");
+		eMogwaiBroken.AddPhysics(10, 1, 0);
+		eMogwaiBroken.AddComponent<BoxCollider>();
+	}
+
 	EntityWrapper& musket = EntityWrapper::Create();
 	ac.GetGameObject()->AddChild(musket);
 
-	musket.SetProperties("Musket", Tag::TWeapon, {0, 0, 0}, {gce::PI, 0, gce::PI}, {1, 1, 1});
+	musket.SetProperties("Musket", Tag::TWeapon, { 0, 0, 0 }, { gce::PI, 0, gce::PI }, { 1, 1, 1 });
 	musket.AddMeshRenderer(gce::GeometryFactory::LoadGeometry("res/Assets/musket/musket.obj"), "res/Assets/musket/musket_base_color.png");
 
 	EntityWrapper& hole = EntityWrapper::Create();

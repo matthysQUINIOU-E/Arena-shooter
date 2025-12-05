@@ -22,7 +22,7 @@ public:
 
 protected:
     void UpdateColliderComponent( uint8 dirty ) override;
-private:
+public:
     Box m_worldBox;
 
     friend class PhysicSystem;
