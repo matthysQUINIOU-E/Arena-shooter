@@ -50,6 +50,19 @@ void HandleFPSMode()
 
 	m_pOwner->transform.SetWorldRotation(pitchQ * yawQ);
 
+
+	// Update local positions for Weapons
+	if (m_pOwner->GetChildren().Empty() == false)
+	{
+		for (GameObject* go : m_pOwner->GetChildren())
+		{
+			if (go->GetTag() == TWeapon)
+			{
+				go->transform.SetLocalPosition({ 0.25, -0.1f, 0.5f });
+			}
+		}
+	}
+
 	// Set Camera Pos
 	gce::Vector3f32 newPos = pFollowGameObject->transform.GetWorldPosition();
 

@@ -1,6 +1,8 @@
 #pragma once
 #include "GameObject.h"
 
+class EntityWrapper;
+
 namespace gce
 {
 	class Texture;
@@ -8,16 +10,10 @@ namespace gce
 
 class Player
 {
-	gce::GameObject* m_pGameObject = nullptr;
-
-	std::vector<gce::GameObject*> m_pWeapons;
+	EntityWrapper* m_pGameObject;
 public:
-	void Create(gce::Scene& scene);
+	void Create();
 
-	void TestMusket(gce::Scene& scene);
-
-	gce::GameObject* GetWeapon(const char* name);
-
-	gce::GameObject* GetGameObject() { return m_pGameObject; }
+	EntityWrapper* GetGameObject() { return m_pGameObject; }
 };
 

@@ -5,6 +5,7 @@
 #include <Script.h>
 #include <algorithm>
 #include "BulletBehavior.hpp"
+#include "../Prefabs/EntityWrapper.h"
 
 using namespace gce;
 
@@ -12,32 +13,22 @@ DECLARE_SCRIPT(GunBehavior, ScriptFlag::Start | ScriptFlag::Update)
 
 void Shoot()
 {
-	Scene& scene = GameManager::GetScene();
+	gce::Scene& scene = GameManager::GetScene();
 
-	GameObject& bullet = GameObject::Create(scene);
+	EntityWrapper& bullet = EntityWrapper::Create();
 
 	if (m_pOwner->GetChildren().Empty())
 	{
 		return;
 	}
 
-	bullet.transform.SetWorldPosition(m_pOwner->GetChildren()[0]->transform.GetWorldPosition());
+	gce::Vector3f32 spawnPoint = m_pOwner->GetChildren()[0]->transform.GetWorldPosition();
 
-	auto& angles = m_pOwner->transform.GetWorldRotation();
+	bullet.SetProperties("Bullet", Tag::TProjectile, spawnPoint, { 0, 0, 0 }, { 0.15, 0.15, 0.15 });
+	bullet.AddMeshRenderer(gce::SHAPES.SPHERE, "");
 
-	bullet.transform.SetWorldRotation(angles);
-	bullet.transform.SetWorldScale({ 0.15, 0.15, 0.15 });
-
-	MeshRenderer* pMesh = bullet.AddComponent<MeshRenderer>();
-	pMesh->pGeometry = gce::SHAPES.SPHERE;
-	pMesh->pMaterial->albedoTextureID = GameManager::s_pInstance->m_pWhiteTexture->GetTextureID();
-	pMesh->pMaterial->useTextureAlbedo = 1;
-	pMesh->pMaterial->subsurface = 1;
-	pMesh->pPso = gce::GameManager::GetSceneManager().GetPSO();
-
-	/*bullet.AddComponent<PhysicComponent>();*/
 	bullet.AddComponent<SphereCollider>();
-	bullet.AddScript<BulletBehavior>();
+	bullet.AddScript<BulletBehavior>()->SetGun(m_pOwner);
 }
 
 void Start()
