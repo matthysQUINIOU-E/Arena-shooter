@@ -39,8 +39,9 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 	EntityWrapper& musket = EntityWrapper::Create();
 	ac.GetGameObject()->AddChild(musket);
 
-	musket.SetProperties("Musket", Tag1::TWeapon, Tag2::TMusket,{ 0, 0, 0 }, { gce::PI, 0, gce::PI }, { 1, 1, 1 });
+	musket.SetProperties("Musket", Tag1::TWeapon, Tag2::TMusket,{ 0, 0, 0 }, {0, 0, 0}, {1, 1, 1});
 	musket.transform.SetLocalPosition({ 0.25, -0.1f, 0.5f });
+	musket.transform.SetLocalRotation({ gce::PI, 0, gce::PI });
 
 	musket.AddMeshRenderer(gce::GeometryFactory::LoadGeometry("res/Assets/musket/musket.obj"), "res/Assets/musket/musket_base_color.png");
 
@@ -52,7 +53,16 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 	hole.SetChildProperties(musket, "Musket Hole", Tag1::TMiscellaneous, Tag2::None, { 0, 0, 0 }, { 0, 0, 0 }, { 0.05, 0.05, 0.05 });
 	hole.transform.SetWorldPosition(holePos);
 
-	musket.AddScript<GunBehavior>();
+
+
+	auto ammoManagerScript = musket.AddScript<AmmoManagerBehavior>();
+	ammoManagerScript->SetMaxAmmos(10);
+
+	auto gunBehavior = musket.AddScript<GunBehavior>();
+	gunBehavior->SetUnloadSpeed(0.1);
+	gunBehavior->SetReloadTime(1.f);
+	gunBehavior->SetAmmoManagerScript(ammoManagerScript);
+
 	player.GetGameObject()->GetScript<PlayerBehavior>()->SetCurrentGun(&musket);
 
 	EntityWrapper& floor = EntityWrapper::Create();

@@ -30,5 +30,5 @@ enum class Tag2 : uint32_t
     //Mobs
     TMogwai,
     TJiangshi,
-    THarpie
+    TGuHuoNiao
 };

@@ -2,6 +2,7 @@
 #include "../SceneManager.h"
 #include "Scripts/PlayerBehavior.hpp"
 #include "EntityWrapper.h"
+#include "../Scripts/HealthBehavior.hpp"
 
 void Player::Create()
 {
@@ -12,4 +13,6 @@ void Player::Create()
 	m_pGameObject->AddMeshRenderer(gce::SHAPES.CUBE, "");
 	m_pGameObject->AddComponent<BoxCollider>();
 	m_pGameObject->AddScript<PlayerBehavior>();
+	auto health = m_pGameObject->AddScript<HealthBehavior>();
+	health->SetMaxHP(100);
 }
