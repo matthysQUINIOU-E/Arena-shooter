@@ -11,7 +11,7 @@ DECLARE_SCRIPT(CameraBehavior, ScriptFlag::Start | ScriptFlag::Update)
 //Members
 GameObject* pFollowGameObject = nullptr;
 
-float sensitivity = 0.0025f;
+float sensitivity = 0.002f;
 
 gce::Vector2i32 middleScreen = { (int)( (float)(WINDOW_WIDTH) * 0.5f), (int)((float)(WINDOW_HEIGHT) * 0.5f) };
 bool fpsMode = true;
