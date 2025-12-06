@@ -1,24 +1,12 @@
 #ifndef ENGINE_GAME_OBJECT_H_INCLUDED
 #define ENGINE_GAME_OBJECT_H_INCLUDED
 
+#pragma once
 #include "define.h"
 #include "GameTransform.h"
 #include "Components.h"
 #include "Maths/Vector3.h"
-
-enum Tag : uint32_t
-{
-    None,
-    TPlayer,
-    TWeapon,
-    TCollectible,
-    TAmmo,
-    TGround,
-    TEnemy,
-    TProjectile,
-
-    TMiscellaneous
-};
+#include "GamePlay/Tags.h"
 
 template <typename ...Args>
 struct Event;
@@ -42,10 +30,16 @@ public:
 
     [[nodiscard]] uint32 GetID() const;
     [[nodiscard]] cstr GetName() const;
-    [[nodiscard]] int GetTag() const { return m_Tag; }
+    [[nodiscard]] Tag1 GetTag1() const { return m_Tag1; }
+    [[nodiscard]] Tag2 GetTag2() const { return m_Tag2; }
 
     void SetName(cstr name);
-    void SetTag(Tag tag) { m_Tag = tag; }
+    void SetTag1(Tag1 tag) { m_Tag1 = tag; }
+    void SetTag2(Tag2 tag) { m_Tag2 = tag; }
+
+    const bool& IsTag1(Tag1 tag) const { if (m_Tag1 == tag) return true; return false; }
+    const bool& IsTag2(Tag2 tag) const { if (m_Tag2 == tag) return true; return false; }
+
     [[nodiscard]] bool IsActive() const;
     void SetActive( bool active );
 
@@ -90,7 +84,8 @@ protected:
     inline static uint32 s_nextID = 0;
     uint32 m_id = s_nextID++;
     cstr m_name;
-    Tag m_Tag = Tag::None;
+    Tag1 m_Tag1 = Tag1::None;
+    Tag2 m_Tag2 = Tag2::None;
 
     Scene* m_pScene = nullptr;
     

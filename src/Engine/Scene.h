@@ -2,6 +2,7 @@
 #define ENGINE_SCENE_H_INCLUDED
 
 #include "define.h"
+#include <unordered_map>
 
 namespace gce {
 
@@ -13,14 +14,13 @@ class Scene final
 public:
     static Scene& Create();
 
+    UnorderedMap<uint32, GameObject*> m_gameObjects;
 private:
     Scene() = default;
     ~Scene() = default;
 
     void UpdateMatrix();
-
-    UnorderedMap<uint32, GameObject*> m_gameObjects;
-
+ 
     friend class LifespanSystem;
     friend class GameManager;
 };

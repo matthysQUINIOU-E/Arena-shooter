@@ -11,8 +11,8 @@ public:
     EntityWrapper();
 
     static EntityWrapper& Create();
-    EntityWrapper& SetProperties(const char* name, Tag tag, gce::Vector3f32 pos = { 0, 0, 0 }, gce::Vector3f32 rotation = { 0, 0, 0 }, gce::Vector3f32 scale = { 1, 1, 1 });
-    EntityWrapper& SetChildProperties(EntityWrapper& parent, const char* name, Tag tag, gce::Vector3f32 pos = { 0, 0, 0 }, gce::Vector3f32 rotation = { 0, 0, 0 }, gce::Vector3f32 scale = { 1, 1, 1 });
+    EntityWrapper& SetProperties(const char* name, Tag1 tag1, Tag2 tag2, gce::Vector3f32 pos = {0, 0, 0}, gce::Vector3f32 rotation = {0, 0, 0}, gce::Vector3f32 scale = {1, 1, 1});
+    EntityWrapper& SetChildProperties(EntityWrapper& parent, const char* name, Tag1 tag1, Tag2 tag2, gce::Vector3f32 pos = { 0, 0, 0 }, gce::Vector3f32 rotation = { 0, 0, 0 }, gce::Vector3f32 scale = { 1, 1, 1 });
     gce::MeshRenderer* AddMeshRenderer(gce::Geometry* pGeo,
         const char* albedoPath = "", const char* roughnessPath = "",
         const char* metalnessPath = "", const char* normalPath = "");

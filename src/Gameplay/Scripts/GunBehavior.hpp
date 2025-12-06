@@ -24,7 +24,7 @@ void Shoot()
 
 	gce::Vector3f32 spawnPoint = m_pOwner->GetChildren()[0]->transform.GetWorldPosition();
 
-	bullet.SetProperties("Bullet", Tag::TProjectile, spawnPoint, { 0, 0, 0 }, { 0.15, 0.15, 0.15 });
+	bullet.SetProperties("Bullet", Tag1::TProjectile, Tag2::None, spawnPoint, { 0, 0, 0 }, { 0.15, 0.15, 0.15 });
 	bullet.AddMeshRenderer(gce::SHAPES.SPHERE, "");
 
 	bullet.AddComponent<SphereCollider>();

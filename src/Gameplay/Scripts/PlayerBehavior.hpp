@@ -5,6 +5,7 @@
 #include "Prefabs/ArenaCamera.h"
 #include "Components.h"
 #include "GunBehavior.hpp"
+#include "../SceneManager.h"
 
 using namespace gce;
 
@@ -75,6 +76,16 @@ void HandleInput()
 			pGun->GetScript<GunBehavior>()->Shoot();
 		}
 	}
+
+	if (GetKeyDown(Keyboard::M))
+	{
+		auto bullets = GameManager::GetSceneManager().GetAllGameObjects(Tag1::TProjectile);
+
+		for (GameObject* go : bullets)
+		{
+			go->Destroy();
+		}
+	}
 }
 
 void SetCurrentGun(GameObject* go) { pGun = go; }
@@ -97,7 +108,7 @@ void Destroy()
 
 void CollisionStay(GameObject* other)
 {
-	if (other->GetTag() == Tag::TGround)
+	if (other->GetTag1() == Tag1::TGround)
 	{
 		if (isJumping == false)
 		{
@@ -108,7 +119,7 @@ void CollisionStay(GameObject* other)
 
 void CollisionEnter(GameObject* other)
 {
-	if (other->GetTag() == Tag::TGround)
+	if (other->GetTag1() == Tag1::TGround)
 	{
 		if (isJumping)
 		{
@@ -123,7 +134,7 @@ void CollisionEnter(GameObject* other)
 
 void CollisionExit(GameObject* other) override
 {
-	if (other->GetTag() == Tag::TGround && isJumping == false)
+	if (other->GetTag1() == Tag1::TGround && isJumping == false)
 		jumpsAmount = 0;
 }
 

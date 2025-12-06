@@ -16,10 +16,11 @@ EntityWrapper& EntityWrapper::Create()
 	return *pNew;
 }
 
-EntityWrapper& EntityWrapper::SetProperties(const char* name, Tag tag, gce::Vector3f32 pos, gce::Vector3f32 rotation, gce::Vector3f32 scale)
+EntityWrapper& EntityWrapper::SetProperties(const char* name, Tag1 tag1, Tag2 tag2, gce::Vector3f32 pos, gce::Vector3f32 rotation, gce::Vector3f32 scale)
 {
 	SetName(name);
-	SetTag(tag);
+	SetTag1(tag1);
+	SetTag2(tag2);
 	transform.SetWorldPosition(pos);
 	transform.SetWorldRotation(rotation);
 	transform.SetWorldScale(scale);
@@ -27,12 +28,13 @@ EntityWrapper& EntityWrapper::SetProperties(const char* name, Tag tag, gce::Vect
 	return *this;
 }
 
-EntityWrapper& EntityWrapper::SetChildProperties(EntityWrapper& parent, const char* name, Tag tag, gce::Vector3f32 pos, gce::Vector3f32 rotation, gce::Vector3f32 scale)
+EntityWrapper& EntityWrapper::SetChildProperties(EntityWrapper& parent, const char* name, Tag1 tag1, Tag2 tag2, gce::Vector3f32 pos, gce::Vector3f32 rotation, gce::Vector3f32 scale)
 {
 	parent.AddChild(*this);
 
 	SetName(name);
-	SetTag(tag);
+	SetTag1(tag1);
+	SetTag2(tag2);
 	transform.SetLocalPosition(pos);
 	transform.SetLocalRotation(rotation);
 	transform.SetLocalScale(scale);

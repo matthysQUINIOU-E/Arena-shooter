@@ -1,13 +1,14 @@
 #pragma once
 #include <vector>
 #include <unordered_map>
+#include "Tags.h"
 
 namespace gce
 {
 	class D12PipelineObject;
 }
 
-enum  SceneType
+enum SceneType
 {
 	MenuScene,
 	GamePlayScene,
@@ -33,5 +34,9 @@ public:
 	void Init();
 
 	gce::D12PipelineObject* GetPSO() { return pPso; }
+
+	gce::GameObject* GetFirstGameObject(Tag1 tag1, Tag2 tag2); // return the first GameObject with the 2 two tags
+	std::vector<gce::GameObject*> GetAllGameObjects(Tag1 tag1, Tag2 tag2); // return all GameObjects with the 2 two tags
+	std::vector<gce::GameObject*> GetAllGameObjects(Tag1 tag1); // return all GameObjects with the first Tag
 };
 
