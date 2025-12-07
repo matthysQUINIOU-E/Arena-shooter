@@ -5,6 +5,9 @@ class Agent : public EntityWrapper
 {
 
 public:
+	Agent();
+	static Agent& Create();
+
 	void FollowPathToTarget();
 	void SetTarget(GameObject* target);
 	void SetSpeed(float speed);

@@ -4,7 +4,8 @@
 #include <NavTile.h>
 #include <Node.h>
 #include <Containers/Vector.hpp>
-#include "Agent.h"
+
+class Agent;
 
 namespace gce
 {

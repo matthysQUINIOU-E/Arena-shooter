@@ -5,6 +5,7 @@
 #include "Containers/Queue.hpp"
 
 class EntityWrapper;
+class Agent;
 
 namespace gce {
 
@@ -29,6 +30,7 @@ class LifespanSystem final
 
     friend class GameObject;
     friend class EntityWrapper;
+    friend class ::Agent;
     friend class GameManager;
 };
 

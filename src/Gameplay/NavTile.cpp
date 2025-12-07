@@ -48,11 +48,11 @@ const gce::Vector3f32& NavTile::GetPosition() const
 	return m_center;
 }
 
-const float NavTile::CalculateEuclidieanDistance(const NavTile& otherNavTile) const
+const float NavTile::CalculateEuclidieanDistance(const NavTile* otherNavTile) const
 {
-	float x = otherNavTile.GetPosition().x - m_center.x;
-	float y = 0.f; // may be origine of not optinal path on plane navmesh otherNavTile.GetPosition().y - m_center.y;
-	float z = otherNavTile.GetPosition().z - m_center.z;
+	float x = otherNavTile->GetPosition().x - m_center.x;
+	float y = 0.f; // may be origine of not optinal path on plane navmesh otherNavTile->GetPosition().y - m_center.y;
+	float z = otherNavTile->GetPosition().z - m_center.z;
 	return std::sqrtf(x * x + y * y + z * z);
 }
 

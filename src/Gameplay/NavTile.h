@@ -12,7 +12,7 @@ public:
 	NavTile(gce::Vertex& vertex1, gce::Vertex& vertex2, gce::Vertex& vertex3);
 	void CheckObstacles(std::vector<gce::Geometry*> obstacles);
 	const gce::Vector3f32& GetPosition() const;
-	const float CalculateEuclidieanDistance(const NavTile& otherNavTile) const;
+	const float CalculateEuclidieanDistance(const NavTile* otherNavTile) const;
 	const bool IsWalkable() const;
 private:
 	bool m_isWalkable = true;

@@ -1,6 +1,8 @@
 #pragma once
 #include "NavMesh.h"
 
+class Agent;
+
 static class PathFinder
 {
 public:

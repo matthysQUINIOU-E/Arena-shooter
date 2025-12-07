@@ -1,6 +1,19 @@
 #include "Agent.h"
 #include "GameManager.h"
 
+Agent::Agent() : EntityWrapper()
+{
+}
+
+Agent& Agent::Create()
+{
+	Agent* const pNew = new Agent();
+	pNew->m_pScene = &gce::GameManager::GetScene();
+	pNew->transform.m_pOwner = pNew;
+	gce::GameManager::GetLifespanSystem().m_toCreate.gameObjects.Push(pNew);
+	return *pNew;
+}
+
 void Agent::FollowPathToTarget()
 {
 	if (IsTargetInRange() || m_pTarget == nullptr )
