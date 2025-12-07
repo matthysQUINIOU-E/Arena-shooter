@@ -5,4 +5,9 @@ namespace gce
 }
 
 void ImportBlenderScene(std::wstring jsonFile);
-gce::Geometry* MakeCustomGeometry(std::vector<std::vector<float>> vertices, std::vector<uint32_t> indices);
+gce::Geometry* MakeCustomGeometry(
+    std::vector<float> vertices,
+    std::vector<uint32_t> indices,
+    gce::Vector<gce::Vertex>& gceVertices,
+    gce::Vector<uint32>& gceIndices
+);

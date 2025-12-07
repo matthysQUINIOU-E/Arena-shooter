@@ -1,9 +1,10 @@
-#include <Engine.h>
 #include <fstream>
+#include <regex>
+#include <Engine.h>
 #include <RenderContext.h>
 #include "json.h"
 #include "Utils.h"
-
+#include "NavMesh.h"
 
 void ImportBlenderScene(std::wstring jsonFile)
 {
@@ -23,13 +24,25 @@ void ImportBlenderScene(std::wstring jsonFile)
 		return;
 	}
 
-    for (auto& obj : data["objects"])
-    {
+    std::regex patternPhysic("^[^_]*P");
+    std::regex patternCollider("^[^_]*C");
+    std::regex patternNavMesh("^[^_]*NM");
 
-        std::string name = obj.value("name", "Unnamed");
-        std::string type = obj.value("type", "NONE");
-        bool hasPhysic = obj.value("hasPhysic", false);
-        bool hasCollider = obj.value("hasCollider", false);
+    gce::Vector<gce::Vertex> navmeshVertices;
+    gce::Vector<uint32> navmeshIndices;
+    std::vector<gce::Geometry*> obstaclesGeometries;
+
+    for (auto& obj : data)
+    {
+        std::string type = obj.value("t", "NONE");
+        if (type != "MESH")
+            continue;
+
+        std::string name = obj.value("n", "Unnamed");
+        bool hasPhysic = std::regex_search(name, patternPhysic);
+        bool hasCollider = std::regex_search(name, patternCollider);
+        bool isNavMesh = std::regex_search(name, patternNavMesh);
+        bool isobstacle = !isNavMesh && hasCollider;
         std::string baseColorTex = "";
         std::string metallicTex = "";
         std::string roughnessTex = "";
@@ -39,65 +52,76 @@ void ImportBlenderScene(std::wstring jsonFile)
         gce::Quaternion rotation;
         gce::Vector3f32 scale;
 
-        if (obj.contains("textures"))
+        if (obj.contains("tx"))
         {
-            auto& tex = obj["textures"];
+            auto& tex = obj["tx"];
 
-            if (tex.contains("base_color") && !tex["base_color"].is_null())
-                baseColorTex = tex["base_color"].get<std::string>();
+            if (tex.contains("Base Color"))
+                baseColorTex = tex["Base Color"].get<std::string>();
 
-            if (tex.contains("metallic") && !tex["metallic"].is_null())
-                metallicTex = tex["metallic"].get<std::string>();
+            if (tex.contains("Metallic"))
+                metallicTex = tex["Metallic"].get<std::string>();
 
-            if (tex.contains("roughness") && !tex["roughness"].is_null())
-                roughnessTex = tex["roughness"].get<std::string>();
+            if (tex.contains("Roughness"))
+                roughnessTex = tex["Roughness"].get<std::string>();
 
-            if (tex.contains("normal_map") && !tex["normal_map"].is_null())
-                normalMapTex = tex["normal_map"].get<std::string>();
+            if (tex.contains("Normal"))
+                normalMapTex = tex["Normal"].get<std::string>();
         }
 
-        if (obj.contains("position"))
+        if (obj.contains("p"))
         {
-            position.x = obj["position"][0];
-            position.y = obj["position"][2];
-            position.z = obj["position"][1];
+            position.x = obj["p"][0];
+            position.y = obj["p"][2];
+            position.z = obj["p"][1];
         }
 
-        if (obj.contains("rotation"))
-            rotation = gce::Quaternion{ obj["rotation"][0], obj["rotation"][2], obj["rotation"][1], obj["rotation"][3] };
+        if (obj.contains("r"))
+            rotation = gce::Quaternion{ obj["r"][0], obj["r"][2], obj["r"][1], obj["r"][3] };
         else
             rotation = gce::Quaternion{ 0.f, 0.f, 0.f, 0.f };
 
-        if (obj.contains("scale"))
-            scale = gce::Vector3f32{ obj["scale"][0], obj["scale"][2], obj["scale"][1] };
+        if (obj.contains("s"))
+            scale = gce::Vector3f32{ obj["s"][0], obj["s"][2], obj["s"][1] };
         else
             scale = gce::Vector3f32{ 1.f, 1.f, 1.f };
 
-
         gce::GameObject& gameObject = gce::GameObject::Create(pScene);
-        gameObject.SetName("importedScene"); // maybe change later just taging everything with the same name
+        // gameObject.SetName("importedScene"); // maybe change later just taging everything with the same name
         gameObject.transform.SetWorldPosition(position);
         gameObject.transform.SetWorldRotation(rotation);
         gameObject.transform.SetWorldScale(scale);
 
-        std::vector<std::vector<float>> vertices;
+        std::vector<float> vertices;
         std::vector<uint32_t> indices;
 
-        if (obj.contains("mesh") && !obj["mesh"].is_null())
+        if (obj.contains("m"))
         {
-            auto& mesh = obj["mesh"];
+            auto& mesh = obj["m"];
 
-            if (mesh.contains("vertices"))
-                vertices = mesh["vertices"].get<std::vector<std::vector<float>>>();
+            if (mesh.contains("v"))
+                vertices = mesh["v"].get<std::vector<float>>();
 
-            if (mesh.contains("indices"))
-                indices = mesh["indices"].get<std::vector<uint32_t>>();
+            if (mesh.contains("i"))
+                indices = mesh["i"].get<std::vector<uint32_t>>();
         }
 
         gce::MeshRenderer* pMeshRenderer = gameObject.AddComponent<gce::MeshRenderer>();
-        pMeshRenderer->pGeometry = MakeCustomGeometry(vertices, indices);
+        gce::Vector<gce::Vertex> gceVertices;
+        gce::Vector<uint32> gceIndices;
+        pMeshRenderer->pGeometry = MakeCustomGeometry(vertices, indices, gceVertices, gceIndices);
         pMeshRenderer->pPso = pGameManager->GetSceneManager().GetPSO();
         pMeshRenderer->pMaterial->subsurface = 1;
+
+        if (isNavMesh)
+        {
+            navmeshVertices = gceVertices;
+            navmeshIndices = gceIndices;
+        }
+        else if (hasCollider)
+        {
+            obstaclesGeometries.push_back(pMeshRenderer->pGeometry);
+        }
         
         if (!baseColorTex.empty())
         {
@@ -105,7 +129,7 @@ void ImportBlenderScene(std::wstring jsonFile)
             pMeshRenderer->pMaterial->albedoTextureID = pNewTexture->GetTextureID();
             pMeshRenderer->pMaterial->useTextureAlbedo = 1;
         }
-
+        /*
         if (!metallicTex.empty())
         {
             gce::Texture* pNewTexture = new gce::Texture(pathTexture + metallicTex);
@@ -119,14 +143,14 @@ void ImportBlenderScene(std::wstring jsonFile)
             pMeshRenderer->pMaterial->roughnessTextureID = pNewTexture->GetTextureID();
             pMeshRenderer->pMaterial->useTextureRoughness = 1;
         }
-
+        
         if (!normalMapTex.empty())
         {
             gce::Texture* pNewTexture = new gce::Texture(pathTexture + normalMapTex);
             pMeshRenderer->pMaterial->normalTextureID = pNewTexture->GetTextureID();
             pMeshRenderer->pMaterial->useTextureNormal = 1;
         }
-
+        */
         if (hasCollider)
             gce::BoxCollider* pBoxCollider = gameObject.AddComponent<gce::BoxCollider>();
 
@@ -134,41 +158,50 @@ void ImportBlenderScene(std::wstring jsonFile)
             gce::PhysicComponent* pPhysic = gameObject.AddComponent<gce::PhysicComponent>();
 
     }
+
+    if (!navmeshVertices.Empty())
+    {
+        NavMesh::Create(navmeshVertices, navmeshIndices, obstaclesGeometries);
+    }
 }
 
-gce::Geometry* MakeCustomGeometry(std::vector<std::vector<float>> vertices, std::vector<uint32_t> indices)
+gce::Geometry* MakeCustomGeometry(
+    std::vector<float> vertices,
+    std::vector<uint32_t> indices,
+    gce::Vector<gce::Vertex>& gceVertices,
+    gce::Vector<uint32>& gceIndices
+)
 {
     gce::Geometry* customGeo = nullptr;
-    gce::Vector<gce::Vertex> gceVertices;
-    gce::Vector<uint32> gceIndices;
 
-    size_t vertexCount = vertices.size();
+    size_t vertexCount = vertices.size() / 5;
 
     gceVertices.Resize(vertexCount);
 
     for (size_t i = 0; i < vertexCount; i++)
     {
+        size_t vIndex = i * 5;
         gce::Vertex v;
         v.pos = {
-            vertices[i][0],
-            vertices[i][2],
-            vertices[i][1]
+            vertices[vIndex],
+            vertices[vIndex + 2],
+            vertices[vIndex + 1]
         };
 
-        v.normal = { 0.f, 0.f, 0.f }; // i don't know if it's right... but i have hopes :)
+        v.normal = { 0.f, 0.f, 0.f }; // it's not right but it will stay like this for now
 
         v.uv = {
-            vertices[i][3],
-            1.f - vertices[i][4]
+            vertices[vIndex + 3],
+            1.f - vertices[vIndex + 4]
         };
 
         gceVertices[i] = v;
     }
 
     gceIndices.Resize(indices.size());
-
+    size_t reverseIndice = indices.size() - 1;
     for (size_t i = 0; i < indices.size(); ++i)
-        gceIndices[indices.size()-1-i] = indices[i];
+        gceIndices[reverseIndice - i] = indices[i];
 
     customGeo = new gce::Geometry(gceVertices.Data(), gceVertices.Size(), gceIndices.Data(), gceIndices.Size());
     return customGeo;
