@@ -12,28 +12,28 @@ using namespace gce;
 DECLARE_SCRIPT(BulletBehavior, ScriptFlag::Start | ScriptFlag::Update | ScriptFlag::CollisionEnter | ScriptFlag::CollisionStay | ScriptFlag::CollisionExit | ScriptFlag::Destroy)
 
 //Members
-GameObject* pGun = nullptr;
+GameObject* pWeapon = nullptr;
 
-float lifeTime = 7.f;
+float lifeTime = 3.f;
 float speed = 100.f;
 
-void SetGun(GameObject* go) { pGun = go; }
+void SetWeapon(GameObject* go) { pWeapon = go; }
 
-gce::Vector3f32 dir = {};
+gce::Vector3f32 dir = {0, 0, 0};
 
 void Start()
 {
-	if (pGun == nullptr)
+	if (pWeapon == nullptr)
 		return;
 
-	dir = -pGun->transform.GetWorldForward();
+	dir = -pWeapon->transform.GetWorldForward();
 }
 
 void Update()
 {
-	SetGun(GameManager::GetSceneManager().GetInventoryManager()->GetCurrentEquipedObject());
+	SetWeapon(GameManager::GetSceneManager().GetInventoryManager()->GetCurrentEquipedObject());
 
-	if (pGun == nullptr || pGun->IsTag1(Tag1::TWeapon) == false)
+	if (pWeapon == nullptr || pWeapon->IsTag1(Tag1::TWeapon) == false)
 		return;
 
 	float dt = GameManager::DeltaTime();

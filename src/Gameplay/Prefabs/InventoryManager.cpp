@@ -177,6 +177,12 @@ void InventoryManager::SwapEquipedObject(bool forward)
 	if (m_inventoryIndex + sens > m_currentInventory.size() - 1)
 		return;
 
+	if (auto current = m_currentInventory[m_inventoryIndex])
+	{
+		if(current->IsTag1(Tag1::TWeapon))
+			current->GetScript<GunBehavior>()->OnLeaveWeapon(); // The old weapon
+	}
+
 	m_inventoryIndex += sens;
 
 	gce::GameObject* newEquipedObject = m_currentInventory[m_inventoryIndex];
@@ -192,7 +198,7 @@ void InventoryManager::SwapEquipedObject(bool forward)
 
 			if (pObject->IsTag1(Tag1::TWeapon))
 			{
-				pObject->GetScript<GunBehavior>()->HandleSwapGun();
+				pObject->GetScript<GunBehavior>()->OnReceiveWeapon();
 			}
 		}
 		else
@@ -213,6 +219,12 @@ void InventoryManager::SetEquipedObjectByIndex(int index)
 	if (index > m_currentInventory.size() - 1) // outrange
 		return;
 
+	if (auto current = m_currentInventory[m_inventoryIndex])
+	{
+		if (current->IsTag1(Tag1::TWeapon))
+			current->GetScript<GunBehavior>()->OnLeaveWeapon(); // The old weapon
+	}
+
 	m_inventoryIndex = index;
 
 	gce::GameObject* newEquipedObject = m_currentInventory[m_inventoryIndex];
@@ -228,7 +240,7 @@ void InventoryManager::SetEquipedObjectByIndex(int index)
 
 			if (pObject->IsTag1(Tag1::TWeapon))
 			{
-				pObject->GetScript<GunBehavior>()->HandleSwapGun();
+				pObject->GetScript<GunBehavior>()->OnReceiveWeapon();
 			}
 		}
 		else

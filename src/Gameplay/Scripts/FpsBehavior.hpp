@@ -14,9 +14,13 @@ TextRenderer* txtRend = nullptr;
 
 float mRefreshProgress = 0.f;
 
+std::wstring* txtPointer = nullptr;
+
 void Start()
 {
 	txtRend = m_pOwner->GetComponent<TextRenderer>();
+
+	txtPointer = new std::wstring(L"");
 }
 
 void Update()
@@ -25,11 +29,10 @@ void Update()
 	{
 		mRefreshProgress = 0.5f;
 
-		std::wstring tmp = std::to_wstring(10);
-
 		if (txtRend)
 		{
-			txtRend->text = tmp;
+			*txtPointer = L"FPS : " + std::to_wstring((int)GameManager::FPS());
+			txtRend->text = *txtPointer;
 		}
 	}
 	else

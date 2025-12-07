@@ -50,8 +50,7 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 	floor.AddComponent<BoxCollider>();
 
 	EntityWrapper& fps = EntityWrapper::Create();
-
-	fps.AddTextRenderer(L"FPS", { 0.f, 0.f, 200.f, 50.f }, gce::Color::Red);
+	fps.AddTextRenderer(L"", {0.f, 0.f, 300.f, 50.f}, gce::Color::Red);
 	fps.AddScript<FpsBehavior>();
 
 	//Clear the Inventory Tmp Objects because GameObjects are pushed back

@@ -7,6 +7,7 @@
 #include "BulletBehavior.hpp"
 #include "../Prefabs/EntityWrapper.h"
 #include "AmmoManagerBehavior.hpp"
+#include "Components.h"
 
 using namespace gce;
 
@@ -20,11 +21,14 @@ float reloadProgressTime = 0.f;
 
 bool isReloading = false;
 
-AmmoManagerBehavior* ammoManagerScript = nullptr;
-
+AmmoManagerBehavior* pAmmoBehavior = nullptr;
 Quaternion defaultRotation;
 
-void HandleSwapGun()
+void DisplayUI()
+{
+}
+
+void OnLeaveWeapon() // When this weapon will be changed
 {
 	isReloading = false;
 	reloadProgressTime = 0.f;
@@ -32,7 +36,11 @@ void HandleSwapGun()
 	unloadProgress = 0.f;
 }
 
-void SetAmmoManagerScript(AmmoManagerBehavior* script) { ammoManagerScript = script; }
+void OnReceiveWeapon() // When this weapon will be the new current one
+{
+}
+
+void SetAmmoManagerScript(AmmoManagerBehavior* script) { pAmmoBehavior = script; }
 
 void SetUnloadSpeed(float speed)
 {
@@ -46,10 +54,10 @@ void SetReloadTime(float newTime)
 
 void Reload()
 {
-	if (ammoManagerScript == nullptr)
+	if (pAmmoBehavior == nullptr)
 		return;
 
-	if (isReloading == false && ammoManagerScript->IsFullAmmos() == false)
+	if (isReloading == false && pAmmoBehavior->IsFullAmmos() == false)
 	{
 		isReloading = true;
 		reloadProgressTime = 0.f;
@@ -58,11 +66,11 @@ void Reload()
 
 void Shoot()
 {
-	if (ammoManagerScript == nullptr)
+	if (pAmmoBehavior == nullptr)
 		return;
 
 	//Conditions to shoot
-	if (isReloading || ammoManagerScript->HaveAmmos() == false)
+	if (isReloading || pAmmoBehavior->HaveAmmos() == false)
 		return;
 
 	//Cap the shooting speed
@@ -88,10 +96,10 @@ void Shoot()
 	bullet.AddMeshRenderer(gce::SHAPES.SPHERE, "");
 
 	bullet.AddComponent<SphereCollider>();
-	bullet.AddScript<BulletBehavior>()->SetGun(m_pOwner);
+	bullet.AddScript<BulletBehavior>()->SetWeapon(m_pOwner);
 
 	unloadProgress = 0.f;
-	ammoManagerScript->UseAmmos();
+	pAmmoBehavior->UseAmmos();
 }
 
 void Start()
@@ -108,7 +116,7 @@ void Update()
 
 	float dt = GameManager::DeltaTime();
 
-	if (isReloading == false && ammoManagerScript->HaveAmmos() == false)
+	if (isReloading == false && pAmmoBehavior->HaveAmmos() == false)
 	{
 		m_pOwner->GetComponent<MeshRenderer>()->pMaterial->useTextureAlbedo = 0;
 	}
@@ -126,10 +134,10 @@ void Update()
 		{
 			isReloading = false;
 			reloadProgressTime = 0.f;
-			ammoManagerScript->FillAmmos();
+			pAmmoBehavior->FillAmmos();
 		}
 	}
-	else if(isReloading == false && ammoManagerScript->HaveAmmos() == true)
+	else if(isReloading == false && pAmmoBehavior->HaveAmmos() == true)
 	{
 		m_pOwner->transform.SetLocalRotation(defaultRotation);
 
