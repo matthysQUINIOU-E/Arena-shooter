@@ -6,6 +6,7 @@
 #include "Components.h"
 #include "GunBehavior.hpp"
 #include "../SceneManager.h"
+#include "../Prefabs/InventoryManager.h"
 
 using namespace gce;
 
@@ -14,7 +15,7 @@ DECLARE_SCRIPT(PlayerBehavior, ScriptFlag::Start | ScriptFlag::Update | ScriptFl
 //Members
 PhysicComponent* pPhysic = nullptr;
 
-GameObject* pGun = nullptr;
+GameObject* pWeapon = nullptr;
 
 float speed = 5.f;
 int jumpsAmount = 0;
@@ -22,12 +23,8 @@ int maxJumpsAmount = 2;
 
 bool isJumping = false;
 
-//Functions
-void HandleInput()
+void BasicControls() // Move + Jump
 {
-	if (pPhysic == nullptr)
-		return;
-
 	gce::Vector3f32 velocity = pPhysic->GetVelocity();
 	pPhysic->SetVelocity({ 0, velocity.y, 0 });
 
@@ -69,26 +66,38 @@ void HandleInput()
 
 	m_pOwner->transform.LocalTranslate((finalDir * speed * dt));
 
-	if (pGun != nullptr)
-	{
-		if (GetButtonDown(Mouse::LEFT))
-		{
-			pGun->GetScript<GunBehavior>()->Shoot();
-		}
-	}
-
-	if (GetKeyDown(Keyboard::M))
-	{
-		auto bullets = GameManager::GetSceneManager().GetAllGameObjects(Tag1::TProjectile);
-
-		for (GameObject* go : bullets)
-		{
-			go->Destroy();
-		}
-	}
 }
 
-void SetCurrentGun(GameObject* go) { pGun = go; }
+//Functions
+void HandleInput()
+{
+	if (pPhysic == nullptr)
+		return;
+
+	BasicControls();
+	
+	// Shoot
+	if (pWeapon != nullptr)
+	{
+		if (GetButton(Mouse::LEFT))
+		{
+			pWeapon->GetScript<GunBehavior>()->Shoot();
+		}
+	}
+
+	// Swap Weapon
+	if (GetKeyDown(Keyboard::_1))
+	{
+		GameManager::GetSceneManager().GetInventoryManager()->SetEquipedObjectByIndex(0);
+	}
+	else if (GetKeyDown(Keyboard::_2))
+	{
+		GameManager::GetSceneManager().GetInventoryManager()->SetEquipedObjectByIndex(1);
+	}
+
+}
+
+void SetCurrentWeapon(GameObject* go) { pWeapon = go; }
 
 void Start()
 {
@@ -98,6 +107,8 @@ void Start()
 
 void Update()
 {
+	SetCurrentWeapon(GameManager::GetSceneManager().GetInventoryManager()->GetCurrentEquipedObject());
+
 	HandleInput();
 }
 

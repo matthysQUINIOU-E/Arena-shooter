@@ -4,12 +4,13 @@
 #include <Render.h>
 #include <Engine.h>
 
+#include "Prefabs/InventoryManager.h"
+
 #include "Prefabs/ArenaCamera.h"
 #include "Prefabs/Player.h"
 #include "Prefabs/EntityWrapper.h"
 #include "Scripts/CameraBehavior.hpp"
 #include "Scripts/PlayerBehavior.hpp"
-#include "Scripts/GunBehavior.hpp"
 #include "Scripts/FpsBehavior.hpp"
 #include "Utils.h"
 #include <ranges>
@@ -36,34 +37,12 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 		eMogwaiBroken.AddComponent<BoxCollider>();
 	}
 
-	EntityWrapper& musket = EntityWrapper::Create();
-	ac.GetGameObject()->AddChild(musket);
+	const auto& inventory = m_pInventoryManager->GetCurrentInventory();
 
-	musket.SetProperties("Musket", Tag1::TWeapon, Tag2::TMusket,{ 0, 0, 0 }, {0, 0, 0}, {1, 1, 1});
-	musket.transform.SetLocalPosition({ 0.25, -0.1f, 0.5f });
-	musket.transform.SetLocalRotation({ gce::PI, 0, gce::PI });
-
-	musket.AddMeshRenderer(gce::GeometryFactory::LoadGeometry("res/Assets/musket/musket.obj"), "res/Assets/musket/musket_base_color.png");
-
-	EntityWrapper& hole = EntityWrapper::Create();
-	gce::Vector3f32 holePos = musket.transform.GetWorldPosition();
-	holePos.z += 0.5;
-	holePos.y += 0.03;
-	holePos.x += 0;
-	hole.SetChildProperties(musket, "Musket Hole", Tag1::TMiscellaneous, Tag2::None, { 0, 0, 0 }, { 0, 0, 0 }, { 0.05, 0.05, 0.05 });
-	hole.transform.SetWorldPosition(holePos);
-
-
-
-	auto ammoManagerScript = musket.AddScript<AmmoManagerBehavior>();
-	ammoManagerScript->SetMaxAmmos(10);
-
-	auto gunBehavior = musket.AddScript<GunBehavior>();
-	gunBehavior->SetUnloadSpeed(0.1);
-	gunBehavior->SetReloadTime(1.f);
-	gunBehavior->SetAmmoManagerScript(ammoManagerScript);
-
-	player.GetGameObject()->GetScript<PlayerBehavior>()->SetCurrentGun(&musket);
+	for (gce::GameObject* go : inventory)
+	{
+		ac.GetGameObject()->AddChild(*go);
+	}
 
 	EntityWrapper& floor = EntityWrapper::Create();
 	floor.SetProperties("Floor", Tag1::TGround, Tag2::None, { 0, -2, 0 }, { 0, 0, 0 }, { 50, 1, 50 });
@@ -74,6 +53,11 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 
 	fps.AddTextRenderer(L"FPS", { 0.f, 0.f, 200.f, 50.f }, gce::Color::Red);
 	fps.AddScript<FpsBehavior>();
+
+	//Clear the Inventory Tmp Objects because GameObjects are pushed back
+
+	m_pInventoryManager->UnInitAll();
+	m_pInventoryManager->InitStates();
 }
 
 void SceneManager::Init()
@@ -87,6 +71,9 @@ void SceneManager::Init()
 		gce::SHADERS.DOMAIN_,
 		gce::SHADERS.ROOT_SIGNATURE
 	);
+
+	m_pInventoryManager = new InventoryManager();
+	m_pInventoryManager->InitAll();
 
 	InitGamePlayScene(scene);
 }

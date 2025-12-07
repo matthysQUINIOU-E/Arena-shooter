@@ -24,6 +24,14 @@ AmmoManagerBehavior* ammoManagerScript = nullptr;
 
 Quaternion defaultRotation;
 
+void HandleSwapGun()
+{
+	isReloading = false;
+	reloadProgressTime = 0.f;
+	m_pOwner->transform.SetLocalRotation(defaultRotation);
+	unloadProgress = 0.f;
+}
+
 void SetAmmoManagerScript(AmmoManagerBehavior* script) { ammoManagerScript = script; }
 
 void SetUnloadSpeed(float speed)
@@ -73,6 +81,10 @@ void Shoot()
 	gce::Vector3f32 spawnPoint = m_pOwner->GetChildren()[0]->transform.GetWorldPosition();
 
 	bullet.SetProperties("Bullet", Tag1::TProjectile, Tag2::None, spawnPoint, { 0, 0, 0 }, { 0.15, 0.15, 0.15 });
+
+	if(m_pOwner->IsTag2(Tag2::TBlunderBuss))
+		bullet.transform.LocalScale({ 3, 3, 3 });
+
 	bullet.AddMeshRenderer(gce::SHAPES.SPHERE, "");
 
 	bullet.AddComponent<SphereCollider>();
@@ -84,13 +96,12 @@ void Shoot()
 
 void Start()
 {
-	defaultRotation = m_pOwner->transform.GetLocalRotation();
 }
 
 void Update()
 {
-	if (m_pOwner->IsActive() == false)
-		return;
+	defaultRotation.SetIdentity();
+	defaultRotation.SetRotationEuler({ 0, gce::PI, 0 });
 
 	if (GetKeyDown(Keyboard::R)) // TODO encapsulate the keybinds
 		Reload();

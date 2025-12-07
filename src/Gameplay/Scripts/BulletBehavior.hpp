@@ -5,6 +5,7 @@
 #include <Script.h>
 #include <algorithm>
 #include "Components.h"
+#include "../Prefabs/InventoryManager.h"
 
 using namespace gce;
 
@@ -13,8 +14,8 @@ DECLARE_SCRIPT(BulletBehavior, ScriptFlag::Start | ScriptFlag::Update | ScriptFl
 //Members
 GameObject* pGun = nullptr;
 
-float lifeTime = 5.f;
-float speed = 50.f;
+float lifeTime = 7.f;
+float speed = 100.f;
 
 void SetGun(GameObject* go) { pGun = go; }
 
@@ -30,7 +31,9 @@ void Start()
 
 void Update()
 {
-	if (pGun == nullptr)
+	SetGun(GameManager::GetSceneManager().GetInventoryManager()->GetCurrentEquipedObject());
+
+	if (pGun == nullptr || pGun->IsTag1(Tag1::TWeapon) == false)
 		return;
 
 	float dt = GameManager::DeltaTime();
@@ -53,7 +56,7 @@ void Destroy()
 
 void CollisionStay(GameObject* other)
 {
-	if (other->GetName() == "Player")
+	if (other->IsTag1(Tag1::TPlayer))
 		return;
 
 	m_pOwner->Destroy();
@@ -61,6 +64,10 @@ void CollisionStay(GameObject* other)
 
 void CollisionEnter(GameObject* other)
 {
+	if (other->IsTag1(Tag1::TPlayer))
+		return;
+
+	m_pOwner->Destroy();
 }
 
 void CollisionExit(GameObject* other) override

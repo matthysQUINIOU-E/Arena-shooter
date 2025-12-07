@@ -5,6 +5,7 @@ enum class Tag1 : uint32_t
     None,
     TPlayer,
     TWeapon,
+    TThrowableWeapon,
     TCollectible,
     TAmmo,
     TGround,
@@ -21,6 +22,13 @@ enum class Tag2 : uint32_t
     //Weapon
     TBlunderBuss,
     TMusket,
+
+    //Collectibles
+    TBomb,
+    TDynamite,
+    TNoodles,
+    TNem,
+    TRice,
 
     //Ammos
     TShotgunAmmo,

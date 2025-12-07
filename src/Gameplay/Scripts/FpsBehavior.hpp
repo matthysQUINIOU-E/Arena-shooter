@@ -3,6 +3,8 @@
 #include <Engine.h>
 #include <Script.h>
 #include <algorithm>
+#include <string>
+#include <iostream>
 
 using namespace gce;
 
@@ -19,26 +21,21 @@ void Start()
 
 void Update()
 {
-	//if (mRefreshProgress < 0)
-	//{
-	//	mRefreshProgress = 0.5f;
+	if (mRefreshProgress < 0)
+	{
+		mRefreshProgress = 0.5f;
 
-	//	std::wstring tmp = std::to_wstring(42.0f);
-	//	std::wstring_view text = tmp;
+		std::wstring tmp = std::to_wstring(10);
 
-	//	std::wcout << text << L"\n";
-
-	///*	WStringView txt = L"FPS : " + std::to_wstring((int)GameManager::FPS());*/
-
-	//	if (txtRend)
-	//	{
-	//		txtRend->text = text;
-	//	}
-	//}
-	//else
-	//{
-	//	mRefreshProgress -= GameManager::DeltaTime();
-	//}
+		if (txtRend)
+		{
+			txtRend->text = tmp;
+		}
+	}
+	else
+	{
+		mRefreshProgress -= GameManager::DeltaTime();
+	}
 }
 
 END_SCRIPT
