@@ -13,8 +13,9 @@ DECLARE_SCRIPT(EnemiBehavior, ScriptFlag::Start | ScriptFlag::Update)
 GameObject* m_Target = nullptr;;
 void Start()
 {
+	float pi = std::numbers::pi_v<float>;
 	m_Target = GameManager::GetSceneManager().GetPlayer();
-//	m_Target->transform.WorldRotate({ 0,45.f,0 });
+	m_Target->transform.LocalRotate({ 0,-7,0});
 
 }
 void Moove(Vector3f32 Dir)
@@ -28,17 +29,17 @@ void Moove(Vector3f32 Dir)
 }
 void Rotate()
 {
+	if (m_pOwner->transform.GetWorldRotation().GetY() == m_Target->transform.GetWorldRotation().GetY())
+		return;
 	float pi = std::numbers::pi_v<float>;
 	gce::Vector3f32 direction = {};
-	direction = m_pOwner->transform.GetLocalPosition() - m_Target->transform.GetLocalPosition();
-	float targetY = std::atan2(direction.x, direction.z);
-	float currentY = m_pOwner->transform.GetLocalRotation().GetY();
-	float TargetRotate = targetY - currentY;
-	while (TargetRotate > pi)  TargetRotate -= 2 * pi;
-	while (TargetRotate < -pi) TargetRotate += 2 * pi;
-	float dt = GameManager::DeltaTime();
-	float maxStep = 4.f * dt;
-	m_pOwner->transform.LocalRotate({ 0,TargetRotate * maxStep,0 });
+	float currentY = -m_Target->transform.GetWorldRotation().GetY() * 1.f / 2*pi;
+	std::cout << m_pOwner->transform.GetWorldRotation().GetY() << "   "<< m_Target->transform.GetWorldRotation().GetY()<< std::endl;
+	if (currentY < 0)
+	{
+		currentY -= 2 * pi; 
+	}
+	m_pOwner->transform.SetWorldRotation({ 0,m_pOwner->transform.GetWorldRotation().GetY() +currentY,0 });
 }
 void Update()
 {
@@ -59,7 +60,7 @@ void Update()
 		finalDir.z = 1.0f;
 	//Moove(finalDir);
 
-	Rotate();
+	//Rotate();
 }
 
 END_SCRIPT

@@ -8,6 +8,7 @@
 #include "Scripts/CameraBehavior.hpp"
 #include "Scripts/FpsBehavior.hpp"
 #include "Scripts/EnemiBehavior.hpp"
+#include "Scripts/MogwaiAttackBehavior.hpp"
 #include "Utils.h"
 
 
@@ -82,7 +83,6 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 	gce::GameObject& Ennemi = gce::GameObject::Create(scene);
 	Ennemi.transform.SetLocalPosition({ 1,3,1 });
 	Ennemi.SetName("Mogwai");
-
 	gce::MeshRenderer* pEnnemiMesh = Ennemi.AddComponent<gce::MeshRenderer>();
 	gce::PhysicComponent* pEnnemiPhysic = Ennemi.AddComponent<gce::PhysicComponent>();
 	EnemiBehavior* pEnnemiBehavior = Ennemi.AddScript<EnemiBehavior>();
@@ -91,10 +91,19 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 	pEnnemiMesh->pMaterial->useTextureAlbedo = 1;
 	pEnnemiMesh->pMaterial->subsurface = 1;
 	pEnnemiMesh->pPso = pso;
-
 	gce::BoxCollider* EnnemibCollider = Ennemi.AddComponent<gce::BoxCollider>();
-	BoxCollider* pFloorBox = floor.AddComponent<BoxCollider>();
 
+	gce::GameObject& MogwaiAttack = gce::GameObject::Create(scene);
+	MogwaiAttack.SetName("Mogwai_Attack");
+	gce::MeshRenderer* pMeshRendererChild = MogwaiAttack.AddComponent<gce::MeshRenderer>();
+	pMeshRendererChild->pGeometry = SHAPES.CUBE;
+	pMeshRendererChild->pPso = pso;
+	gce::BoxCollider* DmgHitbox = MogwaiAttack.AddComponent<gce::BoxCollider>();
+	MogwaiAttack.AddScript<MogwaiAttackBehavior>();
+	Ennemi.AddChild(MogwaiAttack);
+	
+
+	BoxCollider* pFloorBox = floor.AddComponent<BoxCollider>();
 
 	gce::GameObject& fps = gce::GameObject::Create(scene);
 	auto txt = fps.AddComponent<TextRenderer>();
@@ -109,5 +118,10 @@ void SceneManager::Init()
 {
 	gce::Scene& scene = gce::Scene::Create();
 	InitGamePlayScene(scene);
+}
+
+void SceneManager::Button()
+{
+	std::cout << "Test";
 }
 

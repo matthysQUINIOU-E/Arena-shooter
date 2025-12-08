@@ -26,5 +26,6 @@ public:
 	void InitGamePlayScene(gce::Scene& scene1);
 	void Init();
 	gce::GameObject* GetPlayer() { return m_pPlayer; }
+	static void Button();
 };
 
