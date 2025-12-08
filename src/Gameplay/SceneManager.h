@@ -25,6 +25,7 @@ namespace gce {
 	class Scene;
 	class GameObject;
 }
+
 class SceneManager
 { 
 	std::unordered_map<SceneType, std::vector<gce::GameObject*> > m_SceneObjectsList;

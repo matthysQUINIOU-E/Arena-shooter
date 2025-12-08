@@ -22,11 +22,11 @@ gce::GameObject* InventoryManager::CreateMusket()
 	hole.transform.LocalTranslate(holePos);
 
 	auto ammoManagerScript = musket.AddScript<AmmoManagerBehavior>();
-	ammoManagerScript->SetMaxAmmos(12);
+	ammoManagerScript->SetMaxAmmos(1000);
 
 	auto gunBehavior = musket.AddScript<GunBehavior>();
 	gunBehavior->SetUnloadSpeed(0.1);
-	gunBehavior->SetReloadTime(1.f);
+	gunBehavior->SetReloadTime(0.1f);
 	gunBehavior->SetAmmoManagerScript(ammoManagerScript);
 
 	return &musket;
@@ -43,7 +43,7 @@ gce::GameObject* InventoryManager::CreateBlunderBuss()
 
 	EntityWrapper& hole = EntityWrapper::Create();
 	gce::Vector3f32 holePos = {};
-	holePos.z -= 1;
+	holePos.z -= 0.9;
 	holePos.y += 0;
 
 	hole.SetChildProperties(blunderbuss, "Blunderbuss Hole", Tag1::TMiscellaneous, Tag2::None, { 0, 0, 0 }, { 0, 0, 0 }, { 0.1, 0.1, 0.1 });
@@ -54,7 +54,7 @@ gce::GameObject* InventoryManager::CreateBlunderBuss()
 
 	auto gunBehavior = blunderbuss.AddScript<GunBehavior>();
 	gunBehavior->SetUnloadSpeed(0.5);
-	gunBehavior->SetReloadTime(1.2);
+	gunBehavior->SetReloadTime(2);
 	gunBehavior->SetAmmoManagerScript(ammoManagerScript);
 
 	return &blunderbuss;

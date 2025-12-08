@@ -15,7 +15,7 @@ DECLARE_SCRIPT(BulletBehavior, ScriptFlag::Start | ScriptFlag::Update | ScriptFl
 GameObject* pWeapon = nullptr;
 
 float lifeTime = 3.f;
-float speed = 100.f;
+float speed = 75.f;
 
 void SetWeapon(GameObject* go) { pWeapon = go; }
 

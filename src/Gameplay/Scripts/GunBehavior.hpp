@@ -124,8 +124,12 @@ void Update()
 	if (isReloading)
 	{
 		m_pOwner->GetComponent<MeshRenderer>()->pMaterial->useTextureAlbedo = 1.f;
+		
+		int turns = 2; 
 
-		m_pOwner->transform.LocalRotate({ 35 * dt, 0, 0 });
+		float value = (2.f * gce::PI / reloadTime) * turns;
+
+		m_pOwner->transform.LocalRotate({ value * dt, 0, 0 });
 		if (reloadProgressTime < reloadTime)
 		{
 			reloadProgressTime += dt;

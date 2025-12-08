@@ -5,13 +5,15 @@
 #include <Engine.h>
 
 #include "Prefabs/InventoryManager.h"
+#include "Prefabs/UIManager.h"
 
 #include "Prefabs/ArenaCamera.h"
 #include "Prefabs/Player.h"
 #include "Prefabs/EntityWrapper.h"
 #include "Scripts/CameraBehavior.hpp"
 #include "Scripts/PlayerBehavior.hpp"
-#include "Scripts/FpsBehavior.hpp"
+#include "Scripts/UIManagerBehavior.hpp"
+
 #include "Utils.h"
 #include <ranges>
 
@@ -49,12 +51,17 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 	floor.AddMeshRenderer(SHAPES.CUBE, "");
 	floor.AddComponent<BoxCollider>();
 
-	EntityWrapper& fps = EntityWrapper::Create();
-	fps.AddTextRenderer(L"", {0.f, 0.f, 300.f, 50.f}, gce::Color::Red);
-	fps.AddScript<FpsBehavior>();
+	EntityWrapper& UI = EntityWrapper::Create();
+	UI.AddScript<UIManagerBehavior>();
+
+	//EntityWrapper& button = EntityWrapper::Create();
+	//UIButton* comp = button.AddComponent<UIButton>();
+	//BitMapBrush* buttonBrush = new BitMapBrush{ "res/Texture/temple_normal_map.png" }; // Image
+	//comp->pBitMapBrush = buttonBrush;
+
+	//button.SetProperties("Button", Tag1::TMiscellaneous, Tag2::None, { 960, 540, 0 }, { 0, 0, 0 }, { 500, 250, 1 });
 
 	//Clear the Inventory Tmp Objects because GameObjects are pushed back
-
 	m_pInventoryManager->UnInitAll();
 	m_pInventoryManager->InitStates();
 }
