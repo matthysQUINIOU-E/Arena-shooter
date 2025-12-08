@@ -73,21 +73,6 @@ bool CanReload() // Pick ammos from your inventory ammo stock if possible and tr
 	if (ammoToDecrease->IsEmpty())
 		return false;
 
-	int amount = maxCapacity - ammosLeft;
-	
-	int ammoInStock = ammoToDecrease->GetAmount();
-
-	if (ammoInStock > amount)
-	{
-		FillWeaponAmmos();
-	}
-	else
-	{
-		ammosLeft += ammoInStock ; // Reload the rest
-	}
-
-	ammoToDecrease->UseAmmos(amount);
-
 	return true;
 }
 

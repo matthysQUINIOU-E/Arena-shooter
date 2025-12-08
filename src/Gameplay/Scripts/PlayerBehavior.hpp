@@ -119,8 +119,8 @@ void Destroy()
 
 void CollisionStay(GameObject* other)
 {
-	if (other->GetGlobalTag() == GlobalTag::TGround)
-	{
+	if (true) // TO DO Set Tag for the loaded Scene
+	{ 
 		if (isJumping == false)
 		{
 			jumpsAmount = maxJumpsAmount;
@@ -130,7 +130,7 @@ void CollisionStay(GameObject* other)
 
 void CollisionEnter(GameObject* other)
 {
-	if (other->GetGlobalTag() == GlobalTag::TGround)
+	if (true) // TO DO Set Tag for the loaded Scene
 	{
 		if (isJumping)
 		{

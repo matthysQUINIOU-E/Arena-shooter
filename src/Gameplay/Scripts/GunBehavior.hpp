@@ -1,13 +1,14 @@
 #pragma once
-
 #include <Render.h>
 #include <Engine.h>
 #include <Script.h>
 #include <algorithm>
+#include "Components.h"
+
 #include "BulletBehavior.hpp"
 #include "../Prefabs/EntityWrapper.h"
 #include "WeaponMagazineBehavior.hpp"
-#include "Components.h"
+#include "../Prefabs/Ammos.h"
 
 using namespace gce;
 
@@ -149,6 +150,23 @@ void Update()
 		{
 			isReloading = false;
 			reloadProgressTime = 0.f;
+
+			Ammos* ammoToDecrease = GameManager::GetSceneManager().GetInventoryManager()->GetAmmos(pMagazineBehavior->GetAmmoTypeFromWeapon());
+
+			int amount = pMagazineBehavior->maxCapacity - pMagazineBehavior->ammosLeft;
+
+			int ammoInStock = ammoToDecrease->GetAmount();
+
+			if (ammoInStock > amount)
+			{
+				pMagazineBehavior->FillWeaponAmmos();
+			}
+			else
+			{
+				pMagazineBehavior->ammosLeft += ammoInStock; // Reload the rest
+			}
+
+			ammoToDecrease->UseAmmos(amount);
 		}
 	}
 }
