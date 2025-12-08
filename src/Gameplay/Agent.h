@@ -16,9 +16,11 @@ public:
 	void ResetBlockedTime();
 private:
 	void FollowCurrentPath();
+	void MoveToTarget();
 	void GoToPosition(gce::Vector3f32 position);
 	void ReleaseTraveledNodes();
-	bool AquireTravelingToNodes(Node<NavTile, Agent>* goToNode);
+	bool AcquireTravelingToNodes(Node<NavTile, Agent>* goToNode);
+	bool IsNodeInBounds(Node<NavTile,Agent>* node, gce::Vector3f32 min, gce::Vector3f32 max);
 	void FindPath();
 	bool IsTargetInRange();
 	bool HasTargetMovedTooMuch();
@@ -35,11 +37,15 @@ private:
 	float m_noPathTime = 0.f;
 
 	bool m_isMoving = false;
+	float m_distanceToMove;
+	gce::Vector3f32 m_movingTo;
+	gce::Vector3f32 m_direction;
 
 	size_t m_currentPathIndex;
 	Node<NavTile, Agent>* m_pCurrentNode;
 	std::vector<Node<NavTile, Agent>*> m_path;
-	std::vector<Node<NavTile, Agent>*> m_nodesOccupied;
+	std::unordered_set<Node<NavTile, Agent>*> m_nodesOccupied;
+	std::vector<Node<NavTile, Agent>*> m_needToAcquire;
 
 	GameObject* m_pTarget;
 	gce::Vector3f32 m_lastTargetCalculatedPathCoordinates;

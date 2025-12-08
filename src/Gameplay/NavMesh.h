@@ -9,19 +9,19 @@ class Agent;
 
 namespace gce
 {
-	class Geometry;
+	class GameObject;
 }
 
 class NavMesh
 {
 public:
-	static void Create(gce::Vector<gce::Vertex> vertices, gce::Vector<uint32> indices, std::vector<gce::Geometry*> obstacles);
+	static void Create(gce::Vector<gce::Vertex> vertices, gce::Vector<uint32> indices, std::vector<gce::GameObject*> obstacles);
 	static NavMesh* Instance();
 	void ResetVisited();
 	Node<NavTile, Agent>* GetNearestNodeFromPosition(gce::Vector3f32 position); // clearly not optimal
 
 private:
-	NavMesh(gce::Vector<gce::Vertex> vertices, gce::Vector<uint32> indices, std::vector<gce::Geometry*> obstacles);
+	NavMesh(gce::Vector<gce::Vertex> vertices, gce::Vector<uint32> indices, std::vector<gce::GameObject*> obstacles);
 	~NavMesh();
 
 private:

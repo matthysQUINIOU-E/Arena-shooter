@@ -1,5 +1,6 @@
 #include "NavTile.h"
 #include <Geometry.h>
+#include <GameObject.h>
 
 NavTile::NavTile(gce::Vertex& vertex1, gce::Vertex& vertex2, gce::Vertex& vertex3)
 {
@@ -21,21 +22,20 @@ NavTile::NavTile(gce::Vertex& vertex1, gce::Vertex& vertex2, gce::Vertex& vertex
 	};
 }
 
-void NavTile::CheckObstacles(std::vector<gce::Geometry*> obstacles) // only check on x and z axis
+void NavTile::CheckObstacles(std::vector<gce::GameObject*> obstacles)
 {
 	for (size_t i = 0; i < obstacles.size(); i++)
 	{
-		gce::Geometry* obstacle = obstacles[i];
-		float32& maxX = obstacle->max.x;
-		float32& maxZ = obstacle->max.z;
-		float32& minX = obstacle->min.x;
-		float32& minZ = obstacle->min.z;
-		if (
-			m_max.x <= maxX && m_max.x >= minX && m_max.z <= maxZ && m_max.z >= minZ ||
-			m_min.x <= maxX && m_min.x >= minX && m_max.z <= maxZ && m_max.z >= minZ ||
-			m_max.x <= maxX && m_max.x >= minX && m_min.z <= maxZ && m_min.z >= minZ ||
-			m_min.x <= maxX && m_min.x >= minX && m_min.z <= maxZ && m_min.z >= minZ
-		)
+		gce::GameObject* obstacle = obstacles[i];
+		gce::Vector3f32 pos = obstacle->transform.GetWorldPosition();
+		gce::Geometry* obstacleGeo = obstacle->GetComponent<gce::MeshRenderer>()->pGeometry;
+		const float32& maxX = obstacleGeo->max.x + pos.x;
+		const float32& maxY = obstacleGeo->max.y + pos.y;
+		const float32& maxZ = obstacleGeo->max.z + pos.z;
+		const float32& minX = obstacleGeo->min.x + pos.x;
+		const float32& minY = obstacleGeo->min.y + pos.y;
+		const float32& minZ = obstacleGeo->min.z + pos.z;
+		if (IsInBounds({minX,minY,minZ}, {maxX,maxY,maxZ}))
 		{
 			m_isWalkable = false;
 			break;
@@ -46,6 +46,14 @@ void NavTile::CheckObstacles(std::vector<gce::Geometry*> obstacles) // only chec
 const gce::Vector3f32& NavTile::GetPosition() const
 {
 	return m_center;
+}
+
+const bool NavTile::IsInBounds(gce::Vector3f32 min, gce::Vector3f32 max) const // only check on x and z axis
+{
+	return m_max.x <= max.x && m_max.x >= min.x && m_max.z <= max.z && m_max.z >= min.z ||
+		m_min.x <= max.x && m_min.x >= min.x && m_max.z <= max.z && m_max.z >= min.z ||
+		m_max.x <= max.x && m_max.x >= min.x && m_min.z <= max.z && m_min.z >= min.z ||
+		m_min.x <= max.x && m_min.x >= min.x && m_min.z <= max.z && m_min.z >= min.z;
 }
 
 const float NavTile::CalculateEuclidieanDistance(const NavTile* otherNavTile) const

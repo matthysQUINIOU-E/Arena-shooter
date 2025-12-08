@@ -2,7 +2,7 @@
 
 NavMesh* NavMesh::s_pInstance = nullptr;
 
-void NavMesh::Create(gce::Vector<gce::Vertex> vertices, gce::Vector<uint32> indices, std::vector<gce::Geometry*> obstacles)
+void NavMesh::Create(gce::Vector<gce::Vertex> vertices, gce::Vector<uint32> indices, std::vector<gce::GameObject*> obstacles)
 {
 	if (s_pInstance != nullptr)
 	{
@@ -43,10 +43,10 @@ Node<NavTile, Agent>* NavMesh::GetNearestNodeFromPosition(gce::Vector3f32 positi
 	return m_mapTileNode[nearest];
 }
 
-NavMesh::NavMesh(gce::Vector<gce::Vertex> vertices, gce::Vector<uint32> indices, std::vector<gce::Geometry*> obstacles)
+NavMesh::NavMesh(gce::Vector<gce::Vertex> vertices, gce::Vector<uint32> indices, std::vector<gce::GameObject*> obstacles)
 {
 	size_t triangleNumber = indices.Size() / 3;
-	std::unordered_map<std::string, std::unordered_set<Node<NavTile, Agent>*>> mapIndicesNodes;
+	std::unordered_map<std::string, std::vector<Node<NavTile, Agent>*>> mapIndicesNodes;
 
 	for (size_t i = 0; i < triangleNumber; i++)
 	{
@@ -69,19 +69,19 @@ NavMesh::NavMesh(gce::Vector<gce::Vertex> vertices, gce::Vector<uint32> indices,
 
 		auto it1 = mapIndicesNodes.find(edge1);
 		if (it1 != mapIndicesNodes.end())
-			it1->second.insert(node);
+			it1->second.push_back(node);
 		else
 			mapIndicesNodes[edge1] = { node };
 
 		auto it2 = mapIndicesNodes.find(edge2);
 		if (it2 != mapIndicesNodes.end())
-			it2->second.insert(node);
+			it2->second.push_back(node);
 		else
 			mapIndicesNodes[edge2] = { node };
 
 		auto it3 = mapIndicesNodes.find(edge3);
 		if (it3 != mapIndicesNodes.end())
-			it3->second.insert(node);
+			it3->second.push_back(node);
 		else
 			mapIndicesNodes[edge3] = { node };
 	}
@@ -90,9 +90,8 @@ NavMesh::NavMesh(gce::Vector<gce::Vertex> vertices, gce::Vector<uint32> indices,
 	{
 		if (nodes.size() == 2)
 		{
-			auto it = nodes.begin();
-			Node<NavTile, Agent>* a = *it;
-			Node<NavTile, Agent>* b = *std::next(nodes.begin());
+			Node<NavTile, Agent>* a = nodes[0];
+			Node<NavTile, Agent>* b = nodes[1];
 
 			if (a->IsWalkable() && b->IsWalkable())
 			{

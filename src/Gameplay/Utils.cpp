@@ -30,7 +30,7 @@ void ImportBlenderScene(std::wstring jsonFile)
 
     gce::Vector<gce::Vertex> navmeshVertices;
     gce::Vector<uint32> navmeshIndices;
-    std::vector<gce::Geometry*> obstaclesGeometries;
+    std::vector<gce::GameObject*> obstaclesGameObject;
 
     for (auto& obj : data)
     {
@@ -120,7 +120,7 @@ void ImportBlenderScene(std::wstring jsonFile)
         }
         else if (hasCollider)
         {
-            obstaclesGeometries.push_back(pMeshRenderer->pGeometry);
+            obstaclesGameObject.push_back(&gameObject);
         }
         
         if (!baseColorTex.empty())
@@ -161,7 +161,7 @@ void ImportBlenderScene(std::wstring jsonFile)
 
     if (!navmeshVertices.Empty())
     {
-        NavMesh::Create(navmeshVertices, navmeshIndices, obstaclesGeometries);
+        NavMesh::Create(navmeshVertices, navmeshIndices, obstaclesGameObject);
     }
 }
 
