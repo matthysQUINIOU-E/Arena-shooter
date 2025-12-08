@@ -44,7 +44,4 @@ namespace gce
 	        if (max.z < vertex[i].pos.z) max.z = vertex[i].pos.z;
     	}
 	}
-
-
-
 }

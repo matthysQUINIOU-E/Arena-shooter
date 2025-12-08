@@ -119,7 +119,7 @@ namespace gce {
 
             m_pWindow->Update();
 
-            // Update audio parceque l'utilisateur n'a pas accès à la boucle de d'update !!!!!
+            // Update audio parceque l'utilisateur n'a pas accï¿½s ï¿½ la boucle de d'update !!!!!
             AudioUse::Update(m_deltaTime);
         }
 

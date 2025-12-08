@@ -30,20 +30,21 @@ class SceneManager
 { 
 	std::unordered_map<SceneType, std::vector<gce::GameObject*> > m_SceneObjectsList;
 
-	gce::D12PipelineObject* pPso = nullptr;
-
 	InventoryManager* m_pInventoryManager = nullptr;
+
+	gce::D12PipelineObject* m_pPso = nullptr;
 public:
-	SceneManager() {};
+	SceneManager() {}
+	~SceneManager() { delete m_pPso; }
 	void InitGamePlayScene(gce::Scene& scene1);
 	void Init();
-
-	gce::D12PipelineObject* GetPSO() { return pPso; }
 
 	gce::GameObject* GetFirstGameObject(GlobalTag tag1, SecondaryTag tag2); // return the first GameObject with the 2 two tags
 	std::vector<gce::GameObject*> GetAllGameObjects(GlobalTag tag1, SecondaryTag tag2); // return all GameObjects with the 2 two tags
 	std::vector<gce::GameObject*> GetAllGameObjects(GlobalTag tag1); // return all GameObjects with the first Tag
 
 	InventoryManager* GetInventoryManager() { return m_pInventoryManager; }
+
+	gce::D12PipelineObject* GetPSO() { return m_pPso; }
 };
 

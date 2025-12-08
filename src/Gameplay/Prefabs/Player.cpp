@@ -11,6 +11,7 @@ void Player::Create()
 
 	m_pGameObject->AddPhysics(10, 1, 0);
 	m_pGameObject->AddMeshRenderer(gce::SHAPES.CUBE, "");
+
 	m_pGameObject->AddComponent<BoxCollider>();
 	m_pGameObject->AddScript<PlayerBehavior>();
 	auto health = m_pGameObject->AddScript<HealthBehavior>();
