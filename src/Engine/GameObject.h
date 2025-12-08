@@ -35,10 +35,10 @@ public:
     // May be temporary 
     // For the physic collision
     Vector3f32 m_movingDirection;
-    //
 
     static GameObject& Create( Scene& scene);
     void Destroy();
+    virtual void Cast(); // just here for dynamic_cast
 
     [[nodiscard]] uint32 GetID() const;
     [[nodiscard]] cstr GetName() const;

@@ -76,6 +76,7 @@ void Agent::FollowCurrentPath()
 
 	m_blockedTime = 0.f;
 	m_pCurrentNode = pToNode;
+	m_currentPathIndex++;
 	GoToPosition(pToNode->data->GetPosition());
 }
 
@@ -96,7 +97,7 @@ void Agent::MoveToTarget()
 void Agent::GoToPosition(gce::Vector3f32 position) // TODO :: Rotate toward direction
 {
 	m_distanceToMove = (transform.GetWorldPosition() - position).Norm();
-	m_direction = (transform.GetWorldPosition() - position).Normalize();
+	m_direction = (position - transform.GetWorldPosition()).Normalize();
 	m_movingTo = position;
 	m_isMoving = true;
 	MoveToTarget();
@@ -113,10 +114,18 @@ void Agent::ReleaseTraveledNodes()
 	gce::Vector3f32 min = meshRenderer->pGeometry->min + pos;
 	gce::Vector3f32 max = meshRenderer->pGeometry->max + pos;
 
+	std::vector< Node<NavTile, Agent>*> nodesToRelease;
+
 	for (Node<NavTile, Agent>* node : m_nodesOccupied)
 	{
 		if (!IsNodeInBounds(node,min,max))
-			m_nodesOccupied.erase(node);
+			nodesToRelease.push_back(node);
+	}
+
+	for (size_t i = 0; i < nodesToRelease.size(); i++)
+	{
+		Node<NavTile, Agent>* node = nodesToRelease[i];
+		m_nodesOccupied.erase(node);
 	}
 }
 

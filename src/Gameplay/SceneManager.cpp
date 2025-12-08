@@ -10,7 +10,9 @@
 #include "Scripts/PlayerBehavior.hpp"
 #include "Scripts/GunBehavior.hpp"
 #include "Scripts/FpsBehavior.hpp"
+#include "Scripts/AgentBehavior.hpp"
 #include "Utils.h"
+#include "Agent.h"
 
 
 void SceneManager::InitGamePlayScene(gce::Scene& scene)
@@ -50,6 +52,15 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 	fps.AddScript<FpsBehavior>();
 
 	ImportBlenderScene(L"scene_base.json");
+
+	Agent& agent = Agent::Create();
+	MeshRenderer* mr = agent.AddComponent<MeshRenderer>();
+	mr->pGeometry = gce::SHAPES.CYLINDER;
+	mr->pPso = m_pPso;
+	agent.transform.SetWorldPosition({20.f,0.f,0.f});
+	AgentBehavior* ab = agent.AddScript<AgentBehavior>();
+	agent.SetTarget(player.GetGameObject());
+	agent.SetCurrentNode(NavMesh::Instance()->GetNearestNodeFromPosition(agent.transform.GetWorldPosition()));
 }
 
 void SceneManager::Init()

@@ -1,3 +1,4 @@
+#pragma once
 #include "Prefabs/EntityWrapper.h"
 #include "PathFinder.h"
 
@@ -27,7 +28,7 @@ private:
 	bool NeedCalculatePath();
 private:
 	float m_speed = 5.f;
-	float m_stopRange = 20.f;
+	float m_stopRange = 2.f;
 
 	float m_baseBlockedTime = 1.f;
 	float m_blockedTime = 0.f;

@@ -1,5 +1,8 @@
 #include "NavMesh.h"
 
+#include <Components.h>
+#include "GameManager.h"
+
 NavMesh* NavMesh::s_pInstance = nullptr;
 
 void NavMesh::Create(gce::Vector<gce::Vertex> vertices, gce::Vector<uint32> indices, std::vector<gce::GameObject*> obstacles)

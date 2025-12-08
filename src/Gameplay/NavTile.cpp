@@ -38,9 +38,9 @@ void NavTile::CheckObstacles(std::vector<gce::GameObject*> obstacles)
 		if (IsInBounds({minX,minY,minZ}, {maxX,maxY,maxZ}))
 		{
 			m_isWalkable = false;
-			break;
+			return;
 		}
-	}
+	}	
 }
 
 const gce::Vector3f32& NavTile::GetPosition() const
