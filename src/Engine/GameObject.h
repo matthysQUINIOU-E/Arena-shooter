@@ -30,15 +30,15 @@ public:
 
     [[nodiscard]] uint32 GetID() const;
     [[nodiscard]] cstr GetName() const;
-    [[nodiscard]] Tag1 GetTag1() const { return m_Tag1; }
-    [[nodiscard]] Tag2 GetTag2() const { return m_Tag2; }
+    [[nodiscard]] GlobalTag GetGlobalTag() const { return m_globalTag; }
+    [[nodiscard]] SecondaryTag GetSecondaryTag() const { return m_secondaryTag; }
 
     void SetName(cstr name);
-    void SetTag1(Tag1 tag) { m_Tag1 = tag; }
-    void SetTag2(Tag2 tag) { m_Tag2 = tag; }
+    void SetTag1(GlobalTag tag) { m_globalTag = tag; }
+    void SetTag2(SecondaryTag tag) { m_secondaryTag = tag; }
 
-    const bool& IsTag1(Tag1 tag) const { if (m_Tag1 == tag) return true; return false; }
-    const bool& IsTag2(Tag2 tag) const { if (m_Tag2 == tag) return true; return false; }
+    const bool& IsTag1(GlobalTag tag) const { if (m_globalTag == tag) return true; return false; }
+    const bool& IsTag2(SecondaryTag tag) const { if (m_secondaryTag == tag) return true; return false; }
 
     [[nodiscard]] bool IsActive() const;
     void SetActive( bool active );
@@ -84,8 +84,8 @@ protected:
     inline static uint32 s_nextID = 0;
     uint32 m_id = s_nextID++;
     cstr m_name;
-    Tag1 m_Tag1 = Tag1::None;
-    Tag2 m_Tag2 = Tag2::None;
+    GlobalTag m_globalTag = GlobalTag::None;
+    SecondaryTag m_secondaryTag = SecondaryTag::None;
 
     Scene* m_pScene = nullptr;
     

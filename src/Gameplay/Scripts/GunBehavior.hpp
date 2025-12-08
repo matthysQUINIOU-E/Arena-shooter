@@ -6,7 +6,7 @@
 #include <algorithm>
 #include "BulletBehavior.hpp"
 #include "../Prefabs/EntityWrapper.h"
-#include "AmmoManagerBehavior.hpp"
+#include "WeaponMagazineBehavior.hpp"
 #include "Components.h"
 
 using namespace gce;
@@ -21,7 +21,7 @@ float reloadProgressTime = 0.f;
 
 bool isReloading = false;
 
-AmmoManagerBehavior* pAmmoBehavior = nullptr;
+WeaponMagazineBehavior* pMagazineBehavior = nullptr;
 Quaternion defaultRotation;
 
 void DisplayUI()
@@ -40,7 +40,7 @@ void OnReceiveWeapon() // When this weapon will be the new current one
 {
 }
 
-void SetAmmoManagerScript(AmmoManagerBehavior* script) { pAmmoBehavior = script; }
+void SetAmmoManagerScript(WeaponMagazineBehavior* script) { pMagazineBehavior = script; }
 
 void SetUnloadSpeed(float speed)
 {
@@ -54,10 +54,10 @@ void SetReloadTime(float newTime)
 
 void Reload()
 {
-	if (pAmmoBehavior == nullptr)
+	if (pMagazineBehavior == nullptr)
 		return;
 
-	if (isReloading == false && pAmmoBehavior->IsFullAmmos() == false)
+	if (isReloading == false && pMagazineBehavior->CanReload())
 	{
 		isReloading = true;
 		reloadProgressTime = 0.f;
@@ -66,11 +66,11 @@ void Reload()
 
 void Shoot()
 {
-	if (pAmmoBehavior == nullptr)
+	if (pMagazineBehavior == nullptr)
 		return;
 
 	//Conditions to shoot
-	if (isReloading || pAmmoBehavior->HaveAmmos() == false)
+	if (isReloading || pMagazineBehavior->IsWeaponEmpty() == false)
 		return;
 
 	//Cap the shooting speed
@@ -88,9 +88,9 @@ void Shoot()
 
 	gce::Vector3f32 spawnPoint = m_pOwner->GetChildren()[0]->transform.GetWorldPosition();
 
-	bullet.SetProperties("Bullet", Tag1::TProjectile, Tag2::None, spawnPoint, { 0, 0, 0 }, { 0.15, 0.15, 0.15 });
+	bullet.SetProperties("Bullet", GlobalTag::TProjectile, SecondaryTag::None, spawnPoint, { 0, 0, 0 }, { 0.15, 0.15, 0.15 });
 
-	if(m_pOwner->IsTag2(Tag2::TBlunderBuss))
+	if(m_pOwner->IsTag2(SecondaryTag::TBlunderBuss))
 		bullet.transform.LocalScale({ 3, 3, 3 });
 
 	bullet.AddMeshRenderer(gce::SHAPES.SPHERE, "");
@@ -99,7 +99,7 @@ void Shoot()
 	bullet.AddScript<BulletBehavior>()->SetWeapon(m_pOwner);
 
 	unloadProgress = 0.f;
-	pAmmoBehavior->UseAmmos();
+	pMagazineBehavior->UseWeaponAmmo();
 }
 
 void Start()
@@ -116,12 +116,23 @@ void Update()
 
 	float dt = GameManager::DeltaTime();
 
-	if (isReloading == false && pAmmoBehavior->HaveAmmos() == false)
+	if (isReloading == false)
 	{
-		m_pOwner->GetComponent<MeshRenderer>()->pMaterial->useTextureAlbedo = 0;
-	}
+		m_pOwner->transform.SetLocalRotation(defaultRotation);
 
-	if (isReloading)
+		if (pMagazineBehavior->IsWeaponEmpty() == false)
+		{
+			m_pOwner->GetComponent<MeshRenderer>()->pMaterial->useTextureAlbedo = 0;
+		}
+		else
+		{	
+			if (unloadProgress < unloadSpeed)
+			{
+				unloadProgress += dt;
+			}
+		}
+	}
+	else
 	{
 		m_pOwner->GetComponent<MeshRenderer>()->pMaterial->useTextureAlbedo = 1.f;
 		
@@ -138,16 +149,6 @@ void Update()
 		{
 			isReloading = false;
 			reloadProgressTime = 0.f;
-			pAmmoBehavior->FillAmmos();
-		}
-	}
-	else if(isReloading == false && pAmmoBehavior->HaveAmmos() == true)
-	{
-		m_pOwner->transform.SetLocalRotation(defaultRotation);
-
-		if (unloadProgress < unloadSpeed)
-		{
-			unloadProgress += dt;
 		}
 	}
 }

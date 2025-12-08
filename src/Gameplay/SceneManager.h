@@ -40,9 +40,9 @@ public:
 
 	gce::D12PipelineObject* GetPSO() { return pPso; }
 
-	gce::GameObject* GetFirstGameObject(Tag1 tag1, Tag2 tag2); // return the first GameObject with the 2 two tags
-	std::vector<gce::GameObject*> GetAllGameObjects(Tag1 tag1, Tag2 tag2); // return all GameObjects with the 2 two tags
-	std::vector<gce::GameObject*> GetAllGameObjects(Tag1 tag1); // return all GameObjects with the first Tag
+	gce::GameObject* GetFirstGameObject(GlobalTag tag1, SecondaryTag tag2); // return the first GameObject with the 2 two tags
+	std::vector<gce::GameObject*> GetAllGameObjects(GlobalTag tag1, SecondaryTag tag2); // return all GameObjects with the 2 two tags
+	std::vector<gce::GameObject*> GetAllGameObjects(GlobalTag tag1); // return all GameObjects with the first Tag
 
 	InventoryManager* GetInventoryManager() { return m_pInventoryManager; }
 };

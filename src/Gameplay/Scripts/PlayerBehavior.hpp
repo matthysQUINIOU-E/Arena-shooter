@@ -119,7 +119,7 @@ void Destroy()
 
 void CollisionStay(GameObject* other)
 {
-	if (other->GetTag1() == Tag1::TGround)
+	if (other->GetGlobalTag() == GlobalTag::TGround)
 	{
 		if (isJumping == false)
 		{
@@ -130,7 +130,7 @@ void CollisionStay(GameObject* other)
 
 void CollisionEnter(GameObject* other)
 {
-	if (other->GetTag1() == Tag1::TGround)
+	if (other->GetGlobalTag() == GlobalTag::TGround)
 	{
 		if (isJumping)
 		{
@@ -145,7 +145,7 @@ void CollisionEnter(GameObject* other)
 
 void CollisionExit(GameObject* other) override
 {
-	if (other->GetTag1() == Tag1::TGround && isJumping == false)
+	if (other->GetGlobalTag() == GlobalTag::TGround && isJumping == false)
 		jumpsAmount = 0;
 }
 

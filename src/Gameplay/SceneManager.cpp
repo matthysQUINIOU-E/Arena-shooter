@@ -33,7 +33,7 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 
 	{
 		EntityWrapper& eMogwaiBroken = EntityWrapper::Create();
-		eMogwaiBroken.SetProperties("Mogwai", Tag1::TEnemy, Tag2::TMogwai, { 0.5, 2, 0 }, { 0, 0, 0 }, { 1, 1, 1 });
+		eMogwaiBroken.SetProperties("Mogwai", GlobalTag::TEnemy, SecondaryTag::TMogwai, { 0.5, 2, 0 }, { 0, 0, 0 }, { 1, 1, 1 });
 		eMogwaiBroken.AddMeshRenderer(gce::GeometryFactory::LoadGeometry("res/Assets/mogwai_lowcost/mogwai_lowcost.obj"), "res/Assets/mogwai_lowcost/mogwai_lowcost_base_color.png");
 		eMogwaiBroken.AddPhysics(10, 1, 0);
 		eMogwaiBroken.AddComponent<BoxCollider>();
@@ -47,7 +47,7 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 	}
 
 	EntityWrapper& floor = EntityWrapper::Create();
-	floor.SetProperties("Floor", Tag1::TGround, Tag2::None, { 0, -2, 0 }, { 0, 0, 0 }, { 50, 1, 50 });
+	floor.SetProperties("Floor", GlobalTag::TGround, SecondaryTag::None, { 0, -2, 0 }, { 0, 0, 0 }, { 50, 1, 50 });
 	floor.AddMeshRenderer(SHAPES.CUBE, "");
 	floor.AddComponent<BoxCollider>();
 
@@ -62,7 +62,9 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 	//button.SetProperties("Button", Tag1::TMiscellaneous, Tag2::None, { 960, 540, 0 }, { 0, 0, 0 }, { 500, 250, 1 });
 
 	//Clear the Inventory Tmp Objects because GameObjects are pushed back
-	m_pInventoryManager->UnInitAll();
+
+
+	m_pInventoryManager->UnInitTmp();
 	m_pInventoryManager->InitStates();
 }
 
@@ -84,7 +86,7 @@ void SceneManager::Init()
 	InitGamePlayScene(scene);
 }
 
-gce::GameObject* SceneManager::GetFirstGameObject(Tag1 tag1, Tag2 tag2)
+gce::GameObject* SceneManager::GetFirstGameObject(GlobalTag tag1, SecondaryTag tag2)
 {
 	auto& gameObjects = GameManager::GetScene().m_gameObjects;
 
@@ -99,7 +101,7 @@ gce::GameObject* SceneManager::GetFirstGameObject(Tag1 tag1, Tag2 tag2)
 	return nullptr;
 }
 
-std::vector<gce::GameObject*> SceneManager::GetAllGameObjects(Tag1 tag1, Tag2 tag2)
+std::vector<gce::GameObject*> SceneManager::GetAllGameObjects(GlobalTag tag1, SecondaryTag tag2)
 {
 	auto& gameObjects = GameManager::GetScene().m_gameObjects;
 
@@ -116,7 +118,7 @@ std::vector<gce::GameObject*> SceneManager::GetAllGameObjects(Tag1 tag1, Tag2 ta
 	return finalTab;
 }
 
-std::vector<gce::GameObject*> SceneManager::GetAllGameObjects(Tag1 tag1)
+std::vector<gce::GameObject*> SceneManager::GetAllGameObjects(GlobalTag tag1)
 {
 	auto& gameObjects = GameManager::GetScene().m_gameObjects;
 

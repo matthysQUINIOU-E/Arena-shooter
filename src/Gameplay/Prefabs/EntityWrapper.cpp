@@ -16,7 +16,7 @@ EntityWrapper& EntityWrapper::Create()
 	return *pNew;
 }
 
-EntityWrapper& EntityWrapper::SetProperties(const char* name, Tag1 tag1, Tag2 tag2, gce::Vector3f32 pos, gce::Vector3f32 rotation, gce::Vector3f32 scale)
+EntityWrapper& EntityWrapper::SetProperties(const char* name, GlobalTag tag1, SecondaryTag tag2, gce::Vector3f32 pos, gce::Vector3f32 rotation, gce::Vector3f32 scale)
 {
 	SetName(name);
 	SetTag1(tag1);
@@ -28,7 +28,7 @@ EntityWrapper& EntityWrapper::SetProperties(const char* name, Tag1 tag1, Tag2 ta
 	return *this;
 }
 
-EntityWrapper& EntityWrapper::SetChildProperties(EntityWrapper& parent, const char* name, Tag1 tag1, Tag2 tag2, gce::Vector3f32 pos, gce::Vector3f32 rotation, gce::Vector3f32 scale)
+EntityWrapper& EntityWrapper::SetChildProperties(EntityWrapper& parent, const char* name, GlobalTag tag1, SecondaryTag tag2, gce::Vector3f32 pos, gce::Vector3f32 rotation, gce::Vector3f32 scale)
 {
 	parent.AddChild(*this);
 

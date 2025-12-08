@@ -2,6 +2,8 @@
 #include "GameObject.h"
 #include <vector>
 
+class Ammos;
+
 class InventoryManager
 {
 	int m_inventoryIndex = 0;
@@ -10,6 +12,8 @@ class InventoryManager
 	std::vector<gce::GameObject*> m_tmpCollectibles; // GetCollectibles before the gameobject pushback (only for the Init SceneManager)
 
 	std::vector<gce::GameObject*> m_currentInventory;
+
+	std::vector<Ammos*> m_ammoStock;
 
 	gce::GameObject* m_pEquipedObject = nullptr;
 
@@ -21,14 +25,16 @@ class InventoryManager
 	gce::GameObject* CreateBomb();
 
 public:
+	~InventoryManager();
+
 	void InitAll();
 
 	std::vector<gce::GameObject*> GetWeapons();
-	gce::GameObject* GetWeapon(Tag2 tag);
+	gce::GameObject* GetWeapon(SecondaryTag tag);
 	std::vector<gce::GameObject*> GetCollectibles();
-	gce::GameObject* GetCollectible(Tag2 tag);
+	gce::GameObject* GetCollectible(SecondaryTag tag);
 
-	void UnInitAll();
+	void UnInitTmp();
 
 	void InitStates();
 
@@ -37,5 +43,8 @@ public:
 	gce::GameObject* GetCurrentEquipedObject() { return m_pEquipedObject; }
 
 	std::vector<gce::GameObject*>& GetCurrentInventory() { return m_currentInventory; }
+	std::vector<Ammos*>& GetAmmoStock() { return m_ammoStock; }
+
+	Ammos* GetAmmos(SecondaryTag type);
 };
 

@@ -1,6 +1,6 @@
 #pragma once
 
-enum class Tag1 : uint32_t
+enum class GlobalTag
 {
     None,
     TPlayer,
@@ -15,7 +15,7 @@ enum class Tag1 : uint32_t
     TMiscellaneous
 };
 
-enum class Tag2 : uint32_t
+enum class SecondaryTag
 {
     None,
 
@@ -31,9 +31,9 @@ enum class Tag2 : uint32_t
     TRice,
 
     //Ammos
-    TShotgunAmmo,
-    TBowAmmo,
-    TRiffleAmmo,
+    THeavyAmmo,
+    TNormalAmmo,
+    TLightAmmo,
 
     //Mobs
     TMogwai,
