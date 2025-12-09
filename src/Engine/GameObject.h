@@ -25,36 +25,36 @@ public:
     Vector3f32 m_movingDirection;
     //
 
-    static GameObject& Create( Scene& scene);
+    static GameObject& Create(Scene& scene);
     void Destroy();
 
     [[nodiscard]] uint32 GetID() const;
     [[nodiscard]] cstr GetName() const;
-    [[nodiscard]] GlobalTag GetGlobalTag() const { return m_globalTag; }
+    [[nodiscard]] PrimaryTag GetGlobalTag() const { return m_globalTag; }
     [[nodiscard]] SecondaryTag GetSecondaryTag() const { return m_secondaryTag; }
 
     void SetName(cstr name);
-    void SetTag1(GlobalTag tag) { m_globalTag = tag; }
+    void SetTag1(PrimaryTag tag) { m_globalTag = tag; }
     void SetTag2(SecondaryTag tag) { m_secondaryTag = tag; }
 
-    const bool& IsTag1(GlobalTag tag) const { if (m_globalTag == tag) return true; return false; }
+    const bool& IsTag1(PrimaryTag tag) const { if (m_globalTag == tag) return true; return false; }
     const bool& IsTag2(SecondaryTag tag) const { if (m_secondaryTag == tag) return true; return false; }
 
     [[nodiscard]] bool IsActive() const;
-    void SetActive( bool active );
+    void SetActive(bool active);
 
     [[nodiscard]] bool HasParent() const;
     [[nodiscard]] GameObject* GetParent();
     [[nodiscard]] GameObject const* GetParent() const;
     void RemoveParent();
-    void SetParent( GameObject& parent );
+    void SetParent(GameObject& parent);
 
     [[nodiscard]] bool HasChildren() const;
     [[nodiscard]] uint64 ChildrenCount() const;
     [[nodiscard]] Vector<GameObject*>& GetChildren();
     [[nodiscard]] Vector<GameObject*> const& GetChildren() const;
-    void AddChild( GameObject& child );
-    void RemoveChild( GameObject& child );
+    void AddChild(GameObject& child);
+    void RemoveChild(GameObject& child);
 
     template <class ComponentClass> [[nodiscard]] bool HasComponent() const;
     template <class ComponentClass> [[nodiscard]] bool HasComponentOfSameFamily() const;
@@ -71,6 +71,9 @@ public:
 
     Event<GameObject*>* pCollisionEvents = nullptr;
     Event<GameObject*>* pCollision2DEvents = nullptr;
+
+    UnorderedMap<Component::TypeEnum, uint16>& GetAllComponents() { return m_components; }
+    UnorderedMap<uint16, uint16>&  GetAllScripts() { return m_scripts; }
 protected:
     explicit GameObject( cstr name = "GameObject" );
     // GameObject( GameObject const& ) = default;
@@ -84,7 +87,7 @@ protected:
     inline static uint32 s_nextID = 0;
     uint32 m_id = s_nextID++;
     cstr m_name;
-    GlobalTag m_globalTag = GlobalTag::None;
+    PrimaryTag m_globalTag = PrimaryTag::None;
     SecondaryTag m_secondaryTag = SecondaryTag::None;
 
     Scene* m_pScene = nullptr;

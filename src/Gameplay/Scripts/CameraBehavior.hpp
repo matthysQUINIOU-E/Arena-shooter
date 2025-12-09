@@ -9,7 +9,9 @@ using namespace gce;
 DECLARE_SCRIPT(CameraBehavior, ScriptFlag::Start | ScriptFlag::Update)
 
 //Members
-GameObject* pFollowGameObject = nullptr;
+GameObject* pFollowGameObject = nullptr; // This game object will be in the camera
+PrimaryTag priTag = PrimaryTag::None;
+SecondaryTag secTag = SecondaryTag::None;
 
 float sensitivity = 0.002f;
 
@@ -19,12 +21,15 @@ bool fpsMode = true;
 float totalPitchRotation = 0.f;
 
 //Functions
-void SetGameObjectToFollow(GameObject* go) { pFollowGameObject = go; }
+void SetGameObjectTagsToFollow(PrimaryTag tag1, SecondaryTag tag2) { priTag = tag1, secTag = tag2; }
 
 void HandleFPSMode()
 {
-	if (pFollowGameObject == nullptr)
+	if (pFollowGameObject == nullptr || pFollowGameObject->IsActive() == false)
+	{
+		fpsMode = false;
 		return;
+	}
 
 	// Delta Mouse Calcul
 	HideMouseCursor();
@@ -73,6 +78,8 @@ void Start()
 
 void Update()
 {
+	pFollowGameObject = GameManager::GetSceneManager().GetFirstGameObject(priTag, secTag);
+
 	if (GetKeyDown(Keyboard::NUMPAD0))
 	{
 		fpsMode = !fpsMode;

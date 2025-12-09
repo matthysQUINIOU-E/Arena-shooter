@@ -5,7 +5,7 @@
 #include "Utils.h"
 
 
-void ImportBlenderScene(std::wstring jsonFile)
+std::vector<gce::GameObject*> ImportBlenderScene(std::wstring jsonFile)
 {
 	const std::string pathTexture = "res/Texture/";
 	
@@ -20,8 +20,10 @@ void ImportBlenderScene(std::wstring jsonFile)
 	}
 	catch (const std::exception& e) {
 		std::cerr << "Erreur JSON: " << e.what() << std::endl;
-		return;
+		return std::vector<gce::GameObject*>();
 	}
+
+    std::vector<gce::GameObject*> allCreatedObj;
 
     for (auto& obj : data["objects"])
     {
@@ -133,7 +135,10 @@ void ImportBlenderScene(std::wstring jsonFile)
         if (hasPhysic)
             gce::PhysicComponent* pPhysic = gameObject.AddComponent<gce::PhysicComponent>();
 
+        allCreatedObj.push_back(&gameObject);
     }
+
+    return allCreatedObj;
 }
 
 gce::Geometry* MakeCustomGeometry(std::vector<std::vector<float>> vertices, std::vector<uint32_t> indices)

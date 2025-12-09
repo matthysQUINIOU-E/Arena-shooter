@@ -33,7 +33,7 @@ void Update()
 {
 	SetWeapon(GameManager::GetSceneManager().GetInventoryManager()->GetCurrentEquipedObject());
 
-	if (pWeapon == nullptr || pWeapon->IsTag1(GlobalTag::TWeapon) == false)
+	if (pWeapon == nullptr || pWeapon->IsTag1(PrimaryTag::TWeapon) == false)
 		return;
 
 	float dt = GameManager::DeltaTime();
@@ -56,7 +56,7 @@ void Destroy()
 
 void CollisionStay(GameObject* other)
 {
-	if (other->IsTag1(GlobalTag::TPlayer))
+	if (other->IsTag1(PrimaryTag::TPlayer))
 		return;
 
 	m_pOwner->Destroy();
@@ -64,7 +64,7 @@ void CollisionStay(GameObject* other)
 
 void CollisionEnter(GameObject* other)
 {
-	if (other->IsTag1(GlobalTag::TPlayer))
+	if (other->IsTag1(PrimaryTag::TPlayer))
 		return;
 
 	m_pOwner->Destroy();

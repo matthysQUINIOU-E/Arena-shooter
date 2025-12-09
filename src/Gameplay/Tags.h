@@ -1,6 +1,6 @@
 #pragma once
 
-enum class GlobalTag
+enum class PrimaryTag
 {
     None,
     TPlayer,

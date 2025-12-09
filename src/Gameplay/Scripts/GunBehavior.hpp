@@ -89,7 +89,7 @@ void Shoot()
 
 	gce::Vector3f32 spawnPoint = m_pOwner->GetChildren()[0]->transform.GetWorldPosition();
 
-	bullet.SetProperties("Bullet", GlobalTag::TProjectile, SecondaryTag::None, spawnPoint, { 0, 0, 0 }, { 0.15, 0.15, 0.15 });
+	bullet.SetProperties("Bullet", PrimaryTag::TProjectile, SecondaryTag::None, spawnPoint, { 0, 0, 0 }, { 0.15, 0.15, 0.15 });
 
 	if(m_pOwner->IsTag2(SecondaryTag::TBlunderBuss))
 		bullet.transform.LocalScale({ 3, 3, 3 });
@@ -98,6 +98,8 @@ void Shoot()
 
 	bullet.AddComponent<SphereCollider>();
 	bullet.AddScript<BulletBehavior>()->SetWeapon(m_pOwner);
+
+	GameManager::GetSceneManager().LinkObjectToScene(&bullet, SceneType::GamePlayScene);
 
 	unloadProgress = 0.f;
 	pMagazineBehavior->UseWeaponAmmo();

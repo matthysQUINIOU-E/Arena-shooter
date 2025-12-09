@@ -3,9 +3,12 @@
 #include <vector>
 
 class Ammos;
+class SceneManager;
 
 class InventoryManager
 {
+	SceneManager* m_pSceneManager;
+
 	int m_inventoryIndex = 0;
 
 	std::vector<gce::GameObject*> m_tmpWeapons; // GetWeapons before the gameobject pushback (only for the Init SceneManager)

@@ -8,6 +8,8 @@
 
 #include "Scripts/WeaponMagazineBehavior.hpp"
 #include "Scripts/GunBehavior.hpp"
+#include "Scripts/HealthBehavior.hpp"
+
 #include "GameManager.h"
 #include "SceneManager.h"
 #include "Prefabs/InventoryManager.h"
@@ -26,6 +28,12 @@ std::wstring ammoTxt;
 
 EntityWrapper* pTotalAmmoUI = nullptr;
 std::wstring totalAmmoTxt;
+
+EntityWrapper* pHpUI = nullptr;
+std::wstring hpTxt;
+
+std::wstring NOTHING = L"";
+
 
 //Functions
 void UpdateFPSTxt()
@@ -47,11 +55,18 @@ void UpdateAmmoTxt()
 {
 	gce::GameObject* pObj = GameManager::GetSceneManager().GetInventoryManager()->GetCurrentEquipedObject();
 
-	if (pObj->IsTag1(GlobalTag::TWeapon))
+	if (pObj->IsTag1(PrimaryTag::TWeapon))
 	{
-		WeaponMagazineBehavior* script = pObj->GetScript<WeaponMagazineBehavior>();
+		WeaponMagazineBehavior* pScript = pObj->GetScript<WeaponMagazineBehavior>();
 
-		ammoTxt = L"Ammos : " + std::to_wstring(script->ammosLeft) + L"/" + std::to_wstring(script->maxCapacity);
+		if (pScript)
+		{
+			ammoTxt = L"Ammos : " + std::to_wstring(pScript->ammosLeft) + L"/" + std::to_wstring(pScript->maxCapacity);
+		}
+		else
+		{
+			ammoTxt = NOTHING;
+		}
 	}
 	else
 	{
@@ -64,17 +79,34 @@ void UpdateAmmoTxt()
 void UpdateTotalAmmoTxt()
 {
 	InventoryManager* pInventory = GameManager::GetSceneManager().GetInventoryManager();
+
 	gce::GameObject* pObj = pInventory->GetCurrentEquipedObject();
 
-	if (pObj->IsTag1(GlobalTag::TWeapon))
+	if (pObj == nullptr)
+	{
+		return;
+	}
+
+	if (pObj->IsTag1(PrimaryTag::TWeapon))
 	{
 		WeaponMagazineBehavior* pScript = pObj->GetScript<WeaponMagazineBehavior>();
 
-		Ammos* pAmmoToDisplay = pInventory->GetAmmos(pScript->GetAmmoTypeFromWeapon());
-
-		if (pAmmoToDisplay)
+		if (pScript)
 		{
-			totalAmmoTxt = L"Stock : " + std::to_wstring(pAmmoToDisplay->GetAmount());
+			Ammos* pAmmoToDisplay = pInventory->GetAmmos(pScript->GetAmmoTypeFromWeapon());
+
+			if (pAmmoToDisplay)
+			{
+				totalAmmoTxt = L"Stock : " + std::to_wstring(pAmmoToDisplay->GetAmount());
+			}
+			else
+			{
+				totalAmmoTxt = NOTHING;
+			}
+		}
+		else
+		{
+			totalAmmoTxt = NOTHING;
 		}
 	}
 	else
@@ -83,6 +115,27 @@ void UpdateTotalAmmoTxt()
 	}
 
 	pTotalAmmoUI->GetComponent<TextRenderer>()->text = totalAmmoTxt;
+}
+
+void UpdateHpTxt()
+{
+	gce::GameObject* pPlayer = GameManager::GetSceneManager().GetFirstGameObject(PrimaryTag::TPlayer, SecondaryTag::None);
+
+	if (pPlayer == nullptr)
+		return;
+
+	HealthBehavior* health = pPlayer->GetScript<HealthBehavior>();
+
+	if (health)
+	{
+		hpTxt = L"HP : " + std::to_wstring(health->health) + L"/" + std::to_wstring(health->maxHealth);
+	}
+	else
+	{
+		hpTxt = NOTHING;
+	}
+
+	pHpUI->GetComponent<TextRenderer>()->text = hpTxt;
 }
 
 void Start()
@@ -97,6 +150,9 @@ void Start()
 	pTotalAmmoUI = &EntityWrapper::Create();
 	gce::Vector3f32 totalAmmmoPos = { 1480, 850, 0.f };
 	pTotalAmmoUI->AddTextRenderer(L"Total Ammos", { totalAmmmoPos.x, totalAmmmoPos.y, 0, 0 }, gce::Color::Red);
+
+	pHpUI = &EntityWrapper::Create();
+	pHpUI->AddTextRenderer(L"HP", { 0, 850, 400, 0 }, gce::Color::Red);
 }
 
 void Update()
@@ -104,6 +160,7 @@ void Update()
 	UpdateFPSTxt();
 	UpdateAmmoTxt();
 	UpdateTotalAmmoTxt();
+	UpdateHpTxt();
 }
 
 END_SCRIPT

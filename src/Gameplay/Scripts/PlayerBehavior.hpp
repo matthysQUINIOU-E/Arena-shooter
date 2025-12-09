@@ -145,7 +145,7 @@ void CollisionEnter(GameObject* other)
 
 void CollisionExit(GameObject* other) override
 {
-	if (other->GetGlobalTag() == GlobalTag::TGround && isJumping == false)
+	if (other->GetGlobalTag() == PrimaryTag::TGround && isJumping == false)
 		jumpsAmount = 0;
 }
 
