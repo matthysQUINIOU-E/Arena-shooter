@@ -2,6 +2,7 @@
 
 #include <Components.h>
 #include "GameManager.h"
+#include "Utils.h"
 
 NavMesh* NavMesh::s_pInstance = nullptr;
 
@@ -46,8 +47,30 @@ Node<NavTile, Agent>* NavMesh::GetNearestNodeFromPosition(gce::Vector3f32 positi
 	return m_mapTileNode[nearest];
 }
 
+bool NavMesh::DoesSegmentGoThroughObstacles(const gce::Vector3f32& A, const gce::Vector3f32& B, const float& radius)
+{
+	for (size_t i = 0; i < m_obstacles.size(); i++)
+	{
+		gce::GameObject* obstacle = m_obstacles[i];
+		gce::Vector3f32 obstaclePos = obstacle->transform.GetWorldPosition();
+		gce::MeshRenderer* mr = obstacle->GetComponent<gce::MeshRenderer>();
+		gce::Geometry* geoObstacle = mr->pGeometry;
+		const float32& maxX = geoObstacle->max.x + obstaclePos.x;
+		const float32& maxZ = geoObstacle->max.z + obstaclePos.z;
+		const float32& minX = geoObstacle->min.x + obstaclePos.x;
+		const float32& minZ = geoObstacle->min.z + obstaclePos.z;
+		if (isPointNearLine(A, B, { maxX, 0.f, maxZ }, radius) ||
+			isPointNearLine(A, B, { minX, 0.f, maxZ }, radius) || 
+			isPointNearLine(A, B, { maxX, 0.f, minZ }, radius) || 
+			isPointNearLine(A, B, { minX, 0.f, minZ }, radius))
+			return true;
+	}
+	return false;
+}
+
 NavMesh::NavMesh(gce::Vector<gce::Vertex> vertices, gce::Vector<uint32> indices, std::vector<gce::GameObject*> obstacles)
 {
+	m_obstacles = obstacles;
 	size_t triangleNumber = indices.Size() / 3;
 	std::unordered_map<std::string, std::vector<Node<NavTile, Agent>*>> mapIndicesNodes;
 

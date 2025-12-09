@@ -55,7 +55,7 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 
 	Agent& agent = Agent::Create();
 	MeshRenderer* mr = agent.AddComponent<MeshRenderer>();
-	mr->pGeometry = gce::SHAPES.CYLINDER;
+	mr->pGeometry = gce::SHAPES.CUBE;
 	mr->pPso = m_pPso;
 	agent.transform.SetWorldPosition({20.f,0.f,0.f});
 	AgentBehavior* ab = agent.AddScript<AgentBehavior>();

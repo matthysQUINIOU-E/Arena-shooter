@@ -1,6 +1,7 @@
 #pragma once
 #include "Prefabs/EntityWrapper.h"
 #include "PathFinder.h"
+#include <queue>
 
 class Agent : public EntityWrapper
 {
@@ -16,9 +17,9 @@ public:
 	void SetCurrentNode(Node<NavTile, Agent>* node);
 	void ResetBlockedTime();
 private:
-	void FollowCurrentPath();
+	void CalculateNextLine();
+	void FollowCurrentLine();
 	void MoveToTarget();
-	void GoToPosition(gce::Vector3f32 position);
 	void ReleaseTraveledNodes();
 	bool AcquireTravelingToNodes(Node<NavTile, Agent>* goToNode);
 	bool IsNodeInBounds(Node<NavTile,Agent>* node, gce::Vector3f32 min, gce::Vector3f32 max);
@@ -27,17 +28,21 @@ private:
 	bool HasTargetMovedTooMuch();
 	bool NeedCalculatePath();
 private:
-	float m_speed = 5.f;
+	float m_speed = 3.f;
 	float m_stopRange = 2.f;
 
 	float m_baseBlockedTime = 1.f;
 	float m_blockedTime = 0.f;
 	bool m_blocked = false;
+	Agent* m_pBlockedBy;
 
 	float m_baseNoPathTime = 3.f;
 	float m_noPathTime = 0.f;
 
 	bool m_isMoving = false;
+	std::queue<Node<NavTile, Agent>*> m_currentLineNodes;
+	std::queue<gce::Vector3f32> m_currentLineTargets;
+
 	float m_distanceToMove;
 	gce::Vector3f32 m_movingTo;
 	gce::Vector3f32 m_direction;

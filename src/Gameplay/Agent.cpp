@@ -1,5 +1,6 @@
 #include "Agent.h"
 #include "GameManager.h"
+#include "Utils.h"
 #include <queue>
 
 Agent::Agent() : EntityWrapper()
@@ -25,8 +26,10 @@ void Agent::FollowPathToTarget()
 
 	if (m_isMoving)
 		MoveToTarget();
+	else if (m_currentLineNodes.empty())
+		CalculateNextLine();
 	else 
-		FollowCurrentPath();
+		FollowCurrentLine();
 }
 
 void Agent::SetTarget(GameObject* target)
@@ -54,19 +57,60 @@ void Agent::ResetBlockedTime()
 	m_blockedTime = 0.f;
 }
 
-void Agent::FollowCurrentPath() 
+void Agent::CalculateNextLine()
 {
-
 	if (m_path.size() < 2)
 		return;
 
 	if (m_currentPathIndex >= m_path.size() - 1) // should not happen
 		return;
 
-	Node<NavTile, Agent>* pToNode = m_path[m_currentPathIndex+1];
+	gce::MeshRenderer* meshRenderer = GetComponent<gce::MeshRenderer>();
 
+	if (meshRenderer == nullptr)
+		return;
+
+	gce::Vector3f32 pos = transform.GetWorldPosition();
+	gce::Vector3f32 boxMin = meshRenderer->pGeometry->min;
+	float radius = (pos - boxMin).Norm();
+
+	size_t indexOffset = 1;
+
+	gce::Vector3f32 lastNodePos;
+
+	NavMesh* navMesh = NavMesh::Instance();
+
+	while (m_currentPathIndex + indexOffset < m_path.size())
+	{
+		Node<NavTile, Agent>* pToNode = m_path[m_currentPathIndex + indexOffset];
+		gce::Vector3f32 toNodePos = pToNode->data->GetPosition();
+		if (navMesh->DoesSegmentGoThroughObstacles(pos,toNodePos, radius))
+			break;
+		
+		lastNodePos = toNodePos;
+		indexOffset++;
+	}
+
+	if (indexOffset == 1)
+		return;
+
+	for (size_t i = indexOffset; i >= 1; i--)
+	{
+		Node<NavTile, Agent>* pToNode = m_path[m_currentPathIndex + i];
+		gce::Vector3f32 toNodePos = pToNode->data->GetPosition();
+		m_currentLineNodes.push(pToNode);
+		m_currentLineTargets.push(closestPointOnLine(pos, lastNodePos, toNodePos));
+	}
+
+	m_direction = (lastNodePos - transform.GetWorldPosition()).Normalize();
+}
+
+void Agent::FollowCurrentLine()
+{
 	if (m_blockedTime == 0.f) // release only first time
 		ReleaseTraveledNodes();
+
+	Node<NavTile, Agent>* pToNode = m_currentLineNodes.front();
 
 	if (!AcquireTravelingToNodes(pToNode))
 	{
@@ -76,8 +120,12 @@ void Agent::FollowCurrentPath()
 
 	m_blockedTime = 0.f;
 	m_pCurrentNode = pToNode;
+	m_currentLineNodes.pop();
+	m_distanceToMove = (transform.GetWorldPosition() - m_currentLineTargets.front()).Norm();
+	m_movingTo = m_currentLineTargets.front();
+	m_currentLineTargets.pop();
+	m_isMoving = true;
 	m_currentPathIndex++;
-	GoToPosition(pToNode->data->GetPosition());
 }
 
 void Agent::MoveToTarget()
@@ -92,15 +140,6 @@ void Agent::MoveToTarget()
 		return;
 	}
 	transform.WorldTranslate(translate);
-}
-
-void Agent::GoToPosition(gce::Vector3f32 position) // TODO :: Rotate toward direction
-{
-	m_distanceToMove = (transform.GetWorldPosition() - position).Norm();
-	m_direction = (position - transform.GetWorldPosition()).Normalize();
-	m_movingTo = position;
-	m_isMoving = true;
-	MoveToTarget();
 }
 
 void Agent::ReleaseTraveledNodes()
@@ -171,7 +210,10 @@ bool Agent::AcquireTravelingToNodes(Node<NavTile, Agent>* goToNode)
 	{
 		Node<NavTile, Agent>* node = m_needToAcquire[i];
 		if (node->occupiedByAgent != nullptr && node->occupiedByAgent != this)
+		{
+			m_pBlockedBy = node->occupiedByAgent;
 			return false;
+		}
 	}
 
 	for (size_t i = 0; i < m_needToAcquire.size(); i++)
@@ -191,6 +233,8 @@ bool Agent::IsNodeInBounds(Node<NavTile, Agent>* node, gce::Vector3f32 min, gce:
 
 void Agent::FindPath()
 {
+	m_currentLineNodes = std::queue<Node<NavTile, Agent>*>();
+	m_currentLineTargets = std::queue<gce::Vector3f32>();
 	m_lastTargetCalculatedPathCoordinates = m_pTarget->transform.GetWorldPosition();
 	Node<NavTile, Agent>* pTargetNode = NavMesh::Instance()->GetNearestNodeFromPosition(m_lastTargetCalculatedPathCoordinates);
 
@@ -224,6 +268,8 @@ bool Agent::NeedCalculatePath()
 	{
 		m_blocked = true;
 		m_blockedTime = 0.f;
+		m_pBlockedBy->ResetBlockedTime();
+		m_pBlockedBy = nullptr;
 		return true;
 	}
 	

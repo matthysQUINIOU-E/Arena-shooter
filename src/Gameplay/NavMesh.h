@@ -19,6 +19,7 @@ public:
 	static NavMesh* Instance();
 	void ResetVisited();
 	Node<NavTile, Agent>* GetNearestNodeFromPosition(gce::Vector3f32 position); // clearly not optimal
+	bool DoesSegmentGoThroughObstacles(const gce::Vector3f32& A, const gce::Vector3f32& B,const float& radius);
 
 private:
 	NavMesh(gce::Vector<gce::Vertex> vertices, gce::Vector<uint32> indices, std::vector<gce::GameObject*> obstacles);
@@ -28,6 +29,7 @@ private:
 	static NavMesh* s_pInstance;
 	std::vector<Node<NavTile, Agent>*> m_nodes;
 	std::vector<NavTile*> m_tiles;
+	std::vector<gce::GameObject*> m_obstacles;
 	std::unordered_map<NavTile*, Node<NavTile, Agent>*> m_mapTileNode;
 };
 

@@ -206,3 +206,38 @@ gce::Geometry* MakeCustomGeometry(
     customGeo = new gce::Geometry(gceVertices.Data(), gceVertices.Size(), gceIndices.Data(), gceIndices.Size());
     return customGeo;
 }
+
+gce::Vector3f32 closestPointOnLine(const gce::Vector3f32& A, const gce::Vector3f32& B, const gce::Vector3f32& P)
+{
+
+    gce::Vector3f32 d = B - A;
+    gce::Vector3f32 AP = P - A;
+
+    float denom = d.DotProduct(d);
+    if (denom == 0.0f)
+        return A;
+
+    float t = AP.DotProduct(d) / denom;
+
+    return A + d * t; 
+
+}
+
+bool isPointNearLine(const gce::Vector3f32& A, const gce::Vector3f32& B, const gce::Vector3f32& P, float radius)
+{
+    gce::Vector3f32 d = B - A;
+    gce::Vector3f32 AP = P - A;
+
+    float denom = d.DotProduct(d);
+    if (denom == 0.0f)
+        return (P - A).DotProduct(P - A) <= radius * radius;
+
+    float t = AP.DotProduct(d) / denom;
+
+    gce::Vector3f32 proj = A + d * t;
+
+    gce::Vector3f32 diff = P - proj;
+    float distSq = diff.DotProduct(diff);
+
+    return distSq <= radius * radius;
+}
