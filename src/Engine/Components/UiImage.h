@@ -14,6 +14,10 @@ namespace gce
         BitMapBrush* btmBrush;
 
         void InitializeImage(Vector2f32 const& position, Vector2f32 const& size, float32 opacity);
+        void SetPosition(Vector2f32 const& position);
+        void SetSize(Vector2f32 const& size);
+
+        void SyncRectImage();
 
         friend class UiSystem;
     };

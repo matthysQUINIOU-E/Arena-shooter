@@ -12,8 +12,10 @@
 
 #include "GameManager.h"
 #include "SceneManager.h"
-#include "Prefabs/InventoryManager.h"
-#include "Prefabs/UIManager.h"
+#include "../Prefabs/InventoryManager.h"
+#include "../Prefabs/UIManager.h"
+
+#include "../Prefabs/UiBar.h"
 
 using namespace gce;
 
@@ -37,6 +39,7 @@ std::wstring hpTxt;
 
 EntityWrapper* pCrosshair = nullptr;
 
+UiBar hpBar;
 
 std::wstring NOTHING = L"";
 
@@ -136,6 +139,7 @@ void UpdateHpTxt()
 	if (health)
 	{
 		hpTxt = L"HP : " + std::to_wstring(health->health) + L"/" + std::to_wstring(health->maxHealth);
+		hpBar.SetFilledBarByRatio(health->health, health->maxHealth);
 	}
 	else
 	{
@@ -168,12 +172,21 @@ void Start()
 
 	Vector2f32 center = { (float)WINDOW_WIDTH / 2.f, (float)WINDOW_HEIGHT / 2.f };
 	Vector2f32 size = { 250, 250 };
-
 	float scale = 0.25f;
-
 	Vector2f32 posUi = center - size * 0.5f * scale;
-
 	pCrosshair->AddUiImage("res/2D_Assets/crosshair.png", posUi, size, { posUi.x, posUi.y - 40 }, { scale, scale }, 0);
+
+
+	Vector2f32 size2 = { 202, 26 };
+	float scale2 = 0.5f;
+	Vector2f32 posBar = (Vector2f32(40, 231) + size2 * 0.5f) * scale2;
+	hpBar.InitFilledBar("res/2D_Assets/hpBar.png", posBar, size2, posBar, { scale2, scale2 }, 0);
+
+
+	Vector2f32 size3 = { 285, 102 };
+	float scale3 = 0.5f;
+	Vector2f32 posBar2 = (Vector2f32(-142, 100) + size3 * 0.5f) * scale3;
+	hpBar.InitFrame("res/2D_Assets/hpBar_frame.png", posBar2, size3, posBar2, {scale3, scale3}, 0);
 }
 
 void Update()

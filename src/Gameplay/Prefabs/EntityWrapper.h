@@ -28,6 +28,6 @@ public:
     void UpdateDynamicText(std::wstring& referenceTxt);
 
     gce::UIButton* AddUIButton(gce::Vector2f32 pos, gce::Vector2f32 rotation, gce::Vector2f32 scale, const char* textureBrushPath = "", const char* textureHoverBrushPath = "");
-    gce::UiImage* AddUiImage(const char* imgPath, gce::Vector2f32 pointToStartInImg, gce::Vector2f32 imgDimensions, gce::Vector2f32 pos, gce::Vector2f32 scale = {1, 1}, float32 rotation = 0.f);
+    gce::UiImage* AddUiImage(const char* imgPath, gce::Vector2f32 leftTopRectPos, gce::Vector2f32 imgDimensions, gce::Vector2f32 pos = {0, 0}, gce::Vector2f32 scale = {1, 1}, float32 rotation = 0.f);
     void SetUiImageTransform(gce::Vector2f32 pos, gce::Vector2f32 scale, float32 rotation);
 };

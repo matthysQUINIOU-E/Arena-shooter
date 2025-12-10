@@ -202,11 +202,11 @@ gce::UIButton* EntityWrapper::AddUIButton(gce::Vector2f32 pos, gce::Vector2f32 r
 	return component;
 }
 
-gce::UiImage* EntityWrapper::AddUiImage(const char* imgPath, gce::Vector2f32 pointToStartInImg, gce::Vector2f32 imgDimensions, gce::Vector2f32 pos, gce::Vector2f32 scale, float32 rotation)
+gce::UiImage* EntityWrapper::AddUiImage(const char* imgPath, gce::Vector2f32 leftTopRectPos, gce::Vector2f32 imgSize, gce::Vector2f32 pos, gce::Vector2f32 scale, float32 rotation)
 {
 	auto component = AddComponent<gce::UiImage>();
 
-	component->InitializeImage(pointToStartInImg, imgDimensions, 1.f);
+	component->InitializeImage(leftTopRectPos, imgSize, 1.f);
 	component->btmBrush = new gce::BitMapBrush(imgPath);
 
 	component->btmBrush->SetTransformMatrix({ pos.x, pos.y, 0 }, { scale.x, scale.y, 1 }, rotation);

@@ -7,6 +7,7 @@
 #include "GunBehavior.hpp"
 #include "../SceneManager.h"
 #include "../Prefabs/InventoryManager.h"
+#include "HealthBehavior.hpp"
 
 using namespace gce;
 
@@ -90,8 +91,14 @@ void BasicControls() // Move + Jump
 
 	if (GetKeyDown(Keyboard::SPACE))
 	{
+	
 		if (jumpsAmount > 0)
 		{
+			m_pOwner->GetScript<HealthBehavior>()->TakeDamage(10);
+
+
+
+
 			isJumping = true;
 			jumpsAmount--;
 
@@ -104,6 +111,10 @@ void BasicControls() // Move + Jump
 			pPhysic->SetVelocity({ velocity.x, 0, velocity.z });
 
 			pPhysic->AddForce(f);
+		}
+		else
+		{
+			m_pOwner->GetScript<HealthBehavior>()->Heal(10);
 		}
 	}
 
