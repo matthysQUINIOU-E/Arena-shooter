@@ -31,12 +31,14 @@ private:
 	float m_speed = 3.f;
 	float m_stopRange = 2.f;
 
-	float m_baseBlockedTime = 1.f;
+	float m_baseBlockedTime = 0.2f;
 	float m_blockedTime = 0.f;
 	bool m_blocked = false;
 	Agent* m_pBlockedBy;
 
-	float m_baseNoPathTime = 3.f;
+	bool m_hasReleasedTraveled = false;
+
+	float m_baseNoPathTime = 0.5f;
 	float m_noPathTime = 0.f;
 
 	bool m_isMoving = false;

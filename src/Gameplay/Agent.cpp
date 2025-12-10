@@ -115,7 +115,7 @@ void Agent::CalculateNextLine()
 
 void Agent::FollowCurrentLine()
 {
-	if (m_blockedTime == 0.f) // release only first time
+	if (!m_hasReleasedTraveled)
 		ReleaseTraveledNodes();
 
 	Node<NavTile, Agent>* pToNode = m_currentLineNodes.front();
@@ -134,6 +134,7 @@ void Agent::FollowCurrentLine()
 	m_currentLineTargets.pop();
 	m_isMoving = true;
 	m_currentPathIndex++;
+	m_hasReleasedTraveled = false;
 }
 
 void Agent::MoveToTarget()
@@ -152,12 +153,13 @@ void Agent::MoveToTarget()
 
 void Agent::ReleaseTraveledNodes()
 {
+	m_hasReleasedTraveled = true;
 	gce::MeshRenderer* meshRenderer = GetComponent<gce::MeshRenderer>();
 	
 	if (meshRenderer == nullptr)
 		return;
 
-	gce::Vector3f32 pos = transform.GetWorldPosition();
+	gce::Vector3f32 pos = m_pCurrentNode->data->GetPosition();
 	gce::Vector3f32 min = meshRenderer->pGeometry->min + pos;
 	gce::Vector3f32 max = meshRenderer->pGeometry->max + pos;
 
@@ -172,6 +174,7 @@ void Agent::ReleaseTraveledNodes()
 	for (size_t i = 0; i < nodesToRelease.size(); i++)
 	{
 		Node<NavTile, Agent>* node = nodesToRelease[i];
+		node->occupiedByAgent = nullptr;
 		m_nodesOccupied.erase(node);
 	}
 }
@@ -255,6 +258,7 @@ void Agent::FindPath()
 	m_currentPathIndex = 0;
 	m_noPathTime = 0.f;
 	m_blocked = 0.f;
+	m_needToAcquire.clear();
 }
 
 bool Agent::IsTargetInRange()

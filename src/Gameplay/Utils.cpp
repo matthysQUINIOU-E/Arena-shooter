@@ -27,6 +27,10 @@ void ImportBlenderScene(std::wstring jsonFile)
     std::regex patternPhysic("^[^_]*P");
     std::regex patternCollider("^[^_]*C");
     std::regex patternNavMesh("^[^_]*NM");
+    std::regex patternSpawnerHeal("^[^_]*SH");
+    std::regex patternSpawnerGuHuoNiao("^[^_]*SG");
+    std::regex patternSpawnerJiangshi("^[^_]*SJ");
+    std::regex patternSpawnerMogwai("^[^_]*SM");
 
     gce::Vector<gce::Vertex> navmeshVertices;
     gce::Vector<uint32> navmeshIndices;
@@ -42,6 +46,10 @@ void ImportBlenderScene(std::wstring jsonFile)
         bool hasPhysic = std::regex_search(name, patternPhysic);
         bool hasCollider = std::regex_search(name, patternCollider);
         bool isNavMesh = std::regex_search(name, patternNavMesh);
+        bool isSpawnerHeal = std::regex_search(name, patternSpawnerHeal);
+        bool isSpawnerGuHuoNiao = std::regex_search(name, patternSpawnerGuHuoNiao);
+        bool isSpawnerJiangshi = std::regex_search(name, patternSpawnerJiangshi);
+        bool isSpawnerMogwai = std::regex_search(name, patternSpawnerMogwai);
         bool isobstacle = !isNavMesh && hasCollider;
         std::string baseColorTex = "";
         std::string metallicTex = "";
@@ -87,6 +95,19 @@ void ImportBlenderScene(std::wstring jsonFile)
             scale = gce::Vector3f32{ 1.f, 1.f, 1.f };
 
         gce::GameObject& gameObject = gce::GameObject::Create(pScene);
+
+        if (isSpawnerHeal || isSpawnerGuHuoNiao || isSpawnerJiangshi || isSpawnerMogwai) {
+            gameObject.SetTag1(GlobalTag::TSpawner);
+            if (isSpawnerHeal)
+                gameObject.SetTag2(SecondaryTag::THeal);
+            if (isSpawnerGuHuoNiao)
+                gameObject.SetTag2(SecondaryTag::TGuHuoNiao);
+            if (isSpawnerJiangshi)
+                gameObject.SetTag2(SecondaryTag::TJiangshi);
+            if (isSpawnerMogwai)
+                gameObject.SetTag2(SecondaryTag::TMogwai);
+        }
+
         // gameObject.SetName("importedScene"); // maybe change later just taging everything with the same name
         gameObject.transform.SetWorldPosition(position);
         gameObject.transform.SetWorldRotation(rotation);

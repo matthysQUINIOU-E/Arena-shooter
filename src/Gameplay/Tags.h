@@ -12,12 +12,15 @@ enum class GlobalTag
     TEnemy,
     TProjectile,
 
-    TMiscellaneous
-};
+    TMiscellaneous,
+    TSpawner
+}; 
 
 enum class SecondaryTag
 {
     None,
+
+    THeal,
 
     //Weapon
     TBlunderBuss,

@@ -15,10 +15,9 @@
 #include "Scripts/UIManagerBehavior.hpp"
 #include "Scripts/GunBehavior.hpp"
 #include "Scripts/AgentBehavior.hpp"
+#include "Scripts/WaveManagerBehavior.hpp"
 #include "Utils.h"
 #include "Agent.h"
-
-#include "Utils.h"
 #include <ranges>
 
 void SceneManager::InitGamePlayScene(gce::Scene& scene)
@@ -73,17 +72,8 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 
 	ImportBlenderScene(L"scene_base.json");
 
-
-	/*
-	Agent& agent = Agent::Create();
-	MeshRenderer* mr = agent.AddComponent<MeshRenderer>();
-	mr->pGeometry = gce::SHAPES.CUBE;
-	mr->pPso = m_pPso;
-	agent.transform.SetWorldPosition({20.f,0.f,0.f});
-	AgentBehavior* ab = agent.AddScript<AgentBehavior>();
-	agent.SetTarget(player.GetGameObject());
-	agent.SetCurrentNode(NavMesh::Instance()->GetNearestNodeFromPosition(agent.transform.GetWorldPosition()));
-	*/
+	EntityWrapper& entityWrapper = EntityWrapper::Create();
+	entityWrapper.AddScript<WaveManagerBehavior>();
 }
 
 void SceneManager::Init()

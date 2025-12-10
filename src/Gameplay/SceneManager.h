@@ -39,7 +39,7 @@ public:
 	void InitGamePlayScene(gce::Scene& scene1);
 	void Init();
 
-	gce::GameObject* GetFirstGameObject(GlobalTag tag1, SecondaryTag tag2); // return the first GameObject with the 2 two tags
+	gce::GameObject* GetFirstGameObject(GlobalTag tag1, SecondaryTag tag2 = SecondaryTag::None); // return the first GameObject with the 2 two tags
 	std::vector<gce::GameObject*> GetAllGameObjects(GlobalTag tag1, SecondaryTag tag2); // return all GameObjects with the 2 two tags
 	std::vector<gce::GameObject*> GetAllGameObjects(GlobalTag tag1); // return all GameObjects with the first Tag
 

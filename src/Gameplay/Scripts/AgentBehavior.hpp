@@ -8,22 +8,25 @@
 
 using namespace gce;
 
-DECLARE_SCRIPT(AgentBehavior, ScriptFlag::Start | ScriptFlag::Update)
+DECLARE_SCRIPT(AgentBehavior, ScriptFlag::Update)
 
 //Members
 Agent* pAgent = nullptr;
 
-void Start()
+
+
+void Init()
 {
 	pAgent = dynamic_cast<Agent*>(m_pOwner);
-	if (pAgent == nullptr)
-		return;
 }
 
 void Update()
 {
 	if (pAgent == nullptr)
+	{
+		Init();
 		return;
+	}
 
 	pAgent->FollowPathToTarget();
 }
