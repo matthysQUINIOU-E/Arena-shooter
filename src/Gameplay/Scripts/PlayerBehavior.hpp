@@ -64,8 +64,7 @@ void BasicControls() // Move + Jump
 		}
 	}
 
-	m_pOwner->transform.LocalTranslate((finalDir * speed * dt));
-
+	m_pOwner->transform.WorldTranslate((finalDir * speed * dt));
 }
 
 //Functions

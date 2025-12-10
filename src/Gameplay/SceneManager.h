@@ -3,6 +3,8 @@
 #include <unordered_map>
 #include "Tags.h"
 
+class Player;
+class ArenaCamera;
 class EntityWrapper;
 class InventoryManager;
 
@@ -29,6 +31,11 @@ namespace gce {
 
 class SceneManager
 {
+	std::vector<gce::GameObject*> m_Map;
+
+	Player* m_pPlayer = nullptr;
+	ArenaCamera* m_pArenaCam = nullptr;
+
 	EntityWrapper* m_pEmpty = nullptr; // Need to handle the SceneManager Script
 
 	std::unordered_map<SceneType, std::vector<gce::GameObject*> > m_SceneObjectsList;
@@ -39,9 +46,13 @@ class SceneManager
 	gce::D12PipelineObject* m_pPso = nullptr;
 
 public:
-	SceneManager() {}
+	SceneManager() = default;
 	~SceneManager() { delete m_pPso; }
-	void InitGamePlay(gce::Scene& scene1);
+
+	void InitGamePlay();
+	void UnInitGamePlay();
+	bool m_IsGamePlayInit = false;
+
 	void Init();
 
 	void ChangeScene(SceneType newType);
@@ -55,5 +66,7 @@ public:
 	InventoryManager* GetInventoryManager() { return m_pInventoryManager; }
 
 	gce::D12PipelineObject* GetPSO() { return m_pPso; }
+
+	gce::GameObject* GetCameraObject();
 };
 

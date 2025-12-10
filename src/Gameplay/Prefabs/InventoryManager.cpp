@@ -19,6 +19,7 @@ InventoryManager::~InventoryManager()
 gce::GameObject* InventoryManager::CreateMusket()
 {
 	EntityWrapper& musket = EntityWrapper::Create();
+	m_pSceneManager->GetCameraObject()->AddChild(musket);
 
 	musket.SetProperties("Musket", PrimaryTag::TWeapon, SecondaryTag::TMusket, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 });
 	musket.transform.SetLocalPosition({ 0.25, -0.1f, 0.5f });
@@ -48,10 +49,9 @@ gce::GameObject* InventoryManager::CreateMusket()
 gce::GameObject* InventoryManager::CreateBlunderBuss()
 {
 	EntityWrapper& blunderbuss = EntityWrapper::Create();
+	m_pSceneManager->GetCameraObject()->AddChild(blunderbuss);
 
-	blunderbuss.SetProperties("Blunderbuss", PrimaryTag::TWeapon, SecondaryTag::TBlunderBuss, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 });
-	blunderbuss.transform.SetLocalPosition({ 0.25, -0.1f, 0.5f });
-	
+	blunderbuss.SetProperties("Blunderbuss", PrimaryTag::TWeapon, SecondaryTag::TBlunderBuss, { 0.25, -0.1f, 0.5f }, { 0, 0, 0 }, { 1, 1, 1 });
 	blunderbuss.AddMeshRenderer(gce::GeometryFactory::LoadGeometry("res/Assets/blunderbuss/blunderbuss.obj"), "res/Assets/blunderbuss/blunderbuss_base_color.png");
 
 	EntityWrapper& hole = EntityWrapper::Create();
@@ -79,6 +79,7 @@ gce::GameObject* InventoryManager::CreateBlunderBuss()
 gce::GameObject* InventoryManager::CreateBomb()
 {
 	EntityWrapper& bomb = EntityWrapper::Create();
+	m_pSceneManager->GetCameraObject()->AddChild(bomb);
 
 	bomb.SetProperties("Bomb", PrimaryTag::TThrowableWeapon, SecondaryTag::TBomb, { 0, 0, 0 }, { 0, 0, 0 }, { 2, 2, 2 });
 	bomb.transform.SetLocalPosition({ 0.25, -0.1f, 0.5f });
@@ -112,6 +113,22 @@ void InventoryManager::InitAll()
 	m_ammoStock.push_back(new Ammos(SecondaryTag::THeavyAmmo, 30));
 	m_ammoStock.push_back(new Ammos(SecondaryTag::TNormalAmmo, 100));
 	m_ammoStock.push_back(new Ammos(SecondaryTag::TLightAmmo, 200));
+}
+
+void InventoryManager::ResetAll()
+{
+	m_inventoryIndex = 0;
+	m_pEquipedObject = nullptr;
+
+	UnInitTmp();
+	m_currentInventory.clear();
+
+	for (Ammos* ammos : m_ammoStock)
+	{
+		delete ammos;
+	}
+
+	m_ammoStock.clear();
 }
 
 std::vector<gce::GameObject*> InventoryManager::GetWeapons()

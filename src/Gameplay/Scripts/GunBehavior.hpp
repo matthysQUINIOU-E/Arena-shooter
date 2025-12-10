@@ -111,66 +111,66 @@ void Start()
 
 void Update()
 {
-	defaultRotation.SetIdentity();
-	defaultRotation.SetRotationEuler({ 0, gce::PI, 0 });
+	//defaultRotation.SetIdentity();
+	//defaultRotation.SetRotationEuler({ 0, gce::PI, 0 });
 
-	if (GetKeyDown(Keyboard::R)) // TODO encapsulate the keybinds
-		Reload();
+	//if (GetKeyDown(Keyboard::R)) // TODO encapsulate the keybinds
+	//	Reload();
 
-	float dt = GameManager::DeltaTime();
+	//float dt = GameManager::DeltaTime();
 
-	if (isReloading == false)
-	{
-		m_pOwner->transform.SetLocalRotation(defaultRotation);
+	//if (isReloading == false)
+	//{
+	//	m_pOwner->transform.SetLocalRotation(defaultRotation);
 
-		if (pMagazineBehavior->IsWeaponEmpty() == false)
-		{
-			m_pOwner->GetComponent<MeshRenderer>()->pMaterial->useTextureAlbedo = 0;
-		}
-		else
-		{	
-			if (unloadProgress < unloadSpeed)
-			{
-				unloadProgress += dt;
-			}
-		}
-	}
-	else
-	{
-		m_pOwner->GetComponent<MeshRenderer>()->pMaterial->useTextureAlbedo = 1.f;
-		
-		int turns = 2; 
+	//	if (pMagazineBehavior->IsWeaponEmpty() == false)
+	//	{
+	//		m_pOwner->GetComponent<MeshRenderer>()->pMaterial->useTextureAlbedo = 0;
+	//	}
+	//	else
+	//	{	
+	//		if (unloadProgress < unloadSpeed)
+	//		{
+	//			unloadProgress += dt;
+	//		}
+	//	}
+	//}
+	//else
+	//{
+	//	m_pOwner->GetComponent<MeshRenderer>()->pMaterial->useTextureAlbedo = 1.f;
+	//	
+	//	int turns = 2; 
 
-		float value = (2.f * gce::PI / reloadTime) * turns;
+	//	float value = (2.f * gce::PI / reloadTime) * turns;
 
-		m_pOwner->transform.LocalRotate({ value * dt, 0, 0 });
-		if (reloadProgressTime < reloadTime)
-		{
-			reloadProgressTime += dt;
-		}
-		else
-		{
-			isReloading = false;
-			reloadProgressTime = 0.f;
+	//	m_pOwner->transform.LocalRotate({ value * dt, 0, 0 });
+	//	if (reloadProgressTime < reloadTime)
+	//	{
+	//		reloadProgressTime += dt;
+	//	}
+	//	else
+	//	{
+	//		isReloading = false;
+	//		reloadProgressTime = 0.f;
 
-			Ammos* ammoToDecrease = GameManager::GetSceneManager().GetInventoryManager()->GetAmmos(pMagazineBehavior->GetAmmoTypeFromWeapon());
+	//		Ammos* ammoToDecrease = GameManager::GetSceneManager().GetInventoryManager()->GetAmmos(pMagazineBehavior->GetAmmoTypeFromWeapon());
 
-			int amount = pMagazineBehavior->maxCapacity - pMagazineBehavior->ammosLeft;
+	//		int amount = pMagazineBehavior->maxCapacity - pMagazineBehavior->ammosLeft;
 
-			int ammoInStock = ammoToDecrease->GetAmount();
+	//		int ammoInStock = ammoToDecrease->GetAmount();
 
-			if (ammoInStock > amount)
-			{
-				pMagazineBehavior->FillWeaponAmmos();
-			}
-			else
-			{
-				pMagazineBehavior->ammosLeft += ammoInStock; // Reload the rest
-			}
+	//		if (ammoInStock > amount)
+	//		{
+	//			pMagazineBehavior->FillWeaponAmmos();
+	//		}
+	//		else
+	//		{
+	//			pMagazineBehavior->ammosLeft += ammoInStock; // Reload the rest
+	//		}
 
-			ammoToDecrease->UseAmmos(amount);
-		}
-	}
+	//		ammoToDecrease->UseAmmos(amount);
+	//	}
+	//}
 }
 
 END_SCRIPT

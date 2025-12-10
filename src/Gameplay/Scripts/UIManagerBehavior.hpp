@@ -55,6 +55,9 @@ void UpdateAmmoTxt()
 {
 	gce::GameObject* pObj = GameManager::GetSceneManager().GetInventoryManager()->GetCurrentEquipedObject();
 
+	if (pObj == nullptr)
+		return;
+
 	if (pObj->IsTag1(PrimaryTag::TWeapon))
 	{
 		WeaponMagazineBehavior* pScript = pObj->GetScript<WeaponMagazineBehavior>();
@@ -83,9 +86,7 @@ void UpdateTotalAmmoTxt()
 	gce::GameObject* pObj = pInventory->GetCurrentEquipedObject();
 
 	if (pObj == nullptr)
-	{
 		return;
-	}
 
 	if (pObj->IsTag1(PrimaryTag::TWeapon))
 	{
@@ -140,6 +141,8 @@ void UpdateHpTxt()
 
 void Start()
 {
+	std::cout << "YOOOO\n";
+
 	pFpsUI = &EntityWrapper::Create();
 	pFpsUI->AddTextRenderer(L"Fps", { 0, 0, 300, 300 }, gce::Color::Black);
 

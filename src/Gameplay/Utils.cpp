@@ -48,14 +48,14 @@ std::vector<gce::GameObject*> ImportBlenderScene(std::wstring jsonFile)
             if (tex.contains("base_color") && !tex["base_color"].is_null())
                 baseColorTex = tex["base_color"].get<std::string>();
 
-            if (tex.contains("metallic") && !tex["metallic"].is_null())
+           /* if (tex.contains("metallic") && !tex["metallic"].is_null())
                 metallicTex = tex["metallic"].get<std::string>();
 
             if (tex.contains("roughness") && !tex["roughness"].is_null())
                 roughnessTex = tex["roughness"].get<std::string>();
 
             if (tex.contains("normal_map") && !tex["normal_map"].is_null())
-                normalMapTex = tex["normal_map"].get<std::string>();
+                normalMapTex = tex["normal_map"].get<std::string>();*/
         }
 
         if (obj.contains("position"))

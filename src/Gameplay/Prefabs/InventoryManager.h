@@ -31,6 +31,7 @@ public:
 	~InventoryManager();
 
 	void InitAll();
+	void ResetAll();
 
 	std::vector<gce::GameObject*> GetWeapons();
 	gce::GameObject* GetWeapon(SecondaryTag tag);

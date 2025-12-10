@@ -11,7 +11,7 @@ enum class PrimaryTag
     TGround,
     TEnemy,
     TProjectile,
-
+    TMapObject, //The Base Map without mobs
     TMiscellaneous
 };
 

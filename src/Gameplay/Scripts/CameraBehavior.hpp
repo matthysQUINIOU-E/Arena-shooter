@@ -8,8 +8,6 @@ using namespace gce;
 
 DECLARE_SCRIPT(CameraBehavior, ScriptFlag::Start | ScriptFlag::Update)
 
-//Members
-GameObject* pFollowGameObject = nullptr; // This game object will be in the camera
 PrimaryTag priTag = PrimaryTag::None;
 SecondaryTag secTag = SecondaryTag::None;
 
@@ -21,16 +19,15 @@ bool fpsMode = true;
 float totalPitchRotation = 0.f;
 
 //Functions
-void SetGameObjectTagsToFollow(PrimaryTag tag1, SecondaryTag tag2) { priTag = tag1, secTag = tag2; }
-
 void HandleFPSMode()
 {
-	if (pFollowGameObject == nullptr || pFollowGameObject->IsActive() == false)
+	if (m_pOwner->GetParent() == nullptr)
 	{
 		fpsMode = false;
 		return;
 	}
 
+	gce::GameObject* pFollowGameObject = m_pOwner->GetParent();
 	// Delta Mouse Calcul
 	HideMouseCursor();
 
@@ -45,23 +42,12 @@ void HandleFPSMode()
 	totalPitchRotation += pitch;
 	totalPitchRotation = std::clamp(totalPitchRotation, -gce::PI / 2, gce::PI / 2);
 
-	// Set Rotation for Both GameObjects
-	pFollowGameObject->transform.LocalRotate({ 0.f, yaw, 0.f });
-	m_pOwner->transform.SetLocalRotation({totalPitchRotation, 0.f, 0.f});
+	// Set Rotation for Player
+	pFollowGameObject->transform.WorldRotate({ 0.f, yaw, 0.f });
 
-	// Recalculate the view after the FollowGameObject Rotation changes
-	Quaternion yawQ = pFollowGameObject->transform.GetWorldRotation();
-	Quaternion pitchQ = Quaternion::RotationEuler({ totalPitchRotation, 0.f, 0.f });
+	Quaternion pitchQ = Quaternion::RotationEuler({ totalPitchRotation, 0.f, 0.f});
 
-	m_pOwner->transform.SetWorldRotation(pitchQ * yawQ);
-
-	// Set Camera Pos
-	gce::Vector3f32 newPos = pFollowGameObject->transform.GetWorldPosition();
-
-	float heightOffset = pFollowGameObject->transform.GetWorldScale().y * 0.5f;
-
-	newPos.y += heightOffset;
-	m_pOwner->transform.SetWorldPosition(newPos);
+	m_pOwner->transform.SetLocalRotation(pitchQ);
 
 	SetCursorPos(middleScreen.x, middleScreen.y);
 }
@@ -73,13 +59,10 @@ void HandleNormalMode()
 
 void Start()
 {
-	m_pOwner->transform.SetLocalRotation({ 0.f, 0.f, 0.f });
 }
 
 void Update()
 {
-	pFollowGameObject = GameManager::GetSceneManager().GetFirstGameObject(priTag, secTag);
-
 	if (GetKeyDown(Keyboard::NUMPAD0))
 	{
 		fpsMode = !fpsMode;
