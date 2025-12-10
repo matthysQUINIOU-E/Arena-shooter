@@ -190,7 +190,7 @@ void CollisionEnter(GameObject* other)
 
 void CollisionExit(GameObject* other) override
 {
-	if (other->IsTags({ Tag::TGround }) && isJumping == false)
+	if (other->HasTags({ Tag::TGround }) && isJumping == false)
 		jumpsAmount = 0;
 }
 

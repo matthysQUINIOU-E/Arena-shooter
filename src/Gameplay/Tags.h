@@ -13,7 +13,7 @@ enum class Tag // Game Objects Tags
     TProjectile,
     TMiscellaneous,
     TSpawner,
-
+    TMapObject,
 
     THeal,
 

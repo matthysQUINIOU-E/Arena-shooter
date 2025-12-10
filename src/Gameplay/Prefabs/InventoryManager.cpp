@@ -153,7 +153,7 @@ gce::GameObject* InventoryManager::GetWeapon(Tag tag)
 	{
 		for (gce::GameObject* go : m_tmpWeapons)
 		{
-			if (go->IsTags({ tag }))
+			if (go->HasTags({ tag }))
 				return go;
 		}
 	}
@@ -179,7 +179,7 @@ gce::GameObject* InventoryManager::GetCollectible(Tag tag)
 	{
 		for (gce::GameObject* go : m_tmpCollectibles)
 		{
-			if (go->IsTags({ tag }))
+			if (go->HasTags({ tag }))
 				return go;
 		}
 	}
@@ -224,7 +224,7 @@ void InventoryManager::SwapEquipedObject(bool forward)
 
 	if (auto current = m_currentInventory[m_inventoryIndex])
 	{
-		if (current->IsTags({ Tag::TWeapon }))
+		if (current->HasTags({ Tag::TWeapon }))
 			current->GetScript<GunBehavior>()->OnLeaveWeapon(); // The old weapon
 	}
 
@@ -241,7 +241,7 @@ void InventoryManager::SwapEquipedObject(bool forward)
 			pObject->SetActive(true);
 			m_pEquipedObject = pObject;
 
-			if (pObject->IsTags({ Tag::TWeapon }))
+			if (pObject->HasTags({ Tag::TWeapon }))
 			{
 				pObject->GetScript<GunBehavior>()->OnReceiveWeapon();
 			}
@@ -266,7 +266,7 @@ void InventoryManager::SetEquipedObjectByIndex(int index)
 
 	if (auto current = m_currentInventory[m_inventoryIndex])
 	{
-		if (current->IsTags({ Tag::TWeapon }))
+		if (current->HasTags({ Tag::TWeapon }))
 			current->GetScript<GunBehavior>()->OnLeaveWeapon(); // The old weapon
 	}
 
@@ -283,7 +283,7 @@ void InventoryManager::SetEquipedObjectByIndex(int index)
 			pObject->SetActive(true);
 			m_pEquipedObject = pObject;
 
-			if (pObject->IsTags({ Tag::TWeapon }))
+			if (pObject->HasTags({ Tag::TWeapon }))
 			{
 				pObject->GetScript<GunBehavior>()->OnReceiveWeapon();
 			}

@@ -91,7 +91,7 @@ void Shoot()
 
 	bullet.SetProperties("Bullet", { Tag::TProjectile }, spawnPoint, { 0, 0, 0 }, { 0.15, 0.15, 0.15 });
 
-	if (m_pOwner->IsTags({ Tag::TBlunderBuss }))
+	if (m_pOwner->HasTags({ Tag::TBlunderBuss }))
 		bullet.transform.LocalScale({ 3, 3, 3 });
 
 	bullet.AddMeshRenderer(gce::SHAPES.SPHERE, "");

@@ -75,7 +75,8 @@ void SceneManager::UnInitGamePlay()
 
 	for (gce::GameObject* go : m_SceneObjectsList[SceneType::GamePlayScene])
 	{
-		go->Destroy();
+		if (go->HasTags({ Tag::TMapObject }) == false)
+			go->Destroy();
 	}
 
 	m_SceneObjectsList[SceneType::GamePlayScene].clear();
@@ -115,6 +116,7 @@ void SceneManager::Init()
 	//MAP
 	for (gce::GameObject* go : ImportBlenderScene(L"scene_base.json"))
 	{
+		go->AddTags({ Tag::TMapObject });
 		m_Map.push_back(go);
 	}
 
@@ -180,7 +182,7 @@ gce::GameObject* SceneManager::GetFirstGameObject(std::vector<Tag> tags)
 
 	for (GameObject* pGameObject : gameObjects | std::views::values)
 	{
-		if (pGameObject->IsTags(tags))
+		if (pGameObject->HasTags(tags))
 			return pGameObject;
 	}
 
@@ -195,7 +197,7 @@ std::vector<gce::GameObject*> SceneManager::GetAllGameObjects(std::vector<Tag> t
 
 	for (GameObject* pGameObject : gameObjects | std::views::values)
 	{
-		if (pGameObject->IsTags(tags))
+		if (pGameObject->HasTags(tags))
 			finalTab.push_back(pGameObject);
 	}
 

@@ -61,7 +61,7 @@ WaveManager::WaveManager()
 		for (size_t j = 0; j < m_ennemyTag.size(); j++)
 		{
 			Tag ennemyTag = m_ennemyTag[j];
-			if (spawner->IsTags({ ennemyTag }))
+			if (spawner->HasTags({ ennemyTag }))
 				m_spawnerPosition[ennemyTag].push_back(spawner->transform.GetWorldPosition());
 		}
 	}
@@ -131,6 +131,7 @@ void WaveManager::CreateEnnemy(Tag tag, gce::GameObject* player) //TODO :: creat
 	Agent& entity = Agent::Create();
 	AgentBehavior* ab = entity.AddScript<AgentBehavior>();
 	entity.SetTarget(player);
+	GameManager::GetSceneManager().LinkObjectToScene(&entity, SceneType::GamePlayScene);
 	entity.SetActive(false);
 
 	switch (tag)

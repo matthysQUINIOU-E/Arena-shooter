@@ -64,7 +64,7 @@ void UpdateAmmoTxt()
 	if (pObj == nullptr)
 		return;
 
-	if (pObj->IsTags({ Tag::TWeapon }))
+	if (pObj->HasTags({ Tag::TWeapon }))
 	{
 		WeaponMagazineBehavior* pScript = pObj->GetScript<WeaponMagazineBehavior>();
 
@@ -94,7 +94,7 @@ void UpdateTotalAmmoTxt()
 	if (pObj == nullptr)
 		return;
 
-	if (pObj->IsTags({ Tag::TWeapon }))
+	if (pObj->HasTags({ Tag::TWeapon }))
 	{
 		WeaponMagazineBehavior* pScript = pObj->GetScript<WeaponMagazineBehavior>();
 

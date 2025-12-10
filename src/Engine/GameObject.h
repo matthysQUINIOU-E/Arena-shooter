@@ -33,10 +33,10 @@ public:
     [[nodiscard]] cstr GetName() const;
 
     void SetName(cstr name);
-    void SetTags(std::vector<Tag> tags);
+    void AddTags(std::vector<Tag> tags);
     const Tag& GetUniqueTag(std::vector<Tag> tags);
 
-    const bool& IsTags(std::vector<Tag> tags) const;
+    const bool& HasTags(std::vector<Tag> tags) const;
 
     [[nodiscard]] bool IsActive() const;
     void SetActive(bool active);

@@ -42,7 +42,7 @@ GameObject& GameObject::Create( Scene& scene ) // ask & or *
     return *pNew;
 }
 
-void GameObject::SetTags(std::vector<Tag> tags)
+void GameObject::AddTags(std::vector<Tag> tags)
 {
     for (size_t i = 0; i < tags.size(); i++)
     {
@@ -66,7 +66,7 @@ const Tag& GameObject::GetUniqueTag(std::vector<Tag> tags)
     return res;
 }
 
-const bool& GameObject::IsTags(std::vector<Tag> tags) const
+const bool& GameObject::HasTags(std::vector<Tag> tags) const
 {
     for (size_t i = 0; i < tags.size(); i++)
     {

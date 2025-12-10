@@ -19,7 +19,7 @@ EntityWrapper& EntityWrapper::Create()
 EntityWrapper& EntityWrapper::SetProperties(const char* name, std::vector<Tag> tags, gce::Vector3f32 pos, gce::Vector3f32 rotation, gce::Vector3f32 scale)
 {
 	SetName(name);
-	SetTags(tags);
+	AddTags(tags);
 	transform.SetWorldPosition(pos);
 	transform.SetWorldRotation(rotation);
 	transform.SetWorldScale(scale);
@@ -32,7 +32,7 @@ EntityWrapper& EntityWrapper::SetChildProperties(EntityWrapper& parent, const ch
 	parent.AddChild(*this);
 
 	SetName(name);
-	SetTags(tags);
+	AddTags(tags);
 	transform.SetLocalPosition(pos);
 	transform.SetLocalRotation(rotation);
 	transform.SetLocalScale(scale);
