@@ -5,6 +5,7 @@
 
 #include "Components/TextRenderer.h"
 #include "Components/UIButton.h"
+#include "Components/UiImage.h"
 #include "GameObject.h"
 
 #include "GameManager.h"
@@ -78,6 +79,15 @@ void UiSystem::HandleUiRendering()
 
 		pWindow->SetActiveBrush( *pTextRenderer->pBrush );
 		pWindow->DrawTextUI( pTextRenderer->text, *pTextRenderer->pFont, *pTextRenderer->rectPosF );
+	}
+
+	for (UiImage* pImage : UiImage::s_list)
+	{
+		if (pImage->IsActive() == false || pImage->m_created == false)
+			continue;
+
+		GameManager::GetWindow()->SetActiveBrush(*pImage->btmBrush);
+		GameManager::GetWindow()->DrawShapeUI(*pImage->rectImage, 1);
 	}
 
 	pWindow->EndUI();

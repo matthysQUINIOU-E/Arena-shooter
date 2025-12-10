@@ -140,7 +140,21 @@ gce::PhysicComponent* EntityWrapper::AddPhysics(float32 mass, float32 gravitySca
 	return component;
 }
 
-gce::TextRenderer* EntityWrapper::AddTextRenderer(std::wstring txt, gce::RectanglePosF dimensions, gce::Color txtColor, std::wstring fontName)
+gce::TextRenderer* EntityWrapper::AddStaticTextRenderer(std::wstring txt, gce::RectanglePosF dimensions, gce::Color txtColor, std::wstring fontName)
+{
+	gce::TextRenderer* component = AddComponent<gce::TextRenderer>();
+
+	component->pFont = new gce::Font(fontName);
+	component->pBrush = new gce::ColorBrush(txtColor);
+
+	std::wstring* pTxt = new std::wstring(txt);
+	component->text = *pTxt;
+	component->rectPosF = new gce::RectanglePosF(dimensions);
+
+	return component;
+}
+
+gce::TextRenderer* EntityWrapper::AddDynamicTextRenderer(std::wstring& txt, gce::RectanglePosF dimensions, gce::Color txtColor, std::wstring fontName)
 {
 	gce::TextRenderer* component = AddComponent<gce::TextRenderer>();
 

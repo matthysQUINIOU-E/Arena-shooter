@@ -35,6 +35,9 @@ std::wstring totalAmmoTxt;
 EntityWrapper* pHpUI = nullptr;
 std::wstring hpTxt;
 
+EntityWrapper* pCrosshair = nullptr;
+
+
 std::wstring NOTHING = L"";
 
 
@@ -147,18 +150,34 @@ void Start()
 	pUIManager = GameManager::GetSceneManager().GetUIManager();
 
 	pFpsUI = &EntityWrapper::Create();
-	pFpsUI->AddTextRenderer(L"Fps", { 0, 0, 300, 300 }, gce::Color::Black);
+	pFpsUI->AddDynamicTextRenderer(fpsTxt, { 0, 0, 300, 300 }, gce::Color::Black);
 
 	pAmmoUI = &EntityWrapper::Create();
 	gce::Vector3f32 ammoPos = { 1480, 900, 0.f };
-	pAmmoUI->AddTextRenderer(L"Ammos", { ammoPos.x, ammoPos.y, 0, 0 }, gce::Color::Red);
+	pAmmoUI->AddDynamicTextRenderer(ammoTxt, { ammoPos.x, ammoPos.y, 0, 0 }, gce::Color::Red);
 
 	pTotalAmmoUI = &EntityWrapper::Create();
 	gce::Vector3f32 totalAmmmoPos = { 1480, 850, 0.f };
-	pTotalAmmoUI->AddTextRenderer(L"Total Ammos", { totalAmmmoPos.x, totalAmmmoPos.y, 0, 0 }, gce::Color::Red);
+	pTotalAmmoUI->AddDynamicTextRenderer(totalAmmoTxt, { totalAmmmoPos.x, totalAmmmoPos.y, 0, 0 }, gce::Color::Red);
 
 	pHpUI = &EntityWrapper::Create();
-	pHpUI->AddTextRenderer(L"HP", { 0, 900, 400, 0 }, gce::Color::Red);
+	pHpUI->AddDynamicTextRenderer(hpTxt, { 0, 900, 400, 0 }, gce::Color::Red);
+
+
+	pCrosshair = &EntityWrapper::Create(); // TEST
+	auto image = pCrosshair->AddComponent<UiImage>();
+	Vector2f32 center = { (float)WINDOW_WIDTH / 2.f, (float)WINDOW_HEIGHT / 2.f };
+	Vector2f32 size = { 250, 250 };
+
+	float scale = 0.25f;
+
+	Vector2f32 posUi = center - size * 0.5f * scale;
+	image->InitializeImage(posUi, size, 1.f);
+	image->btmBrush = new BitMapBrush("res/2D_Assets/crosshair.png");
+
+	image->btmBrush->SetTransformMatrix({ posUi.x, posUi.y - 25, 0 }, { scale, scale, scale }, 0);
+
+	image->SetActive(true);
 }
 
 void Update()
@@ -169,6 +188,7 @@ void Update()
 	pTotalAmmoUI->SetActive(display);
 	pHpUI->SetActive(display);
 	pFpsUI->SetActive(display);
+	pCrosshair->SetActive(display);
 
 	if (display == true)
 	{

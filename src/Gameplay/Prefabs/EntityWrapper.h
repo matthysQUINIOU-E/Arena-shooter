@@ -23,6 +23,7 @@ public:
 
     gce::PhysicComponent* AddPhysics(float32 mass, float32 gravityScale, float32 bounciness);
 
-    gce::TextRenderer* AddTextRenderer(std::wstring txt, gce::RectanglePosF dimensions = {0, 0, 200, 200}, gce::Color txtColor = gce::Color::Black, std::wstring fontName = L"Arial");
+    gce::TextRenderer* AddStaticTextRenderer(std::wstring txt, gce::RectanglePosF dimensions = { 0, 0, 200, 200 }, gce::Color txtColor = gce::Color::Black, std::wstring fontName = L"Arial"); // The text won't change
+    gce::TextRenderer* AddDynamicTextRenderer(std::wstring& txt, gce::RectanglePosF dimensions = {0, 0, 200, 200}, gce::Color txtColor = gce::Color::Black, std::wstring fontName = L"Arial"); // The text can be changed
     gce::UIButton* AddUIButton(gce::Vector2f32 pos, gce::Vector2f32 rotation, gce::Vector2f32 scale, const char* textureBrushPath = "", const char* textureHoverBrushPath = "");
 };

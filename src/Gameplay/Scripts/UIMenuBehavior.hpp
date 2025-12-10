@@ -23,11 +23,9 @@ UIManager* pUIManager = nullptr;
 
 //Members
 EntityWrapper* pTitle = nullptr;
-std::wstring titleTxt = L"Title Game :3";
 
 EntityWrapper* pButtonPlay = nullptr;
-EntityWrapper* 
-
+EntityWrapper* pPlay = nullptr;
 
 std::wstring NOTHING = L"";
 
@@ -43,10 +41,14 @@ void Start()
 	pUIManager = GameManager::GetSceneManager().GetUIManager();
 
 	pTitle = &EntityWrapper::Create();
-	pTitle->AddTextRenderer(titleTxt, { 860, 400, 0, 0 }, gce::Color::Magenta);
+	pTitle->AddStaticTextRenderer(L"Title Game :3", {900, 350, 0, 0}, gce::Color::Magenta);
 
+	//PLAY
 	pButtonPlay = &EntityWrapper::Create();
-	pButtonPlay->AddUIButton({ 960, 540 }, { 0, 0 }, { 300, 200 }, "res/Texture/jaune.jpg")->AddListener(OnTriggerButtonPlay);
+	pButtonPlay->AddUIButton({ 960, 540 }, { 0, 0 }, { 300, 150 }, "res/Texture/jaune.jpg")->AddListener(OnTriggerButtonPlay);
+
+	pPlay = &EntityWrapper::Create();
+	pPlay->AddStaticTextRenderer(L"PLAY", {900, 500,0, 0}, gce::Color::Black);
 }
 
 void Update()
@@ -54,12 +56,9 @@ void Update()
 	bool display = pUIManager->IsSceneType(SceneType::MenuScene);
 
 	pTitle->SetActive(display);
-	pButtonPlay->SetActive(display);
 
-	if (display == true)
-	{
-		pTitle->GetComponent<TextRenderer>()->text = titleTxt;
-	}
+	pButtonPlay->SetActive(display);
+	pPlay->SetActive(display);
 }
 
 END_SCRIPT

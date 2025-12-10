@@ -119,13 +119,18 @@ void Update()
 
 	float dt = GameManager::DeltaTime();
 
+	MeshRenderer* pMesh = m_pOwner->GetComponent<MeshRenderer>();
+
+	if (pMesh == nullptr)
+		return;
+
 	if (isReloading == false)
 	{
 		m_pOwner->transform.SetLocalRotation(defaultRotation);
 
 		if (pMagazineBehavior->IsWeaponEmpty() == false)
 		{
-			m_pOwner->GetComponent<MeshRenderer>()->pMaterial->useTextureAlbedo = 0;
+			pMesh->pMaterial->useTextureAlbedo = 0;
 		}
 		else
 		{	
@@ -137,7 +142,7 @@ void Update()
 	}
 	else
 	{
-		m_pOwner->GetComponent<MeshRenderer>()->pMaterial->useTextureAlbedo = 1.f;
+		pMesh->pMaterial->useTextureAlbedo = 1.f;
 		
 		int turns = 2; 
 
