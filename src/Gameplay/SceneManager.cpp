@@ -5,81 +5,93 @@
 #include <Engine.h>
 
 #include "Prefabs/InventoryManager.h"
-#include "Prefabs/UIManager.h"
 
 #include "Prefabs/ArenaCamera.h"
 #include "Prefabs/Player.h"
-#include "Prefabs/EntityWrapper.h"
-#include "Scripts/CameraBehavior.hpp"
 #include "Scripts/PlayerBehavior.hpp"
+
+#include "Prefabs/EntityWrapper.h"
+
+#include "Prefabs/UIManager.h"
+#include "Scripts/UIGameplayBehavior.hpp"
 #include "Scripts/UIManagerBehavior.hpp"
+#include "Scripts/CameraBehavior.hpp"
+
+#include "Scripts/SceneManagerBehavior.hpp"
+
 #include "Scripts/GunBehavior.hpp"
 #include "Scripts/AgentBehavior.hpp"
 #include "Scripts/WaveManagerBehavior.hpp"
+
 #include "Utils.h"
 #include "Agent.h"
 #include <ranges>
 
-void SceneManager::InitGamePlayScene(gce::Scene& scene)
+void SceneManager::InitGamePlay()
 {
-	ArenaCamera ac;
-	ac.Create();
-	ac.SetParams(XM_PIDIV4, 0.001f, 500.0f, 1000.0f / 800.0f);
+	if (m_IsGamePlayInit == true)
+		return;
+	
+	m_IsGamePlayInit = true;
 
-	gce::LightManager::SetLightsProperties(8.0f, 100.0f, 2.0f, 32.0f, 1.f);
-	gce::LightData directionalLight = gce::LightManager::CreateDirectionalLight(gce::Vector3f32(0.0f, -1.f, 0.f), gce::Vector4(1.0f, 1.0f, 1.0f, 1.0f), 3.0f, 3.0f);
-	gce::LightManager::AddLight(directionalLight);
-
-	Player player;
-	player.Create();
-	ac.GetScript<CameraBehavior>()->SetGameObjectToFollow(player.GetGameObject());
-
+	for (gce::GameObject* go : m_Map)
 	{
-		EntityWrapper& eMogwaiBroken = EntityWrapper::Create();
-		eMogwaiBroken.SetProperties("Mogwai", GlobalTag::TEnemy, SecondaryTag::TMogwai, { 0.5, 2, 0 }, { 0, 0, 0 }, { 1, 1, 1 });
-		eMogwaiBroken.AddMeshRenderer(gce::GeometryFactory::LoadGeometry("res/Assets/mogwai_lowcost/mogwai_lowcost.obj"), "res/Assets/mogwai_lowcost/mogwai_lowcost_base_color.png");
-		eMogwaiBroken.AddPhysics(10, 1, 0);
-		eMogwaiBroken.AddComponent<BoxCollider>();
+		go->SetActive(true);
 	}
 
-	const auto& inventory = m_pInventoryManager->GetCurrentInventory();
+	m_pPlayer = new Player();
+	m_pPlayer->Create();
 
-	for (gce::GameObject* go : inventory)
-	{
-		ac.GetGameObject()->AddChild(*go);
-	}
+	gce::GameObject* pGameObject = m_pPlayer->GetGameObject();
+	
+	pGameObject->AddChild(*GetCameraObject());
+	m_pPlayer->GetGameObject()->AddScript<PlayerBehavior>();
 
-	EntityWrapper& floor = EntityWrapper::Create();
-	floor.SetProperties("Floor", GlobalTag::TGround, SecondaryTag::None, { 0, -2, 0 }, { 0, 0, 0 }, { 50, 1, 50 });
-	floor.AddMeshRenderer(SHAPES.CUBE, "");
-	floor.AddComponent<BoxCollider>();
+	LinkObjectToScene(pGameObject, SceneType::GamePlayScene);
 
-	EntityWrapper& UI = EntityWrapper::Create();
-	UI.AddScript<UIManagerBehavior>();
+	float camOffsetY = m_pPlayer->GetGameObject()->transform.GetWorldScale().y * 0.5f;
 
-	//EntityWrapper& button = EntityWrapper::Create();
-	//UIButton* comp = button.AddComponent<UIButton>();
-	//BitMapBrush* buttonBrush = new BitMapBrush{ "res/Texture/temple_normal_map.png" }; // Image
-	//comp->pBitMapBrush = buttonBrush;
+	GetCameraObject()->transform.SetLocalPosition({ 0, camOffsetY, 0 });
 
-	//button.SetProperties("Button", Tag1::TMiscellaneous, Tag2::None, { 960, 540, 0 }, { 0, 0, 0 }, { 500, 250, 1 });
+	m_pInventoryManager->InitAll();
 
 	//Clear the Inventory Tmp Objects because GameObjects are pushed back
-
-
 	m_pInventoryManager->UnInitTmp();
 	m_pInventoryManager->InitStates();
+}
 
-	ImportBlenderScene(L"scene_base.json");
+void SceneManager::UnInitGamePlay()
+{
+	m_IsGamePlayInit = false;
 
-	EntityWrapper& entityWrapper = EntityWrapper::Create();
-	entityWrapper.AddScript<WaveManagerBehavior>();
+	for (gce::GameObject* go : m_pInventoryManager->GetCurrentInventory())
+	{
+		m_pArenaCam->GetGameObject()->RemoveChild(*go);
+	}
+
+	m_pInventoryManager->ResetAll();
+
+	m_pPlayer->GetGameObject()->RemoveChild(*GetCameraObject());
+
+	for (gce::GameObject* go : m_SceneObjectsList[SceneType::GamePlayScene])
+	{
+		go->Destroy();
+	}
+
+	m_SceneObjectsList[SceneType::GamePlayScene].clear();
+
+	delete m_pPlayer;
+	m_pPlayer = nullptr;
+
+	for (gce::GameObject* go : m_Map)
+	{
+		go->SetActive(false);
+	}
 }
 
 void SceneManager::Init()
 {
-	gce::Scene& scene = gce::Scene::Create();
-
+	//PSO
 	m_pPso = new gce::D12PipelineObject(
 		gce::SHADERS.VERTEX,
 		gce::SHADERS.PIXEL,
@@ -88,13 +100,83 @@ void SceneManager::Init()
 		gce::SHADERS.ROOT_SIGNATURE
 	);
 
-	m_pInventoryManager = new InventoryManager();
-	m_pInventoryManager->InitAll();
+	gce::Scene& scene = gce::Scene::Create();
 
-	InitGamePlayScene(scene);
+	// LIGHT
+	gce::LightManager::SetLightsProperties(8.0f, 100.0f, 2.0f, 32.0f, 1.f);
+	gce::LightData directionalLight = gce::LightManager::CreateDirectionalLight(gce::Vector3f32(0.0f, -1.f, 0.f), gce::Vector4(1.0f, 1.0f, 1.0f, 1.0f), 3.0f, 3.0f);
+	gce::LightManager::AddLight(directionalLight);
+
+	//CAM
+	m_pArenaCam = new ArenaCamera();
+	m_pArenaCam->Create();
+	m_pArenaCam->SetParams(XM_PIDIV4, 0.001f, 500.0f, 1000.0f / 800.0f);
+
+	//MAP
+	for (gce::GameObject* go : ImportBlenderScene(L"scene_base.json"))
+	{
+		go->SetTag1(PrimaryTag::TMapObject);
+
+		m_Map.push_back(go);
+	}
+
+	EntityWrapper& entityWrapper = EntityWrapper::Create();
+	entityWrapper.AddScript<WaveManagerBehavior>();
+
+	//INVENTORY
+	m_pInventoryManager = new InventoryManager();
+
+	//Scene Manager Behavior
+	m_pEmpty = &EntityWrapper::Create();
+	m_pEmpty->SetProperties("SceneManager Object", PrimaryTag::TMiscellaneous, SecondaryTag::None);
+	m_pEmpty->AddScript<SceneManagerBehavior>();
+
+	//UI
+	m_pUIManager = new UIManager();
+	m_pUIManager->Init();
+
+	InitGamePlay();
 }
 
-gce::GameObject* SceneManager::GetFirstGameObject(GlobalTag tag1, SecondaryTag tag2)
+void SceneManager::ChangeScene(SceneType newType)
+{
+	if (m_currentSceneType == newType)
+		return;
+
+	switch (m_currentSceneType)
+	{
+	case SceneType::GamePlayScene:
+		UnInitGamePlay();
+		break;
+	default:
+		for (gce::GameObject* go : m_SceneObjectsList[m_currentSceneType])
+		{
+			go->SetActive(false);
+		}
+	}
+
+	switch (newType)
+	{
+	case SceneType::GamePlayScene:
+		m_IsGamePlayInit = false;
+		InitGamePlay();
+		break;
+	default:
+		for (gce::GameObject* go : m_SceneObjectsList[newType])
+		{
+			go->SetActive(true);
+		}
+	}
+
+	m_currentSceneType = newType;
+}
+
+void SceneManager::LinkObjectToScene(gce::GameObject* obj, SceneType scene)
+{
+	m_SceneObjectsList[scene].push_back(obj);
+}
+
+gce::GameObject* SceneManager::GetFirstGameObject(PrimaryTag tag1, SecondaryTag tag2) 
 {
 	auto& gameObjects = GameManager::GetScene().m_gameObjects;
 
@@ -109,7 +191,22 @@ gce::GameObject* SceneManager::GetFirstGameObject(GlobalTag tag1, SecondaryTag t
 	return nullptr;
 }
 
-std::vector<gce::GameObject*> SceneManager::GetAllGameObjects(GlobalTag tag1, SecondaryTag tag2)
+gce::GameObject* SceneManager::GetFirstGameObject(PrimaryTag tag1)
+{
+	auto& gameObjects = GameManager::GetScene().m_gameObjects;
+
+	for (GameObject* pGameObject : gameObjects | std::views::values)
+	{
+		if (pGameObject->IsTag1(tag1))
+		{
+			return pGameObject;
+		}
+	}
+
+	return nullptr;
+}
+
+std::vector<gce::GameObject*> SceneManager::GetAllGameObjects(PrimaryTag tag1, SecondaryTag tag2)
 {
 	auto& gameObjects = GameManager::GetScene().m_gameObjects;
 
@@ -126,7 +223,7 @@ std::vector<gce::GameObject*> SceneManager::GetAllGameObjects(GlobalTag tag1, Se
 	return finalTab;
 }
 
-std::vector<gce::GameObject*> SceneManager::GetAllGameObjects(GlobalTag tag1)
+std::vector<gce::GameObject*> SceneManager::GetAllGameObjects(PrimaryTag tag1)
 {
 	auto& gameObjects = GameManager::GetScene().m_gameObjects;
 
@@ -141,5 +238,10 @@ std::vector<gce::GameObject*> SceneManager::GetAllGameObjects(GlobalTag tag1)
 	}
 
 	return finalTab;
+}
+
+gce::GameObject* SceneManager::GetCameraObject()
+{
+	return m_pArenaCam->GetGameObject();
 }
 

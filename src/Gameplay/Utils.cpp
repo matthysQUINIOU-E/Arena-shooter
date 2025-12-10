@@ -6,7 +6,7 @@
 #include "Utils.h"
 #include "NavMesh.h"
 
-void ImportBlenderScene(std::wstring jsonFile)
+std::vector<gce::GameObject*> ImportBlenderScene(std::wstring jsonFile)
 {
 	const std::string pathTexture = "res/Texture/";
 	
@@ -21,7 +21,7 @@ void ImportBlenderScene(std::wstring jsonFile)
 	}
 	catch (const std::exception& e) {
 		std::cerr << "Erreur JSON: " << e.what() << std::endl;
-		return;
+		return std::vector<gce::GameObject*>();
 	}
 
     std::regex patternPhysic("^[^_]*P");
@@ -35,6 +35,8 @@ void ImportBlenderScene(std::wstring jsonFile)
     gce::Vector<gce::Vertex> navmeshVertices;
     gce::Vector<uint32> navmeshIndices;
     std::vector<gce::GameObject*> obstaclesGameObject;
+
+    std::vector<gce::GameObject*> allCreatedObj;
 
     for (auto& obj : data)
     {
@@ -67,14 +69,14 @@ void ImportBlenderScene(std::wstring jsonFile)
             if (tex.contains("Base Color"))
                 baseColorTex = tex["Base Color"].get<std::string>();
 
-            if (tex.contains("Metallic"))
-                metallicTex = tex["Metallic"].get<std::string>();
+           /* if (tex.contains("metallic") && !tex["metallic"].is_null())
+                metallicTex = tex["metallic"].get<std::string>();
 
             if (tex.contains("Roughness"))
                 roughnessTex = tex["Roughness"].get<std::string>();
 
-            if (tex.contains("Normal"))
-                normalMapTex = tex["Normal"].get<std::string>();
+            if (tex.contains("normal_map") && !tex["normal_map"].is_null())
+                normalMapTex = tex["normal_map"].get<std::string>();*/
         }
 
         if (obj.contains("p"))
@@ -178,12 +180,15 @@ void ImportBlenderScene(std::wstring jsonFile)
         if (hasPhysic)
             gce::PhysicComponent* pPhysic = gameObject.AddComponent<gce::PhysicComponent>();
 
+        allCreatedObj.push_back(&gameObject);
     }
 
     if (!navmeshVertices.Empty())
     {
         NavMesh::Create(navmeshVertices, navmeshIndices, obstaclesGameObject);
     }
+    
+    return allCreatedObj;
 }
 
 gce::Geometry* MakeCustomGeometry(

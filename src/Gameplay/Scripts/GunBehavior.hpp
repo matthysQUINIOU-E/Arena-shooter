@@ -89,7 +89,7 @@ void Shoot()
 
 	gce::Vector3f32 spawnPoint = m_pOwner->GetChildren()[0]->transform.GetWorldPosition();
 
-	bullet.SetProperties("Bullet", GlobalTag::TProjectile, SecondaryTag::None, spawnPoint, { 0, 0, 0 }, { 0.15, 0.15, 0.15 });
+	bullet.SetProperties("Bullet", PrimaryTag::TProjectile, SecondaryTag::None, spawnPoint, { 0, 0, 0 }, { 0.15, 0.15, 0.15 });
 
 	if(m_pOwner->IsTag2(SecondaryTag::TBlunderBuss))
 		bullet.transform.LocalScale({ 3, 3, 3 });
@@ -98,6 +98,8 @@ void Shoot()
 
 	bullet.AddComponent<SphereCollider>();
 	bullet.AddScript<BulletBehavior>()->SetWeapon(m_pOwner);
+
+	GameManager::GetSceneManager().LinkObjectToScene(&bullet, SceneType::GamePlayScene);
 
 	unloadProgress = 0.f;
 	pMagazineBehavior->UseWeaponAmmo();
@@ -117,13 +119,18 @@ void Update()
 
 	float dt = GameManager::DeltaTime();
 
+	MeshRenderer* pMesh = m_pOwner->GetComponent<MeshRenderer>();
+
+	if (pMesh == nullptr)
+		return;
+
 	if (isReloading == false)
 	{
 		m_pOwner->transform.SetLocalRotation(defaultRotation);
 
 		if (pMagazineBehavior->IsWeaponEmpty() == false)
 		{
-			m_pOwner->GetComponent<MeshRenderer>()->pMaterial->useTextureAlbedo = 0;
+			pMesh->pMaterial->useTextureAlbedo = 0;
 		}
 		else
 		{	
@@ -135,7 +142,7 @@ void Update()
 	}
 	else
 	{
-		m_pOwner->GetComponent<MeshRenderer>()->pMaterial->useTextureAlbedo = 1.f;
+		pMesh->pMaterial->useTextureAlbedo = 1.f;
 		
 		int turns = 2; 
 

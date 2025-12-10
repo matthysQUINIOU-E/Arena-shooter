@@ -11,8 +11,8 @@ public:
     EntityWrapper();
 
     static EntityWrapper& Create();
-    EntityWrapper& SetProperties(const char* name, GlobalTag tag1, SecondaryTag tag2, gce::Vector3f32 pos = {0, 0, 0}, gce::Vector3f32 rotation = {0, 0, 0}, gce::Vector3f32 scale = {1, 1, 1});
-    EntityWrapper& SetChildProperties(EntityWrapper& parent, const char* name, GlobalTag tag1, SecondaryTag tag2, gce::Vector3f32 pos = { 0, 0, 0 }, gce::Vector3f32 rotation = { 0, 0, 0 }, gce::Vector3f32 scale = { 1, 1, 1 });
+    EntityWrapper& SetProperties(const char* name, PrimaryTag tag1, SecondaryTag tag2, gce::Vector3f32 pos = {0, 0, 0}, gce::Vector3f32 rotation = {0, 0, 0}, gce::Vector3f32 scale = {1, 1, 1});
+    EntityWrapper& SetChildProperties(EntityWrapper& parent, const char* name, PrimaryTag tag1, SecondaryTag tag2, gce::Vector3f32 pos = { 0, 0, 0 }, gce::Vector3f32 rotation = { 0, 0, 0 }, gce::Vector3f32 scale = { 1, 1, 1 });
     gce::MeshRenderer* AddMeshRenderer(gce::Geometry* pGeo,
         const char* albedoPath = "", const char* roughnessPath = "",
         const char* metalnessPath = "", const char* normalPath = "");
@@ -23,5 +23,7 @@ public:
 
     gce::PhysicComponent* AddPhysics(float32 mass, float32 gravityScale, float32 bounciness);
 
-    gce::TextRenderer* AddTextRenderer(std::wstring txt, gce::RectanglePosF dimensions = {0, 0, 200, 200}, gce::Color txtColor = gce::Color::Black, std::wstring fontName = L"Arial");
+    gce::TextRenderer* AddStaticTextRenderer(std::wstring txt, gce::RectanglePosF dimensions = { 0, 0, 200, 200 }, gce::Color txtColor = gce::Color::Black, std::wstring fontName = L"Arial"); // The text won't change
+    gce::TextRenderer* AddDynamicTextRenderer(std::wstring& txt, gce::RectanglePosF dimensions = {0, 0, 200, 200}, gce::Color txtColor = gce::Color::Black, std::wstring fontName = L"Arial"); // The text can be changed
+    gce::UIButton* AddUIButton(gce::Vector2f32 pos, gce::Vector2f32 rotation, gce::Vector2f32 scale, const char* textureBrushPath = "", const char* textureHoverBrushPath = "");
 };

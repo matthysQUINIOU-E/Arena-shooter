@@ -26,8 +26,8 @@ struct Component
         PhysicComponent,
         TextRenderer,
         UIButton,
+        UiImage,
         SkyBoxComponent,
-       
     };
     enum TypeMasks: uint64
     {
@@ -50,6 +50,7 @@ struct Component
         PhysicComponentMask  = 1 << PhysicComponent,
 		TextRendererMask = 1 << TextRenderer,
         UIButtonMask  = 1 << UIButton,
+        UiImageMask = 1 << UiImage,
     };
 
     [[nodiscard]] GameObject& GetOwner();

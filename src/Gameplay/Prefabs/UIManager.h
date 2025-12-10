@@ -1,15 +1,13 @@
 #pragma once
 #include <iostream>
 #include "EntityWrapper.h"
+#include "../SceneManager.h"
+#include <vector>
 
 class UIManager
 {
-	EntityWrapper* m_pAmmoObj;
 public:
-	std::wstring ammoTxt;
+	void Init();
 
-	void CreateTexts();
-
-	void UpdateUI();
+	bool IsSceneType(SceneType type);
 };
-

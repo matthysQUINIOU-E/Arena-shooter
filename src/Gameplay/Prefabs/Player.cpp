@@ -7,13 +7,12 @@
 void Player::Create()
 {
 	m_pGameObject = &EntityWrapper::Create();
-	m_pGameObject->SetProperties("Player", GlobalTag::TPlayer, SecondaryTag::None, { 0, 10, 0 }, { 0, 0, 0 }, { 1, 2, 1 });
+	m_pGameObject->SetProperties("Player", PrimaryTag::TPlayer, SecondaryTag::None, { 10, 2, 0 });
 
 	m_pGameObject->AddPhysics(10, 1, 0);
 	m_pGameObject->AddMeshRenderer(gce::SHAPES.CUBE, "");
 
 	m_pGameObject->AddComponent<BoxCollider>();
-	m_pGameObject->AddScript<PlayerBehavior>();
 	auto health = m_pGameObject->AddScript<HealthBehavior>();
 	health->SetMaxHP(100);
 }

@@ -1,10 +1,13 @@
 #pragma once
+#include <vector>
+
 namespace gce
 {
 	class Geometry;
+	class GameObject;
 }
 
-void ImportBlenderScene(std::wstring jsonFile);
+std::vector<gce::GameObject*> ImportBlenderScene(std::wstring jsonFile);
 gce::Geometry* MakeCustomGeometry(
     std::vector<float> vertices,
     std::vector<uint32_t> indices,
@@ -14,3 +17,4 @@ gce::Geometry* MakeCustomGeometry(
 
 gce::Vector3f32 ClosestPointOnLine(const gce::Vector3f32& A, const gce::Vector3f32& B, const gce::Vector3f32& P);
 bool IsPointNearLine(const gce::Vector3f32& A, const gce::Vector3f32& B, const gce::Vector3f32& P, float radius);
+

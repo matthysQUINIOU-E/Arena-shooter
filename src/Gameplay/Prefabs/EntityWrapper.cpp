@@ -16,7 +16,7 @@ EntityWrapper& EntityWrapper::Create()
 	return *pNew;
 }
 
-EntityWrapper& EntityWrapper::SetProperties(const char* name, GlobalTag tag1, SecondaryTag tag2, gce::Vector3f32 pos, gce::Vector3f32 rotation, gce::Vector3f32 scale)
+EntityWrapper& EntityWrapper::SetProperties(const char* name, PrimaryTag tag1, SecondaryTag tag2, gce::Vector3f32 pos, gce::Vector3f32 rotation, gce::Vector3f32 scale)
 {
 	SetName(name);
 	SetTag1(tag1);
@@ -28,7 +28,7 @@ EntityWrapper& EntityWrapper::SetProperties(const char* name, GlobalTag tag1, Se
 	return *this;
 }
 
-EntityWrapper& EntityWrapper::SetChildProperties(EntityWrapper& parent, const char* name, GlobalTag tag1, SecondaryTag tag2, gce::Vector3f32 pos, gce::Vector3f32 rotation, gce::Vector3f32 scale)
+EntityWrapper& EntityWrapper::SetChildProperties(EntityWrapper& parent, const char* name, PrimaryTag tag1, SecondaryTag tag2, gce::Vector3f32 pos, gce::Vector3f32 rotation, gce::Vector3f32 scale)
 {
 	parent.AddChild(*this);
 
@@ -140,7 +140,21 @@ gce::PhysicComponent* EntityWrapper::AddPhysics(float32 mass, float32 gravitySca
 	return component;
 }
 
-gce::TextRenderer* EntityWrapper::AddTextRenderer(std::wstring txt, gce::RectanglePosF dimensions, gce::Color txtColor, std::wstring fontName)
+gce::TextRenderer* EntityWrapper::AddStaticTextRenderer(std::wstring txt, gce::RectanglePosF dimensions, gce::Color txtColor, std::wstring fontName)
+{
+	gce::TextRenderer* component = AddComponent<gce::TextRenderer>();
+
+	component->pFont = new gce::Font(fontName);
+	component->pBrush = new gce::ColorBrush(txtColor);
+
+	std::wstring* pTxt = new std::wstring(txt);
+	component->text = *pTxt;
+	component->rectPosF = new gce::RectanglePosF(dimensions);
+
+	return component;
+}
+
+gce::TextRenderer* EntityWrapper::AddDynamicTextRenderer(std::wstring& txt, gce::RectanglePosF dimensions, gce::Color txtColor, std::wstring fontName)
 {
 	gce::TextRenderer* component = AddComponent<gce::TextRenderer>();
 
@@ -148,6 +162,34 @@ gce::TextRenderer* EntityWrapper::AddTextRenderer(std::wstring txt, gce::Rectang
 	component->pBrush = new gce::ColorBrush(txtColor);
 	component->text = txt;
 	component->rectPosF = new gce::RectanglePosF(dimensions);
+
+	return component;
+}
+
+gce::UIButton* EntityWrapper::AddUIButton(gce::Vector2f32 pos, gce::Vector2f32 rotation, gce::Vector2f32 scale, const char* textureBrushPath, const char* textureHoverBrushPath)
+{
+	transform.SetWorldPosition({pos.x, pos.y, 0});
+	transform.SetWorldRotation({rotation.x, rotation.y, 0});
+	transform.SetWorldScale({scale.x, scale.y, 0});
+
+	gce::UIButton* component = AddComponent<gce::UIButton>();
+
+	if (textureBrushPath == "")
+	{
+		component->pBitMapBrush = new gce::BitMapBrush("res/Assets/white.png");
+		component->pHoverBitMapBrush = component->pBitMapBrush;
+	}
+	else
+	{
+		component->pBitMapBrush = new gce::BitMapBrush(textureBrushPath);
+
+		if (textureHoverBrushPath == "")
+		{
+			component->pHoverBitMapBrush = component->pBitMapBrush;
+		}
+		else
+			component->pHoverBitMapBrush = new gce::BitMapBrush(textureHoverBrushPath);
+	}
 
 	return component;
 }

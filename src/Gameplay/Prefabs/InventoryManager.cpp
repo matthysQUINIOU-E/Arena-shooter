@@ -20,7 +20,9 @@ gce::GameObject* InventoryManager::CreateMusket()
 {
 	EntityWrapper& musket = EntityWrapper::Create();
 
-	musket.SetProperties("Musket", GlobalTag::TWeapon, SecondaryTag::TMusket, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 });
+	musket.SetProperties("Musket", PrimaryTag::TWeapon, SecondaryTag::TMusket, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 });
+	m_pSceneManager->GetCameraObject()->AddChild(musket);
+
 	musket.transform.SetLocalPosition({ 0.25, -0.1f, 0.5f });
 
 	musket.AddMeshRenderer(gce::GeometryFactory::LoadGeometry("res/Assets/musket/musket.obj"), "res/Assets/musket/musket_base_color.png");
@@ -29,16 +31,18 @@ gce::GameObject* InventoryManager::CreateMusket()
 	holePos.z -= 0.5;
 	holePos.y += 0.03;
 
-	hole.SetChildProperties(musket, "Musket Hole", GlobalTag::TMiscellaneous, SecondaryTag::None, {0, 0, 0}, {0, 0, 0}, {0.05, 0.05, 0.05});
+	hole.SetChildProperties(musket, "Musket Hole", PrimaryTag::TMiscellaneous, SecondaryTag::None, {0, 0, 0}, {0, 0, 0}, {0.05, 0.05, 0.05});
 	hole.transform.LocalTranslate(holePos);
 
 	auto ammoManagerScript = musket.AddScript<WeaponMagazineBehavior>();
-	ammoManagerScript->SetMaxCapacity(1000);
+	ammoManagerScript->SetMaxCapacity(30);
 
 	auto gunBehavior = musket.AddScript<GunBehavior>();
-	gunBehavior->SetUnloadSpeed(0.1);
-	gunBehavior->SetReloadTime(0.1f);
+	gunBehavior->SetUnloadSpeed(0.2);
+	gunBehavior->SetReloadTime(1.f);
 	gunBehavior->SetAmmoManagerScript(ammoManagerScript);
+
+	m_pSceneManager->LinkObjectToScene(&musket, SceneType::GamePlayScene);
 
 	return &musket;
 }
@@ -47,9 +51,11 @@ gce::GameObject* InventoryManager::CreateBlunderBuss()
 {
 	EntityWrapper& blunderbuss = EntityWrapper::Create();
 
-	blunderbuss.SetProperties("Blunderbuss", GlobalTag::TWeapon, SecondaryTag::TBlunderBuss, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 });
+	blunderbuss.SetProperties("Blunderbuss", PrimaryTag::TWeapon, SecondaryTag::TBlunderBuss, { 0, 0, 0.f }, { 0, 0, 0 }, { 1, 1, 1 });
+	m_pSceneManager->GetCameraObject()->AddChild(blunderbuss);
+
 	blunderbuss.transform.SetLocalPosition({ 0.25, -0.1f, 0.5f });
-	
+
 	blunderbuss.AddMeshRenderer(gce::GeometryFactory::LoadGeometry("res/Assets/blunderbuss/blunderbuss.obj"), "res/Assets/blunderbuss/blunderbuss_base_color.png");
 
 	EntityWrapper& hole = EntityWrapper::Create();
@@ -57,7 +63,7 @@ gce::GameObject* InventoryManager::CreateBlunderBuss()
 	holePos.z -= 0.9;
 	holePos.y += 0;
 
-	hole.SetChildProperties(blunderbuss, "Blunderbuss Hole", GlobalTag::TMiscellaneous, SecondaryTag::None, { 0, 0, 0 }, { 0, 0, 0 }, { 0.1, 0.1, 0.1 });
+	hole.SetChildProperties(blunderbuss, "Blunderbuss Hole", PrimaryTag::TMiscellaneous, SecondaryTag::None, { 0, 0, 0 }, { 0, 0, 0 }, { 0.1, 0.1, 0.1 });
 	hole.transform.LocalTranslate(holePos);
 
 	auto ammoManagerScript = blunderbuss.AddScript<WeaponMagazineBehavior>();
@@ -68,6 +74,8 @@ gce::GameObject* InventoryManager::CreateBlunderBuss()
 	gunBehavior->SetReloadTime(2);
 	gunBehavior->SetAmmoManagerScript(ammoManagerScript);
 
+	m_pSceneManager->LinkObjectToScene(&blunderbuss, SceneType::GamePlayScene);
+
 	return &blunderbuss;
 }
 
@@ -75,8 +83,9 @@ gce::GameObject* InventoryManager::CreateBlunderBuss()
 gce::GameObject* InventoryManager::CreateBomb()
 {
 	EntityWrapper& bomb = EntityWrapper::Create();
+	m_pSceneManager->GetCameraObject()->AddChild(bomb);
 
-	bomb.SetProperties("Bomb", GlobalTag::TThrowableWeapon, SecondaryTag::TBomb, { 0, 0, 0 }, { 0, 0, 0 }, { 2, 2, 2 });
+	bomb.SetProperties("Bomb", PrimaryTag::TThrowableWeapon, SecondaryTag::TBomb, { 0, 0, 0 }, { 0, 0, 0 }, { 2, 2, 2 });
 	bomb.transform.SetLocalPosition({ 0.25, -0.1f, 0.5f });
 
 	bomb.AddMeshRenderer(gce::GeometryFactory::LoadGeometry("res/Assets/bomb/bomb.obj"), "res/Assets/bomb/bomb_base_color.png");
@@ -84,14 +93,18 @@ gce::GameObject* InventoryManager::CreateBomb()
 	EntityWrapper& hole = EntityWrapper::Create();
 	gce::Vector3f32 holePos = bomb.transform.GetWorldPosition();
 
-	hole.SetChildProperties(bomb, "Bomb Hole", GlobalTag::TMiscellaneous, SecondaryTag::None, { 0, 0, 0 }, { 0, 0, 0 }, { 0.05, 0.05, 0.05 });
+	hole.SetChildProperties(bomb, "Bomb Hole", PrimaryTag::TMiscellaneous, SecondaryTag::None, { 0, 0, 0 }, { 0, 0, 0 }, { 0.05, 0.05, 0.05 });
 	hole.transform.SetWorldPosition(holePos);
+
+	m_pSceneManager->LinkObjectToScene(&bomb, SceneType::GamePlayScene);
 
 	return &bomb;
 }
 
 void InventoryManager::InitAll()
 {
+	m_pSceneManager = &GameManager::GetSceneManager();
+
 	m_tmpWeapons.push_back(CreateMusket());
 	m_tmpWeapons.push_back(CreateBlunderBuss());
 	
@@ -106,6 +119,22 @@ void InventoryManager::InitAll()
 	m_ammoStock.push_back(new Ammos(SecondaryTag::TLightAmmo, 200));
 }
 
+void InventoryManager::ResetAll()
+{
+	m_inventoryIndex = 0;
+	m_pEquipedObject = nullptr;
+
+	UnInitTmp();
+	m_currentInventory.clear();
+
+	for (Ammos* ammos : m_ammoStock)
+	{
+		delete ammos;
+	}
+
+	m_ammoStock.clear();
+}
+
 std::vector<gce::GameObject*> InventoryManager::GetWeapons()
 {
 	if (m_tmpWeapons.empty() == false)
@@ -115,7 +144,7 @@ std::vector<gce::GameObject*> InventoryManager::GetWeapons()
 		return weapons;
 	}
 
-	return gce::GameManager::GetSceneManager().GetAllGameObjects(GlobalTag::TWeapon);
+	return gce::GameManager::GetSceneManager().GetAllGameObjects(PrimaryTag::TWeapon);
 }
 
 gce::GameObject* InventoryManager::GetWeapon(SecondaryTag tag)
@@ -129,7 +158,7 @@ gce::GameObject* InventoryManager::GetWeapon(SecondaryTag tag)
 		}
 	}
 
-	return gce::GameManager::GetSceneManager().GetFirstGameObject(GlobalTag::TWeapon, tag);
+	return gce::GameManager::GetSceneManager().GetFirstGameObject(PrimaryTag::TWeapon, tag);
 }
 
 std::vector<gce::GameObject*> InventoryManager::GetCollectibles()
@@ -141,7 +170,7 @@ std::vector<gce::GameObject*> InventoryManager::GetCollectibles()
 		return collectibles;
 	}
 
-	return gce::GameManager::GetSceneManager().GetAllGameObjects(GlobalTag::TThrowableWeapon);
+	return gce::GameManager::GetSceneManager().GetAllGameObjects(PrimaryTag::TThrowableWeapon);
 }
 
 gce::GameObject* InventoryManager::GetCollectible(SecondaryTag tag)
@@ -155,7 +184,7 @@ gce::GameObject* InventoryManager::GetCollectible(SecondaryTag tag)
 		}
 	}
 
-	return gce::GameManager::GetSceneManager().GetFirstGameObject(GlobalTag::TThrowableWeapon, tag);
+	return gce::GameManager::GetSceneManager().GetFirstGameObject(PrimaryTag::TThrowableWeapon, tag);
 }
 
 void InventoryManager::UnInitTmp()
@@ -195,7 +224,7 @@ void InventoryManager::SwapEquipedObject(bool forward)
 
 	if (auto current = m_currentInventory[m_inventoryIndex])
 	{
-		if(current->IsTag1(GlobalTag::TWeapon))
+		if(current->IsTag1(PrimaryTag::TWeapon))
 			current->GetScript<GunBehavior>()->OnLeaveWeapon(); // The old weapon
 	}
 
@@ -212,7 +241,7 @@ void InventoryManager::SwapEquipedObject(bool forward)
 			pObject->SetActive(true);
 			m_pEquipedObject = pObject;
 
-			if (pObject->IsTag1(GlobalTag::TWeapon))
+			if (pObject->IsTag1(PrimaryTag::TWeapon))
 			{
 				pObject->GetScript<GunBehavior>()->OnReceiveWeapon();
 			}
@@ -237,7 +266,7 @@ void InventoryManager::SetEquipedObjectByIndex(int index)
 
 	if (auto current = m_currentInventory[m_inventoryIndex])
 	{
-		if (current->IsTag1(GlobalTag::TWeapon))
+		if (current->IsTag1(PrimaryTag::TWeapon))
 			current->GetScript<GunBehavior>()->OnLeaveWeapon(); // The old weapon
 	}
 
@@ -254,7 +283,7 @@ void InventoryManager::SetEquipedObjectByIndex(int index)
 			pObject->SetActive(true);
 			m_pEquipedObject = pObject;
 
-			if (pObject->IsTag1(GlobalTag::TWeapon))
+			if (pObject->IsTag1(PrimaryTag::TWeapon))
 			{
 				pObject->GetScript<GunBehavior>()->OnReceiveWeapon();
 			}

@@ -62,6 +62,10 @@ void GameObject::Destroy()
     if ( HasComponent<SphereCollider>() ) RemoveComponent<SphereCollider>();
     if ( HasComponent<BoxCollider>() ) RemoveComponent<BoxCollider>();
     if ( HasComponent<PhysicComponent>() ) RemoveComponent<PhysicComponent>();
+    if ((HasComponent<TextRenderer>())) RemoveComponent<TextRenderer>();
+    if ((HasComponent<UIButton>())) RemoveComponent<UIButton>();
+    if ((HasComponent<UiImage>())) RemoveComponent<UiImage>();
+    if ((HasComponent<SkyBoxComponent>())) RemoveComponent<SkyBoxComponent>();
 
     GameManager::GetLifespanSystem().m_toDelete.gameObjects.Push( this );
 

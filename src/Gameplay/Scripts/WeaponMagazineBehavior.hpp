@@ -20,16 +20,19 @@ const SecondaryTag& GetAmmoTypeFromWeapon()
 {
 	SecondaryTag typeToUse = SecondaryTag::None;
 
-	switch (m_pOwner->GetSecondaryTag())
+	if (m_pOwner)
 	{
-	case SecondaryTag::TMusket:
-		typeToUse = SecondaryTag::TNormalAmmo;
-		break;
-	case SecondaryTag::TBlunderBuss:
-		typeToUse = SecondaryTag::THeavyAmmo;
-		break;
-	default:
-		break;
+		switch (m_pOwner->GetSecondaryTag())
+		{
+		case SecondaryTag::TMusket:
+			typeToUse = SecondaryTag::TNormalAmmo;
+			break;
+		case SecondaryTag::TBlunderBuss:
+			typeToUse = SecondaryTag::THeavyAmmo;
+			break;
+		default:
+			break;
+		}
 	}
 
 	return typeToUse;

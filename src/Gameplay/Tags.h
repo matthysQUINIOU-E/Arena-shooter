@@ -1,6 +1,6 @@
 #pragma once
 
-enum class GlobalTag
+enum class PrimaryTag
 {
     None,
     TPlayer,
@@ -11,7 +11,6 @@ enum class GlobalTag
     TGround,
     TEnemy,
     TProjectile,
-
     TMiscellaneous,
     TSpawner
 }; 

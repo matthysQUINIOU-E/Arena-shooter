@@ -7,7 +7,6 @@ gce::GameObject* ArenaCamera::Create()
 	m_pGameObject = &EntityWrapper::Create();
 
 	m_pCamera = m_pGameObject->AddComponent<gce::Camera>();
-	m_pGameObject->AddScript<CameraBehavior>();
 
 	m_pCamera->SetMainCamera();
 	m_pCamera->SetType(gce::PERSPECTIVE);
