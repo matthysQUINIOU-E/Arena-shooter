@@ -59,10 +59,12 @@ bool NavMesh::DoesSegmentGoThroughObstacles(const gce::Vector3f32& A, const gce:
 		const float32& maxZ = geoObstacle->max.z + obstaclePos.z;
 		const float32& minX = geoObstacle->min.x + obstaclePos.x;
 		const float32& minZ = geoObstacle->min.z + obstaclePos.z;
-		if (isPointNearLine(A, B, { maxX, 0.f, maxZ }, radius) ||
-			isPointNearLine(A, B, { minX, 0.f, maxZ }, radius) || 
-			isPointNearLine(A, B, { maxX, 0.f, minZ }, radius) || 
-			isPointNearLine(A, B, { minX, 0.f, minZ }, radius))
+
+		if (IsPointNearLine(A, B, { maxX, 0.f, maxZ }, radius) ||
+			IsPointNearLine(A, B, { minX, 0.f, maxZ }, radius) || 
+			IsPointNearLine(A, B, { maxX, 0.f, minZ }, radius) || 
+			IsPointNearLine(A, B, { minX, 0.f, minZ }, radius))
+			
 			return true;
 	}
 	return false;

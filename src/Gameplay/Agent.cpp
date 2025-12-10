@@ -28,7 +28,7 @@ void Agent::FollowPathToTarget()
 		MoveToTarget();
 	else if (m_currentLineNodes.empty())
 		CalculateNextLine();
-	else 
+	else if (!m_currentLineNodes.empty())
 		FollowCurrentLine();
 }
 
@@ -72,7 +72,7 @@ void Agent::CalculateNextLine()
 
 	gce::Vector3f32 pos = transform.GetWorldPosition();
 	gce::Vector3f32 boxMin = meshRenderer->pGeometry->min;
-	float radius = (pos - boxMin).Norm();
+	float radius = boxMin.Norm();
 
 	size_t indexOffset = 1;
 
@@ -91,15 +91,23 @@ void Agent::CalculateNextLine()
 		indexOffset++;
 	}
 
-	if (indexOffset == 1)
-		return;
+	// temp fix happens when agent is to close to obstacles 
+	// should probably modify Astar to adjust the path to agent geometry size 
+	if (indexOffset == 1 && m_currentPathIndex + indexOffset < m_path.size())
+	{
+		Node<NavTile, Agent>* pToNode = m_path[m_currentPathIndex + indexOffset];
+		gce::Vector3f32 toNodePos = pToNode->data->GetPosition();
+		lastNodePos = toNodePos;
+		m_currentLineNodes.push(pToNode);
+		m_currentLineTargets.push(ClosestPointOnLine(pos, lastNodePos, toNodePos));
+	}
 
-	for (size_t i = indexOffset; i >= 1; i--)
+	for (size_t i = 1; i < indexOffset; i++)
 	{
 		Node<NavTile, Agent>* pToNode = m_path[m_currentPathIndex + i];
 		gce::Vector3f32 toNodePos = pToNode->data->GetPosition();
 		m_currentLineNodes.push(pToNode);
-		m_currentLineTargets.push(closestPointOnLine(pos, lastNodePos, toNodePos));
+		m_currentLineTargets.push(ClosestPointOnLine(pos, lastNodePos, toNodePos));
 	}
 
 	m_direction = (lastNodePos - transform.GetWorldPosition()).Normalize();

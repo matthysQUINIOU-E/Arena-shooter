@@ -41,6 +41,15 @@ void NavTile::CheckObstacles(std::vector<gce::GameObject*> obstacles)
 			return;
 		}
 	}	
+	
+	/*
+		gce::GameObject& go = gce::GameObject::Create(gce::GameManager::GetScene());
+		gce::MeshRenderer* mr = go.AddComponent<gce::MeshRenderer>();
+		mr->pGeometry = gce::SHAPES.CUBE;
+		mr->pPso = gce::GameManager::GetSceneManager().GetPSO();
+		go.transform.SetWorldPosition(m_center);
+		go.transform.SetWorldScale({ 0.1f,0.5f,0.1f });
+	*/
 }
 
 const gce::Vector3f32& NavTile::GetPosition() const

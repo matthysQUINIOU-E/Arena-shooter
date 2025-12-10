@@ -53,6 +53,7 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 
 	ImportBlenderScene(L"scene_base.json");
 
+	/*
 	Agent& agent = Agent::Create();
 	MeshRenderer* mr = agent.AddComponent<MeshRenderer>();
 	mr->pGeometry = gce::SHAPES.CUBE;
@@ -61,6 +62,7 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 	AgentBehavior* ab = agent.AddScript<AgentBehavior>();
 	agent.SetTarget(player.GetGameObject());
 	agent.SetCurrentNode(NavMesh::Instance()->GetNearestNodeFromPosition(agent.transform.GetWorldPosition()));
+	*/
 }
 
 void SceneManager::Init()

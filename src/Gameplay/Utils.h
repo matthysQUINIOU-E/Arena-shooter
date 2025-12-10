@@ -12,5 +12,5 @@ gce::Geometry* MakeCustomGeometry(
     gce::Vector<uint32>& gceIndices
 );
 
-gce::Vector3f32 closestPointOnLine(const gce::Vector3f32& A, const gce::Vector3f32& B, const gce::Vector3f32& P);
-bool isPointNearLine(const gce::Vector3f32& A, const gce::Vector3f32& B, const gce::Vector3f32& P, float radius);
+gce::Vector3f32 ClosestPointOnLine(const gce::Vector3f32& A, const gce::Vector3f32& B, const gce::Vector3f32& P);
+bool IsPointNearLine(const gce::Vector3f32& A, const gce::Vector3f32& B, const gce::Vector3f32& P, float radius);

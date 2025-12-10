@@ -207,37 +207,39 @@ gce::Geometry* MakeCustomGeometry(
     return customGeo;
 }
 
-gce::Vector3f32 closestPointOnLine(const gce::Vector3f32& A, const gce::Vector3f32& B, const gce::Vector3f32& P)
+gce::Vector3f32 ClosestPointOnLine(const gce::Vector3f32& a, const gce::Vector3f32& b, const gce::Vector3f32& p)
 {
 
-    gce::Vector3f32 d = B - A;
-    gce::Vector3f32 AP = P - A;
+    gce::Vector3f32 d = b - a;
+    gce::Vector3f32 ap = p - a;
 
     float denom = d.DotProduct(d);
-    if (denom == 0.0f)
-        return A;
+    if (denom == 0.0f)  
+        return a;
 
-    float t = AP.DotProduct(d) / denom;
+    float t = ap.DotProduct(d) / denom;
 
-    return A + d * t; 
+    t = max(0.f,min(1.f, t));
 
+    return a + d * t;
 }
 
-bool isPointNearLine(const gce::Vector3f32& A, const gce::Vector3f32& B, const gce::Vector3f32& P, float radius)
+bool IsPointNearLine(const gce::Vector3f32& a, const gce::Vector3f32& b, const gce::Vector3f32& p, float radius)
 {
-    gce::Vector3f32 d = B - A;
-    gce::Vector3f32 AP = P - A;
+    gce::Vector3f32 d = b - a;
+    gce::Vector3f32 ap = p - a;
 
     float denom = d.DotProduct(d);
-    if (denom == 0.0f)
-        return (P - A).DotProduct(P - A) <= radius * radius;
+    if (denom == 0.0f)  // a == b
+        return ap.DotProduct(ap) <= radius * radius;
 
-    float t = AP.DotProduct(d) / denom;
+    float t = ap.DotProduct(d) / denom;
 
-    gce::Vector3f32 proj = A + d * t;
+    if (t < 0.0f) t = 0.0f;
+    else if (t > 1.0f) t = 1.0f;
 
-    gce::Vector3f32 diff = P - proj;
-    float distSq = diff.DotProduct(diff);
+    gce::Vector3f32 proj = a + d * t;
+    gce::Vector3f32 diff = p - proj;
 
-    return distSq <= radius * radius;
+    return diff.DotProduct(diff) <= radius * radius;
 }
