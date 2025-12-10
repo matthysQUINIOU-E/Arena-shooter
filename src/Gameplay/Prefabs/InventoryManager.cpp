@@ -19,9 +19,10 @@ InventoryManager::~InventoryManager()
 gce::GameObject* InventoryManager::CreateMusket()
 {
 	EntityWrapper& musket = EntityWrapper::Create();
-	m_pSceneManager->GetCameraObject()->AddChild(musket);
 
 	musket.SetProperties("Musket", PrimaryTag::TWeapon, SecondaryTag::TMusket, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 });
+	m_pSceneManager->GetCameraObject()->AddChild(musket);
+
 	musket.transform.SetLocalPosition({ 0.25, -0.1f, 0.5f });
 
 	musket.AddMeshRenderer(gce::GeometryFactory::LoadGeometry("res/Assets/musket/musket.obj"), "res/Assets/musket/musket_base_color.png");
@@ -49,9 +50,12 @@ gce::GameObject* InventoryManager::CreateMusket()
 gce::GameObject* InventoryManager::CreateBlunderBuss()
 {
 	EntityWrapper& blunderbuss = EntityWrapper::Create();
+
+	blunderbuss.SetProperties("Blunderbuss", PrimaryTag::TWeapon, SecondaryTag::TBlunderBuss, { 0, 0, 0.f }, { 0, 0, 0 }, { 1, 1, 1 });
 	m_pSceneManager->GetCameraObject()->AddChild(blunderbuss);
 
-	blunderbuss.SetProperties("Blunderbuss", PrimaryTag::TWeapon, SecondaryTag::TBlunderBuss, { 0.25, -0.1f, 0.5f }, { 0, 0, 0 }, { 1, 1, 1 });
+	blunderbuss.transform.SetLocalPosition({ 0.25, -0.1f, 0.5f });
+
 	blunderbuss.AddMeshRenderer(gce::GeometryFactory::LoadGeometry("res/Assets/blunderbuss/blunderbuss.obj"), "res/Assets/blunderbuss/blunderbuss_base_color.png");
 
 	EntityWrapper& hole = EntityWrapper::Create();

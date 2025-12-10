@@ -111,66 +111,69 @@ void Start()
 
 void Update()
 {
-	//defaultRotation.SetIdentity();
-	//defaultRotation.SetRotationEuler({ 0, gce::PI, 0 });
+	auto pos = m_pOwner->GetParent()->transform.GetWorldPosition();
+	std::cout << pos.x << ", " << pos.y << ", " << pos.z << std::endl;
 
-	//if (GetKeyDown(Keyboard::R)) // TODO encapsulate the keybinds
-	//	Reload();
+	defaultRotation.SetIdentity();
+	defaultRotation.SetRotationEuler({ 0, gce::PI, 0 });
 
-	//float dt = GameManager::DeltaTime();
+	if (GetKeyDown(Keyboard::R)) // TODO encapsulate the keybinds
+		Reload();
 
-	//if (isReloading == false)
-	//{
-	//	m_pOwner->transform.SetLocalRotation(defaultRotation);
+	float dt = GameManager::DeltaTime();
 
-	//	if (pMagazineBehavior->IsWeaponEmpty() == false)
-	//	{
-	//		m_pOwner->GetComponent<MeshRenderer>()->pMaterial->useTextureAlbedo = 0;
-	//	}
-	//	else
-	//	{	
-	//		if (unloadProgress < unloadSpeed)
-	//		{
-	//			unloadProgress += dt;
-	//		}
-	//	}
-	//}
-	//else
-	//{
-	//	m_pOwner->GetComponent<MeshRenderer>()->pMaterial->useTextureAlbedo = 1.f;
-	//	
-	//	int turns = 2; 
+	if (isReloading == false)
+	{
+		m_pOwner->transform.SetLocalRotation(defaultRotation);
 
-	//	float value = (2.f * gce::PI / reloadTime) * turns;
+		if (pMagazineBehavior->IsWeaponEmpty() == false)
+		{
+			m_pOwner->GetComponent<MeshRenderer>()->pMaterial->useTextureAlbedo = 0;
+		}
+		else
+		{	
+			if (unloadProgress < unloadSpeed)
+			{
+				unloadProgress += dt;
+			}
+		}
+	}
+	else
+	{
+		m_pOwner->GetComponent<MeshRenderer>()->pMaterial->useTextureAlbedo = 1.f;
+		
+		int turns = 2; 
 
-	//	m_pOwner->transform.LocalRotate({ value * dt, 0, 0 });
-	//	if (reloadProgressTime < reloadTime)
-	//	{
-	//		reloadProgressTime += dt;
-	//	}
-	//	else
-	//	{
-	//		isReloading = false;
-	//		reloadProgressTime = 0.f;
+		float value = (2.f * gce::PI / reloadTime) * turns;
 
-	//		Ammos* ammoToDecrease = GameManager::GetSceneManager().GetInventoryManager()->GetAmmos(pMagazineBehavior->GetAmmoTypeFromWeapon());
+		m_pOwner->transform.LocalRotate({ value * dt, 0, 0 });
+		if (reloadProgressTime < reloadTime)
+		{
+			reloadProgressTime += dt;
+		}
+		else
+		{
+			isReloading = false;
+			reloadProgressTime = 0.f;
 
-	//		int amount = pMagazineBehavior->maxCapacity - pMagazineBehavior->ammosLeft;
+			Ammos* ammoToDecrease = GameManager::GetSceneManager().GetInventoryManager()->GetAmmos(pMagazineBehavior->GetAmmoTypeFromWeapon());
 
-	//		int ammoInStock = ammoToDecrease->GetAmount();
+			int amount = pMagazineBehavior->maxCapacity - pMagazineBehavior->ammosLeft;
 
-	//		if (ammoInStock > amount)
-	//		{
-	//			pMagazineBehavior->FillWeaponAmmos();
-	//		}
-	//		else
-	//		{
-	//			pMagazineBehavior->ammosLeft += ammoInStock; // Reload the rest
-	//		}
+			int ammoInStock = ammoToDecrease->GetAmount();
 
-	//		ammoToDecrease->UseAmmos(amount);
-	//	}
-	//}
+			if (ammoInStock > amount)
+			{
+				pMagazineBehavior->FillWeaponAmmos();
+			}
+			else
+			{
+				pMagazineBehavior->ammosLeft += ammoInStock; // Reload the rest
+			}
+
+			ammoToDecrease->UseAmmos(amount);
+		}
+	}
 }
 
 END_SCRIPT

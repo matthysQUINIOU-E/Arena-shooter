@@ -14,9 +14,37 @@
 #include "Scripts/CameraBehavior.hpp"
 #include "Scripts/UIManagerBehavior.hpp"
 #include "Scripts/SceneManagerBehavior.hpp"
+#include "Scripts/PlayerBehavior.hpp"
 
 #include "Utils.h"
 #include <ranges>
+
+void SceneManager::DebugTest()
+{
+	EntityWrapper& player = EntityWrapper::Create();
+
+	player.SetName("G");
+	player.AddMeshRenderer(SHAPES.CUBE, "");
+	player.transform.SetWorldPosition({ 10, 0, 0 });
+	player.transform.SetLocalScale({ 1, 1, 1 });
+	player.AddChild(*GetCameraObject());
+
+	player.AddScript<PlayerBehavior>();
+
+	EntityWrapper& cube = EntityWrapper::Create();
+	cube.SetName("Floor");
+	cube.AddMeshRenderer(SHAPES.CUBE, "");
+	cube.transform.SetLocalPosition({ 0, 0, 5 });
+	cube.transform.SetWorldScale({ 1, 1, 1 });
+	
+	GetCameraObject()->AddChild(cube);
+
+	EntityWrapper& floor = EntityWrapper::Create();
+	floor.SetName("Floor");
+	floor.AddMeshRenderer(SHAPES.CUBE, "");
+	floor.transform.SetWorldPosition({ 0, -1, 0 });
+	floor.transform.SetWorldScale({ 50, 1, 50 });
+}
 
 void SceneManager::InitGamePlay()
 {
@@ -30,22 +58,21 @@ void SceneManager::InitGamePlay()
 		go->SetActive(true);
 	}
 
-	if (m_pPlayer == nullptr)
-	{
-		m_pPlayer = new Player();
-		m_pPlayer->Create();
+	m_pPlayer = new Player();
+	m_pPlayer->Create();
 
-		gce::GameObject* pGameObject = m_pPlayer->GetGameObject();
+	gce::GameObject* pGameObject = m_pPlayer->GetGameObject();
+	
+	pGameObject->AddChild(*GetCameraObject());
+	m_pPlayer->GetGameObject()->AddScript<PlayerBehavior>();
 
-		pGameObject->AddChild(*m_pArenaCam->GetGameObject());
-		LinkObjectToScene(pGameObject, SceneType::GamePlayScene);
-	}
-
-	m_pInventoryManager->InitAll();
+	LinkObjectToScene(pGameObject, SceneType::GamePlayScene);
 
 	float camOffsetY = m_pPlayer->GetGameObject()->transform.GetWorldScale().y * 0.5f;
 
-	m_pArenaCam->GetGameObject()->transform.SetLocalPosition({ 0, 0, 0 });
+	GetCameraObject()->transform.SetLocalPosition({ 0, camOffsetY, 0 });
+
+	m_pInventoryManager->InitAll();
 
 	//EntityWrapper& button = EntityWrapper::Create();
 	//UIButton* comp = button.AddComponent<UIButton>();
@@ -86,10 +113,8 @@ void SceneManager::UnInitGamePlay()
 		go->SetActive(false);
 	}
 
-	Quaternion reset = { 0, 0, 0, 1 };
-
 	m_pArenaCam->GetGameObject()->transform.SetLocalPosition({ 0, 0, 0 });
-	m_pArenaCam->GetGameObject()->transform.SetWorldRotation(reset);
+	m_pArenaCam->GetGameObject()->transform.SetWorldRotation({0 , gce::PI / 2, 0 });
 }
 
 void SceneManager::Init()

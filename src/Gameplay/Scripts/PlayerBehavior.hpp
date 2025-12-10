@@ -13,6 +13,7 @@ using namespace gce;
 DECLARE_SCRIPT(PlayerBehavior, ScriptFlag::Start | ScriptFlag::Update | ScriptFlag::CollisionEnter | ScriptFlag::CollisionStay | ScriptFlag::CollisionExit | ScriptFlag::Destroy)
 
 //Members
+
 PhysicComponent* pPhysic = nullptr;
 
 GameObject* pWeapon = nullptr;
@@ -23,8 +24,53 @@ int maxJumpsAmount = 2;
 
 bool isJumping = false;
 
+float sensitivity = 0.002f;
+gce::Vector2i32 middleScreen = { (int)((float)(WINDOW_WIDTH) * 0.5f), (int)((float)(WINDOW_HEIGHT) * 0.5f) };
+float totalPitchRotation = 0.f;
+
+void LookAround()
+{
+	if (GetKeyDown(Keyboard::NUMPAD8))
+	{
+		abort();
+		return;
+	}
+
+	if (m_pOwner->GetChildren().Empty())
+	{
+		return;
+	}
+
+	gce::GameObject* pCamera = m_pOwner->GetChildren()[0];
+	// Delta Mouse Calcul
+	HideMouseCursor();
+
+	POINT currentMousePos;
+	GetCursorPos(&currentMousePos);
+	gce::Vector2i32 mouseDelta = { (int)(currentMousePos.x - middleScreen.x), (int)(currentMousePos.y - middleScreen.y) };
+
+	float yaw = mouseDelta.x * sensitivity;
+	float pitch = mouseDelta.y * sensitivity;
+
+	//Don't allow to look the world upside down (e.g more than 90 degrees toward up)
+	totalPitchRotation += pitch;
+	totalPitchRotation = std::clamp(totalPitchRotation, -gce::PI / 2, gce::PI / 2);
+
+	// Set Rotation for Player
+	m_pOwner->transform.WorldRotate({ 0.f, yaw, 0.f });
+
+	Quaternion pitchQ = Quaternion::RotationEuler({ totalPitchRotation, 0.f, 0.f });
+
+	pCamera->transform.SetLocalRotation(pitchQ);
+
+	SetCursorPos(middleScreen.x, middleScreen.y);
+}
+
 void BasicControls() // Move + Jump
 {
+	if (pPhysic == nullptr)
+		return;
+
 	gce::Vector3f32 velocity = pPhysic->GetVelocity();
 	pPhysic->SetVelocity({ 0, velocity.y, 0 });
 
@@ -101,6 +147,10 @@ void SetCurrentWeapon(GameObject* go) { pWeapon = go; }
 void Start()
 {
 	pPhysic = m_pOwner->GetComponent<PhysicComponent>();
+
+	if (pPhysic == nullptr)
+		return;
+
 	pPhysic->SetBounciness(0.f);
 }
 
@@ -109,6 +159,7 @@ void Update()
 	SetCurrentWeapon(GameManager::GetSceneManager().GetInventoryManager()->GetCurrentEquipedObject());
 
 	HandleInput();
+	LookAround();
 }
 
 void Destroy()

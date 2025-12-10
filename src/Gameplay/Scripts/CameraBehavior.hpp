@@ -21,35 +21,35 @@ float totalPitchRotation = 0.f;
 //Functions
 void HandleFPSMode()
 {
-	if (m_pOwner->GetParent() == nullptr)
-	{
-		fpsMode = false;
-		return;
-	}
+	//if (m_pOwner->GetParent() == nullptr)
+	//{
+	//	fpsMode = false;
+	//	return;
+	//}
 
-	gce::GameObject* pFollowGameObject = m_pOwner->GetParent();
-	// Delta Mouse Calcul
-	HideMouseCursor();
+	//gce::GameObject* pFollowGameObject = m_pOwner->GetParent();
+	//// Delta Mouse Calcul
+	//HideMouseCursor();
 
-	POINT currentMousePos;
-	GetCursorPos(&currentMousePos);
-	gce::Vector2i32 mouseDelta = { (int)(currentMousePos.x - middleScreen.x), (int)(currentMousePos.y - middleScreen.y) };
+	//POINT currentMousePos;
+	//GetCursorPos(&currentMousePos);
+	//gce::Vector2i32 mouseDelta = { (int)(currentMousePos.x - middleScreen.x), (int)(currentMousePos.y - middleScreen.y) };
 
-	float yaw = mouseDelta.x * sensitivity;
-	float pitch = mouseDelta.y * sensitivity;
+	//float yaw = mouseDelta.x * sensitivity;
+	//float pitch = mouseDelta.y * sensitivity;
 
-	//Don't allow to look the world upside down (e.g more than 90 degrees toward up)
-	totalPitchRotation += pitch;
-	totalPitchRotation = std::clamp(totalPitchRotation, -gce::PI / 2, gce::PI / 2);
+	////Don't allow to look the world upside down (e.g more than 90 degrees toward up)
+	//totalPitchRotation += pitch;
+	//totalPitchRotation = std::clamp(totalPitchRotation, -gce::PI / 2, gce::PI / 2);
 
-	// Set Rotation for Player
-	pFollowGameObject->transform.WorldRotate({ 0.f, yaw, 0.f });
+	//// Set Rotation for Player
+	//pFollowGameObject->transform.WorldRotate({ 0.f, yaw, 0.f });
 
-	Quaternion pitchQ = Quaternion::RotationEuler({ totalPitchRotation, 0.f, 0.f});
+	//Quaternion pitchQ = Quaternion::RotationEuler({ totalPitchRotation, 0.f, 0.f});
 
-	m_pOwner->transform.SetLocalRotation(pitchQ);
+	//m_pOwner->transform.SetLocalRotation(pitchQ);
 
-	SetCursorPos(middleScreen.x, middleScreen.y);
+	//SetCursorPos(middleScreen.x, middleScreen.y);
 }
 
 void HandleNormalMode()

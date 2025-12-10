@@ -49,6 +49,8 @@ public:
 	SceneManager() = default;
 	~SceneManager() { delete m_pPso; }
 
+	void DebugTest();
+
 	void InitGamePlay();
 	void UnInitGamePlay();
 	bool m_IsGamePlayInit = false;
