@@ -13,6 +13,7 @@
 #include <Structs.h>
 
 class EntityWrapper;
+class Agent;
 
 namespace gce {
 
@@ -130,6 +131,7 @@ private:
     friend struct BoxCollider;
     friend class GameObject;
     friend class EntityWrapper;
+    friend class ::Agent;
     friend class RenderSystem;
 
     friend Dirty::Enum operator|( Dirty::Enum, Dirty::Enum );

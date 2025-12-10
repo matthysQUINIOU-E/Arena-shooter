@@ -69,5 +69,6 @@ void GameObject::Destroy()
         pChild->Destroy();
 }
 
+void GameObject::Cast() {}
 
 }

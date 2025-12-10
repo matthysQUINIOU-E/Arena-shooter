@@ -13,6 +13,11 @@
 #include "Scripts/CameraBehavior.hpp"
 #include "Scripts/PlayerBehavior.hpp"
 #include "Scripts/UIManagerBehavior.hpp"
+#include "Scripts/GunBehavior.hpp"
+#include "Scripts/FpsBehavior.hpp"
+#include "Scripts/AgentBehavior.hpp"
+#include "Utils.h"
+#include "Agent.h"
 
 #include "Utils.h"
 #include <ranges>
@@ -21,7 +26,6 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 {
 	ArenaCamera ac;
 	ac.Create();
-	ac.SetParams(XM_PIDIV4, 0.001f, 500.0f, 1000.0f / 800.0f);
 	ac.SetParams(XM_PIDIV4, 0.001f, 500.0f, 1000.0f / 800.0f);
 
 	gce::LightManager::SetLightsProperties(8.0f, 100.0f, 2.0f, 32.0f, 1.f);
@@ -69,6 +73,18 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 	m_pInventoryManager->InitStates();
 
 	ImportBlenderScene(L"scene_base.json");
+
+
+	/*
+	Agent& agent = Agent::Create();
+	MeshRenderer* mr = agent.AddComponent<MeshRenderer>();
+	mr->pGeometry = gce::SHAPES.CUBE;
+	mr->pPso = m_pPso;
+	agent.transform.SetWorldPosition({20.f,0.f,0.f});
+	AgentBehavior* ab = agent.AddScript<AgentBehavior>();
+	agent.SetTarget(player.GetGameObject());
+	agent.SetCurrentNode(NavMesh::Instance()->GetNearestNodeFromPosition(agent.transform.GetWorldPosition()));
+	*/
 }
 
 void SceneManager::Init()
