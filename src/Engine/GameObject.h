@@ -34,6 +34,7 @@ public:
 
     void SetName(cstr name);
     void SetTags(std::vector<Tag> tags);
+    const Tag& GetUniqueTag(std::vector<Tag> tags);
 
     const bool& IsTags(std::vector<Tag> tags) const;
 

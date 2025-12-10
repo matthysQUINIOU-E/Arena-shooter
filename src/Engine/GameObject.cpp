@@ -50,6 +50,22 @@ void GameObject::SetTags(std::vector<Tag> tags)
     }
 }
 
+const Tag& GameObject::GetUniqueTag(std::vector<Tag> tags)
+{
+    Tag res = Tag::None;
+    for (size_t i = 0; i < tags.size(); i++)
+    {
+        Tag tag = tags[i];
+        if (m_tags.contains(tag))
+            if (res == Tag::None)
+                res = tag;
+            else
+                return Tag::None;
+    }
+
+    return res;
+}
+
 const bool& GameObject::IsTags(std::vector<Tag> tags) const
 {
     for (size_t i = 0; i < tags.size(); i++)

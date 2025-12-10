@@ -28,7 +28,7 @@ void WaveManager::EnnemyKilled(Agent* ennemy)
 	if (ennemy == nullptr)
 		return;
 
-	auto it = m_ennemiesFreePool.find(ennemy->GetSecondaryTag()); // TODOTOFOTOOTOO
+	auto it = m_ennemiesFreePool.find(ennemy->GetUniqueTag({Tag::TMogwai, Tag::TGuHuoNiao, Tag::TJiangshi}));
 	if (it != m_ennemiesFreePool.end())
 	{
 		it->second.push_back(ennemy);
