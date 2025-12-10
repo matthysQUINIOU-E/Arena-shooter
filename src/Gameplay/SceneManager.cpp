@@ -5,46 +5,19 @@
 #include <Engine.h>
 
 #include "Prefabs/InventoryManager.h"
-#include "Prefabs/UIManager.h"
 
 #include "Prefabs/ArenaCamera.h"
 #include "Prefabs/Player.h"
 #include "Prefabs/EntityWrapper.h"
+#include "Prefabs/UIManager.h"
 
 #include "Scripts/CameraBehavior.hpp"
-#include "Scripts/UIManagerBehavior.hpp"
+#include "Scripts/UIGameplayBehavior.hpp"
 #include "Scripts/SceneManagerBehavior.hpp"
 #include "Scripts/PlayerBehavior.hpp"
 
 #include "Utils.h"
 #include <ranges>
-
-void SceneManager::DebugTest()
-{
-	EntityWrapper& player = EntityWrapper::Create();
-
-	player.SetName("G");
-	player.AddMeshRenderer(SHAPES.CUBE, "");
-	player.transform.SetWorldPosition({ 10, 0, 0 });
-	player.transform.SetLocalScale({ 1, 1, 1 });
-	player.AddChild(*GetCameraObject());
-
-	player.AddScript<PlayerBehavior>();
-
-	EntityWrapper& cube = EntityWrapper::Create();
-	cube.SetName("Floor");
-	cube.AddMeshRenderer(SHAPES.CUBE, "");
-	cube.transform.SetLocalPosition({ 0, 0, 5 });
-	cube.transform.SetWorldScale({ 1, 1, 1 });
-	
-	GetCameraObject()->AddChild(cube);
-
-	EntityWrapper& floor = EntityWrapper::Create();
-	floor.SetName("Floor");
-	floor.AddMeshRenderer(SHAPES.CUBE, "");
-	floor.transform.SetWorldPosition({ 0, -1, 0 });
-	floor.transform.SetWorldScale({ 50, 1, 50 });
-}
 
 void SceneManager::InitGamePlay()
 {
@@ -74,15 +47,7 @@ void SceneManager::InitGamePlay()
 
 	m_pInventoryManager->InitAll();
 
-	//EntityWrapper& button = EntityWrapper::Create();
-	//UIButton* comp = button.AddComponent<UIButton>();
-	//BitMapBrush* buttonBrush = new BitMapBrush{ "res/Texture/temple_normal_map.png" }; // Image
-	//comp->pBitMapBrush = buttonBrush;
-
-	//button.SetProperties("Button", Tag1::TMiscellaneous, Tag2::None, { 960, 540, 0 }, { 0, 0, 0 }, { 500, 250, 1 });
-
 	//Clear the Inventory Tmp Objects because GameObjects are pushed back
-
 	m_pInventoryManager->UnInitTmp();
 	m_pInventoryManager->InitStates();
 }
@@ -98,6 +63,8 @@ void SceneManager::UnInitGamePlay()
 
 	m_pInventoryManager->ResetAll();
 
+	m_pPlayer->GetGameObject()->RemoveChild(*GetCameraObject());
+
 	for (gce::GameObject* go : m_SceneObjectsList[SceneType::GamePlayScene])
 	{
 		go->Destroy();
@@ -112,13 +79,11 @@ void SceneManager::UnInitGamePlay()
 	{
 		go->SetActive(false);
 	}
-
-	m_pArenaCam->GetGameObject()->transform.SetLocalPosition({ 0, 0, 0 });
-	m_pArenaCam->GetGameObject()->transform.SetWorldRotation({0 , gce::PI / 2, 0 });
 }
 
 void SceneManager::Init()
 {
+	//PSO
 	m_pPso = new gce::D12PipelineObject(
 		gce::SHADERS.VERTEX,
 		gce::SHADERS.PIXEL,
@@ -129,14 +94,17 @@ void SceneManager::Init()
 
 	gce::Scene& scene = gce::Scene::Create();
 
+	// LIGHT
 	gce::LightManager::SetLightsProperties(8.0f, 100.0f, 2.0f, 32.0f, 1.f);
 	gce::LightData directionalLight = gce::LightManager::CreateDirectionalLight(gce::Vector3f32(0.0f, -1.f, 0.f), gce::Vector4(1.0f, 1.0f, 1.0f, 1.0f), 3.0f, 3.0f);
 	gce::LightManager::AddLight(directionalLight);
 
+	//CAM
 	m_pArenaCam = new ArenaCamera();
 	m_pArenaCam->Create();
 	m_pArenaCam->SetParams(XM_PIDIV4, 0.001f, 500.0f, 1000.0f / 800.0f);
 
+	//MAP
 	for (gce::GameObject* go : ImportBlenderScene(L"scene_base.json"))
 	{
 		go->SetTag1(PrimaryTag::TMapObject);
@@ -144,12 +112,17 @@ void SceneManager::Init()
 		m_Map.push_back(go);
 	}
 
+	//INVENTORY
 	m_pInventoryManager = new InventoryManager();
 
+	//Scene Manager Behavior
 	m_pEmpty = &EntityWrapper::Create();
 	m_pEmpty->SetProperties("SceneManager Object", PrimaryTag::TMiscellaneous, SecondaryTag::None);
 	m_pEmpty->AddScript<SceneManagerBehavior>();
-	m_pEmpty->AddScript<UIManagerBehavior>();
+
+	//UI
+	m_pUIManager = new UIManager();
+	m_pUIManager->Init();
 
 	InitGamePlay();
 }
@@ -192,13 +165,28 @@ void SceneManager::LinkObjectToScene(gce::GameObject* obj, SceneType scene)
 	m_SceneObjectsList[scene].push_back(obj);
 }
 
-gce::GameObject* SceneManager::GetFirstGameObject(PrimaryTag tag1, SecondaryTag tag2)
+gce::GameObject* SceneManager::GetFirstGameObject(PrimaryTag tag1, SecondaryTag tag2) 
 {
 	auto& gameObjects = GameManager::GetScene().m_gameObjects;
 
 	for (GameObject* pGameObject : gameObjects | std::views::values)
 	{
 		if (pGameObject->IsTag1(tag1) && pGameObject->IsTag2(tag2))
+		{
+			return pGameObject;
+		}
+	}
+
+	return nullptr;
+}
+
+gce::GameObject* SceneManager::GetFirstGameObject(PrimaryTag tag1)
+{
+	auto& gameObjects = GameManager::GetScene().m_gameObjects;
+
+	for (GameObject* pGameObject : gameObjects | std::views::values)
+	{
+		if (pGameObject->IsTag1(tag1))
 		{
 			return pGameObject;
 		}

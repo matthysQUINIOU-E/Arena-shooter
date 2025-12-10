@@ -152,4 +152,32 @@ gce::TextRenderer* EntityWrapper::AddTextRenderer(std::wstring txt, gce::Rectang
 	return component;
 }
 
+gce::UIButton* EntityWrapper::AddUIButton(gce::Vector2f32 pos, gce::Vector2f32 rotation, gce::Vector2f32 scale, const char* textureBrushPath, const char* textureHoverBrushPath)
+{
+	transform.SetWorldPosition({pos.x, pos.y, 0});
+	transform.SetWorldRotation({rotation.x, rotation.y, 0});
+	transform.SetWorldScale({scale.x, scale.y, 0});
+
+	gce::UIButton* component = AddComponent<gce::UIButton>();
+
+	if (textureBrushPath == "")
+	{
+		component->pBitMapBrush = new gce::BitMapBrush("res/Assets/white.png");
+		component->pHoverBitMapBrush = component->pBitMapBrush;
+	}
+	else
+	{
+		component->pBitMapBrush = new gce::BitMapBrush(textureBrushPath);
+
+		if (textureHoverBrushPath == "")
+		{
+			component->pHoverBitMapBrush = component->pBitMapBrush;
+		}
+		else
+			component->pHoverBitMapBrush = new gce::BitMapBrush(textureHoverBrushPath);
+	}
+
+	return component;
+}
+
 ///////////////////////////////////////////////////////////////////

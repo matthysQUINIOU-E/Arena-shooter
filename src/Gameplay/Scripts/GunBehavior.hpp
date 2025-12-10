@@ -111,9 +111,6 @@ void Start()
 
 void Update()
 {
-	auto pos = m_pOwner->GetParent()->transform.GetWorldPosition();
-	std::cout << pos.x << ", " << pos.y << ", " << pos.z << std::endl;
-
 	defaultRotation.SetIdentity();
 	defaultRotation.SetRotationEuler({ 0, gce::PI, 0 });
 

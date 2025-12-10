@@ -22,6 +22,12 @@ void Start()
 
 void Update()
 {
+	if (GetKeyDown(Keyboard::NUMPAD8))
+	{
+		abort();
+		return;
+	}
+
 	if (pSceneManager == nullptr)
 		return;
 

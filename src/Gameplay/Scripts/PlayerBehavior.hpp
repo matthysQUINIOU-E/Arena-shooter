@@ -30,14 +30,9 @@ float totalPitchRotation = 0.f;
 
 void LookAround()
 {
-	if (GetKeyDown(Keyboard::NUMPAD8))
-	{
-		abort();
-		return;
-	}
-
 	if (m_pOwner->GetChildren().Empty())
 	{
+		ShowMouseCursor();
 		return;
 	}
 

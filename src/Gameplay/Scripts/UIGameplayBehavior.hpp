@@ -13,10 +13,13 @@
 #include "GameManager.h"
 #include "SceneManager.h"
 #include "Prefabs/InventoryManager.h"
+#include "Prefabs/UIManager.h"
 
 using namespace gce;
 
-DECLARE_SCRIPT(UIManagerBehavior, ScriptFlag::Start | ScriptFlag::Update)
+DECLARE_SCRIPT(UIGameplayBehavior, ScriptFlag::Start | ScriptFlag::Update)
+
+UIManager* pUIManager = nullptr;
 
 //Members
 EntityWrapper* pFpsUI = nullptr;
@@ -141,7 +144,7 @@ void UpdateHpTxt()
 
 void Start()
 {
-	std::cout << "YOOOO\n";
+	pUIManager = GameManager::GetSceneManager().GetUIManager();
 
 	pFpsUI = &EntityWrapper::Create();
 	pFpsUI->AddTextRenderer(L"Fps", { 0, 0, 300, 300 }, gce::Color::Black);
@@ -155,15 +158,26 @@ void Start()
 	pTotalAmmoUI->AddTextRenderer(L"Total Ammos", { totalAmmmoPos.x, totalAmmmoPos.y, 0, 0 }, gce::Color::Red);
 
 	pHpUI = &EntityWrapper::Create();
-	pHpUI->AddTextRenderer(L"HP", { 0, 850, 400, 0 }, gce::Color::Red);
+	pHpUI->AddTextRenderer(L"HP", { 0, 900, 400, 0 }, gce::Color::Red);
 }
 
 void Update()
 {
-	UpdateFPSTxt();
-	UpdateAmmoTxt();
-	UpdateTotalAmmoTxt();
-	UpdateHpTxt();
+	bool display = pUIManager->IsSceneType(SceneType::GamePlayScene);
+
+	pAmmoUI->SetActive(display);
+	pTotalAmmoUI->SetActive(display);
+	pHpUI->SetActive(display);
+	pFpsUI->SetActive(display);
+
+	if (display == true)
+	{
+		UpdateFPSTxt();
+		UpdateAmmoTxt();
+		UpdateTotalAmmoTxt();
+		UpdateHpTxt();
+	}
+
 }
 
 END_SCRIPT
