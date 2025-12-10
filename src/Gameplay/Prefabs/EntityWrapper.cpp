@@ -164,6 +164,16 @@ gce::TextRenderer* EntityWrapper::AddDynamicTextRenderer(std::wstring& txt, gce:
 	return component;
 }
 
+void EntityWrapper::UpdateDynamicText(std::wstring& referenceTxt)
+{
+	gce::TextRenderer* component = GetComponent<gce::TextRenderer>();
+
+	if (component == nullptr)
+		return;
+
+	component->text = referenceTxt;
+}
+
 gce::UIButton* EntityWrapper::AddUIButton(gce::Vector2f32 pos, gce::Vector2f32 rotation, gce::Vector2f32 scale, const char* textureBrushPath, const char* textureHoverBrushPath)
 {
 	transform.SetWorldPosition({pos.x, pos.y, 0});
@@ -190,6 +200,28 @@ gce::UIButton* EntityWrapper::AddUIButton(gce::Vector2f32 pos, gce::Vector2f32 r
 	}
 
 	return component;
+}
+
+gce::UiImage* EntityWrapper::AddUiImage(const char* imgPath, gce::Vector2f32 pointToStartInImg, gce::Vector2f32 imgDimensions, gce::Vector2f32 pos, gce::Vector2f32 scale, float32 rotation)
+{
+	auto component = AddComponent<gce::UiImage>();
+
+	component->InitializeImage(pointToStartInImg, imgDimensions, 1.f);
+	component->btmBrush = new gce::BitMapBrush(imgPath);
+
+	component->btmBrush->SetTransformMatrix({ pos.x, pos.y, 0 }, { scale.x, scale.y, 1 }, rotation);
+	component->SetActive(true);
+	return nullptr;
+}
+
+void EntityWrapper::SetUiImageTransform(gce::Vector2f32 pos, gce::Vector2f32 scale, float32 rotation)
+{
+	auto component = GetComponent<gce::UiImage>();
+
+	if (component == nullptr)
+		return;
+
+	component->btmBrush->SetTransformMatrix({ pos.x, pos.y, 0 }, { scale.x, scale.y, 1 }, rotation);
 }
 
 ///////////////////////////////////////////////////////////////////

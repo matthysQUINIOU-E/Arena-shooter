@@ -17,25 +17,15 @@ GameObject* pWeapon = nullptr;
 float lifeTime = 3.f;
 float speed = 75.f;
 
-void SetWeapon(GameObject* go) { pWeapon = go; }
-
-gce::Vector3f32 dir = {0, 0, 0};
+gce::Vector3f32 dir = {};
 
 void Start()
 {
-	if (pWeapon == nullptr)
-		return;
-
-	dir = -pWeapon->transform.GetWorldForward();
+	dir = GameManager::GetSceneManager().GetCameraObject()->transform.GetWorldForward();
 }
 
 void Update()
 {
-	SetWeapon(GameManager::GetSceneManager().GetInventoryManager()->GetCurrentEquipedObject());
-
-	if (pWeapon == nullptr || pWeapon->HasTags({ Tag::TWeapon }) == false)
-		return;
-
 	float dt = GameManager::DeltaTime();
 
 	if (lifeTime < 0)

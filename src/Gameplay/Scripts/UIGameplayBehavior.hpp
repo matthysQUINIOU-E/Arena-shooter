@@ -49,7 +49,7 @@ void UpdateFPSTxt()
 		mRefreshProgress = 0.5f;
 
 		fpsTxt = L"FPS : " + std::to_wstring((int)GameManager::FPS());
-		pFpsUI->GetComponent<TextRenderer>()->text = fpsTxt;
+		pFpsUI->UpdateDynamicText(fpsTxt);
 	}
 	else
 	{
@@ -82,7 +82,7 @@ void UpdateAmmoTxt()
 		ammoTxt = L"To Do";
 	}
 
-	pAmmoUI->GetComponent<TextRenderer>()->text = ammoTxt;
+	pAmmoUI->UpdateDynamicText(ammoTxt);
 }
 
 void UpdateTotalAmmoTxt()
@@ -121,7 +121,7 @@ void UpdateTotalAmmoTxt()
 		totalAmmoTxt = L"To Do";
 	}
 
-	pTotalAmmoUI->GetComponent<TextRenderer>()->text = totalAmmoTxt;
+	pTotalAmmoUI->UpdateDynamicText(totalAmmoTxt);
 }
 
 void UpdateHpTxt()
@@ -142,7 +142,7 @@ void UpdateHpTxt()
 		hpTxt = NOTHING;
 	}
 
-	pHpUI->GetComponent<TextRenderer>()->text = hpTxt;
+	pHpUI->UpdateDynamicText(hpTxt);
 }
 
 void Start()
@@ -165,19 +165,15 @@ void Start()
 
 
 	pCrosshair = &EntityWrapper::Create(); // TEST
-	auto image = pCrosshair->AddComponent<UiImage>();
+
 	Vector2f32 center = { (float)WINDOW_WIDTH / 2.f, (float)WINDOW_HEIGHT / 2.f };
 	Vector2f32 size = { 250, 250 };
 
 	float scale = 0.25f;
 
 	Vector2f32 posUi = center - size * 0.5f * scale;
-	image->InitializeImage(posUi, size, 1.f);
-	image->btmBrush = new BitMapBrush("res/2D_Assets/crosshair.png");
 
-	image->btmBrush->SetTransformMatrix({ posUi.x, posUi.y - 25, 0 }, { scale, scale, scale }, 0);
-
-	image->SetActive(true);
+	pCrosshair->AddUiImage("res/2D_Assets/crosshair.png", posUi, size, { posUi.x, posUi.y - 40 }, { scale, scale }, 0);
 }
 
 void Update()

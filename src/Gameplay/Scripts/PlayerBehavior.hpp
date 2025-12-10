@@ -28,9 +28,11 @@ float sensitivity = 0.002f;
 gce::Vector2i32 middleScreen = { (int)((float)(WINDOW_WIDTH) * 0.5f), (int)((float)(WINDOW_HEIGHT) * 0.5f) };
 float totalPitchRotation = 0.f;
 
+bool stopLookAround = false;
+
 void LookAround()
 {
-	if (m_pOwner->GetChildren().Empty())
+	if (m_pOwner->GetChildren().Empty() || stopLookAround == true)
 	{
 		ShowMouseCursor();
 		return;
@@ -154,12 +156,17 @@ void Update()
 	SetCurrentWeapon(GameManager::GetSceneManager().GetInventoryManager()->GetCurrentEquipedObject());
 
 	HandleInput();
+
+	if (GetKeyDown(Keyboard::NUMPAD0))
+	{
+		stopLookAround = !stopLookAround;
+	}
+
 	LookAround();
 }
 
 void Destroy()
 {
-	Console::Log("[TestScript1] Destroy has been called.");
 }
 
 void CollisionStay(GameObject* other)
@@ -190,7 +197,7 @@ void CollisionEnter(GameObject* other)
 
 void CollisionExit(GameObject* other) override
 {
-	if (other->HasTags({ Tag::TGround }) && isJumping == false)
+	if (isJumping == false)
 		jumpsAmount = 0;
 }
 

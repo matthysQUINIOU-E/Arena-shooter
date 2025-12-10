@@ -97,7 +97,7 @@ void Shoot()
 	bullet.AddMeshRenderer(gce::SHAPES.SPHERE, "");
 
 	bullet.AddComponent<SphereCollider>();
-	bullet.AddScript<BulletBehavior>()->SetWeapon(m_pOwner);
+	bullet.AddScript<BulletBehavior>();
 
 	GameManager::GetSceneManager().LinkObjectToScene(&bullet, SceneType::GamePlayScene);
 
