@@ -14,7 +14,6 @@
 #include "Scripts/PlayerBehavior.hpp"
 #include "Scripts/UIManagerBehavior.hpp"
 #include "Scripts/GunBehavior.hpp"
-#include "Scripts/FpsBehavior.hpp"
 #include "Scripts/AgentBehavior.hpp"
 #include "Utils.h"
 #include "Agent.h"
