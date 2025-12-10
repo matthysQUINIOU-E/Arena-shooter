@@ -16,11 +16,10 @@ EntityWrapper& EntityWrapper::Create()
 	return *pNew;
 }
 
-EntityWrapper& EntityWrapper::SetProperties(const char* name, PrimaryTag tag1, SecondaryTag tag2, gce::Vector3f32 pos, gce::Vector3f32 rotation, gce::Vector3f32 scale)
+EntityWrapper& EntityWrapper::SetProperties(const char* name, std::vector<Tag> tags, gce::Vector3f32 pos, gce::Vector3f32 rotation, gce::Vector3f32 scale)
 {
 	SetName(name);
-	SetTag1(tag1);
-	SetTag2(tag2);
+	SetTags(tags);
 	transform.SetWorldPosition(pos);
 	transform.SetWorldRotation(rotation);
 	transform.SetWorldScale(scale);
@@ -28,13 +27,12 @@ EntityWrapper& EntityWrapper::SetProperties(const char* name, PrimaryTag tag1, S
 	return *this;
 }
 
-EntityWrapper& EntityWrapper::SetChildProperties(EntityWrapper& parent, const char* name, PrimaryTag tag1, SecondaryTag tag2, gce::Vector3f32 pos, gce::Vector3f32 rotation, gce::Vector3f32 scale)
+EntityWrapper& EntityWrapper::SetChildProperties(EntityWrapper& parent, const char* name, std::vector<Tag> tags, gce::Vector3f32 pos, gce::Vector3f32 rotation, gce::Vector3f32 scale)
 {
 	parent.AddChild(*this);
 
 	SetName(name);
-	SetTag1(tag1);
-	SetTag2(tag2);
+	SetTags(tags);
 	transform.SetLocalPosition(pos);
 	transform.SetLocalRotation(rotation);
 	transform.SetLocalScale(scale);

@@ -16,19 +16,19 @@ DECLARE_SCRIPT(WeaponMagazineBehavior, ScriptFlag::Start | ScriptFlag::Update)
 int ammosLeft = 0;
 int maxCapacity = 0;
 
-const SecondaryTag& GetAmmoTypeFromWeapon()
+const Tag& GetAmmoTypeFromWeapon()
 {
-	SecondaryTag typeToUse = SecondaryTag::None;
+	Tag typeToUse = Tag::None;
 
 	if (m_pOwner)
 	{
-		switch (m_pOwner->GetSecondaryTag())
+		switch (m_pOwner->GetSecondaryTag()) // TODO
 		{
-		case SecondaryTag::TMusket:
-			typeToUse = SecondaryTag::TNormalAmmo;
+		case Tag::TMusket:
+			typeToUse = Tag::TNormalAmmo;
 			break;
-		case SecondaryTag::TBlunderBuss:
-			typeToUse = SecondaryTag::THeavyAmmo;
+		case Tag::TBlunderBuss:
+			typeToUse = Tag::THeavyAmmo;
 			break;
 		default:
 			break;

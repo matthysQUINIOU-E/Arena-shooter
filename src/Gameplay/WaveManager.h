@@ -18,7 +18,7 @@ private:
 	void TrySpawn();
 	int GetEnnemiesNumberForWave(int wave);
 
-	void CreateEnnemy(SecondaryTag secondaryTag, gce::GameObject* player);
+	void CreateEnnemy(Tag tag, gce::GameObject* player);
 
 private:
 	static WaveManager* s_instance;
@@ -36,12 +36,12 @@ private:
 	int m_maxWave = 10;
 	int m_curentWave = 0;
 
-	std::unordered_map<SecondaryTag,std::vector<Agent*>> m_ennemiesFreePool;
-	std::unordered_map<SecondaryTag,std::vector<gce::Vector3f32>> m_spawnerPosition;
-	std::vector<SecondaryTag> m_ennemyTag;
+	std::unordered_map<Tag,std::vector<Agent*>> m_ennemiesFreePool;
+	std::unordered_map<Tag,std::vector<gce::Vector3f32>> m_spawnerPosition;
+	std::vector<Tag> m_ennemyTag;
 
 	std::mt19937 m_rng;
 	std::uniform_int_distribution<int> m_ennemyTagDistrubution;
-	std::unordered_map<SecondaryTag, std::uniform_int_distribution<int>> m_spawnerPositionDistribution;
+	std::unordered_map<Tag, std::uniform_int_distribution<int>> m_spawnerPositionDistribution;
 };
 

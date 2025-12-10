@@ -28,7 +28,7 @@ void WaveManager::EnnemyKilled(Agent* ennemy)
 	if (ennemy == nullptr)
 		return;
 
-	auto it = m_ennemiesFreePool.find(ennemy->GetSecondaryTag());
+	auto it = m_ennemiesFreePool.find(ennemy->GetSecondaryTag()); // TODOTOFOTOOTOO
 	if (it != m_ennemiesFreePool.end())
 	{
 		it->second.push_back(ennemy);
@@ -40,39 +40,39 @@ WaveManager::WaveManager()
 {
 	std::random_device rand = std::random_device();
 	m_rng = std::mt19937(rand());
-	m_ennemyTag = { SecondaryTag::TMogwai, SecondaryTag::TJiangshi, SecondaryTag::TGuHuoNiao };
+	m_ennemyTag = { Tag::TMogwai, Tag::TJiangshi, Tag::TGuHuoNiao };
 	m_ennemyTagDistrubution = std::uniform_int_distribution<int>(0, m_ennemyTag.size() - 1);
 
-	gce::GameObject* player = gce::GameManager::GetSceneManager().GetFirstGameObject(GlobalTag::TPlayer);
+	gce::GameObject* player = gce::GameManager::GetSceneManager().GetFirstGameObject({ Tag::TPlayer });
 
 	for (size_t i = 0; i < m_ennemyTag.size(); i++)
 	{
-		SecondaryTag ennemyTag = m_ennemyTag[i];
+		Tag ennemyTag = m_ennemyTag[i];
 		for (size_t i = 0; i < m_maxSimultanateEnnemies; i++)
 		{
 			CreateEnnemy(ennemyTag, player);
 		}
 	}
 
-	std::vector<GameObject*> spawners = gce::GameManager::GetSceneManager().GetAllGameObjects(GlobalTag::TSpawner);
+	std::vector<GameObject*> spawners = gce::GameManager::GetSceneManager().GetAllGameObjects({ Tag::TSpawner });
 	for (size_t i = 0; i < spawners.size(); i++)
 	{
 		gce::GameObject* spawner = spawners[i];
 		for (size_t j = 0; j < m_ennemyTag.size(); j++)
 		{
-			SecondaryTag ennemyTag = m_ennemyTag[j];
-			if(spawner->IsTag2(ennemyTag))
+			Tag ennemyTag = m_ennemyTag[j];
+			if (spawner->IsTags({ ennemyTag }))
 				m_spawnerPosition[ennemyTag].push_back(spawner->transform.GetWorldPosition());
 		}
 	}
+
 	for (size_t i = 0; i < m_ennemyTag.size(); i++)
 	{
-		SecondaryTag ennemyTag = m_ennemyTag[i];
+		Tag ennemyTag = m_ennemyTag[i];
 		if (m_spawnerPosition[ennemyTag].empty())
 			continue;
 		m_spawnerPositionDistribution[ennemyTag] = std::uniform_int_distribution<int>(0, m_spawnerPosition[ennemyTag].size() - 1);
 	}
-
 }
 
 void WaveManager::TryNextWave()
@@ -109,7 +109,7 @@ void WaveManager::TrySpawn()
 	m_spawnTimer = 0.f;
 	
 	int tagIndex = m_ennemyTagDistrubution(m_rng);
-	SecondaryTag tag = m_ennemyTag[tagIndex];
+	Tag tag = m_ennemyTag[tagIndex];
 	Agent* ennemy = m_ennemiesFreePool[tag].back();
 	m_ennemiesFreePool[tag].pop_back();
 	ennemy->SetActive(true);
@@ -126,23 +126,24 @@ int WaveManager::GetEnnemiesNumberForWave(int wave)
 	return 8 + wave * 4;
 }
 
-void WaveManager::CreateEnnemy(SecondaryTag secondaryTag, gce::GameObject* player) //TODO :: create real ennemies
+void WaveManager::CreateEnnemy(Tag tag, gce::GameObject* player) //TODO :: create real ennemies
 {
 	Agent& entity = Agent::Create();
 	AgentBehavior* ab = entity.AddScript<AgentBehavior>();
 	entity.SetTarget(player);
 	entity.SetActive(false);
-	switch (secondaryTag)
+
+	switch (tag)
 	{
-	case SecondaryTag::TMogwai:
+	case Tag::TMogwai:
 		entity.AddMeshRenderer(gce::SHAPES.CUBE, "");
 		entity.AddComponent<gce::BoxCollider>();
 		break;
-	case SecondaryTag::TJiangshi:
+	case Tag::TJiangshi:
 		entity.AddMeshRenderer(gce::SHAPES.CYLINDER, "");
 		entity.AddComponent<gce::BoxCollider>();
 		break;
-	case SecondaryTag::TGuHuoNiao:
+	case Tag::TGuHuoNiao:
 		entity.AddMeshRenderer(gce::SHAPES.SPHERE, "");
 		entity.AddComponent<gce::BoxCollider>();
 		break;
@@ -150,5 +151,5 @@ void WaveManager::CreateEnnemy(SecondaryTag secondaryTag, gce::GameObject* playe
 		break;
 	}
 
-	m_ennemiesFreePool[secondaryTag].push_back(&entity);
+	m_ennemiesFreePool[tag].push_back(&entity);
 }

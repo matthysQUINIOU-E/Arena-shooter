@@ -64,7 +64,7 @@ void UpdateAmmoTxt()
 	if (pObj == nullptr)
 		return;
 
-	if (pObj->IsTag1(PrimaryTag::TWeapon))
+	if (pObj->IsTags({ Tag::TWeapon }))
 	{
 		WeaponMagazineBehavior* pScript = pObj->GetScript<WeaponMagazineBehavior>();
 
@@ -94,7 +94,7 @@ void UpdateTotalAmmoTxt()
 	if (pObj == nullptr)
 		return;
 
-	if (pObj->IsTag1(PrimaryTag::TWeapon))
+	if (pObj->IsTags({ Tag::TWeapon }))
 	{
 		WeaponMagazineBehavior* pScript = pObj->GetScript<WeaponMagazineBehavior>();
 
@@ -126,7 +126,7 @@ void UpdateTotalAmmoTxt()
 
 void UpdateHpTxt()
 {
-	gce::GameObject* pPlayer = GameManager::GetSceneManager().GetFirstGameObject(PrimaryTag::TPlayer, SecondaryTag::None);
+	gce::GameObject* pPlayer = GameManager::GetSceneManager().GetFirstGameObject({ Tag::TPlayer });
 
 	if (pPlayer == nullptr)
 		return;

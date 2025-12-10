@@ -34,9 +34,9 @@ public:
 	void ResetAll();
 
 	std::vector<gce::GameObject*> GetWeapons();
-	gce::GameObject* GetWeapon(SecondaryTag tag);
+	gce::GameObject* GetWeapon(Tag tag);
 	std::vector<gce::GameObject*> GetCollectibles();
-	gce::GameObject* GetCollectible(SecondaryTag tag);
+	gce::GameObject* GetCollectible(Tag tag);
 
 	void UnInitTmp();
 
@@ -49,6 +49,6 @@ public:
 	std::vector<gce::GameObject*>& GetCurrentInventory() { return m_currentInventory; }
 	std::vector<Ammos*>& GetAmmoStock() { return m_ammoStock; }
 
-	Ammos* GetAmmos(SecondaryTag type);
+	Ammos* GetAmmos(Tag type);
 };
 

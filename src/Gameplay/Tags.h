@@ -1,6 +1,6 @@
 #pragma once
 
-enum class PrimaryTag
+enum class Tag // Game Objects Tags
 {
     None,
     TPlayer,
@@ -12,12 +12,8 @@ enum class PrimaryTag
     TEnemy,
     TProjectile,
     TMiscellaneous,
-    TSpawner
-}; 
+    TSpawner,
 
-enum class SecondaryTag
-{
-    None,
 
     THeal,
 

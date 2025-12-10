@@ -7,6 +7,7 @@
 #include "Components.h"
 #include "Maths/Vector3.h"
 #include "GamePlay/Tags.h"
+#include <unordered_set>
 
 template <typename ...Args>
 struct Event;
@@ -30,15 +31,11 @@ public:
 
     [[nodiscard]] uint32 GetID() const;
     [[nodiscard]] cstr GetName() const;
-    [[nodiscard]] PrimaryTag GetGlobalTag() const { return m_globalTag; }
-    [[nodiscard]] SecondaryTag GetSecondaryTag() const { return m_secondaryTag; }
 
     void SetName(cstr name);
-    void SetTag1(PrimaryTag tag) { m_globalTag = tag; }
-    void SetTag2(SecondaryTag tag) { m_secondaryTag = tag; }
+    void SetTags(std::vector<Tag> tags);
 
-    const bool& IsTag1(PrimaryTag tag) const { if (m_globalTag == tag) return true; return false; }
-    const bool& IsTag2(SecondaryTag tag) const { if (m_secondaryTag == tag) return true; return false; }
+    const bool& IsTags(std::vector<Tag> tags) const;
 
     [[nodiscard]] bool IsActive() const;
     void SetActive(bool active);
@@ -87,14 +84,15 @@ protected:
     inline static uint32 s_nextID = 0;
     uint32 m_id = s_nextID++;
     cstr m_name;
-    PrimaryTag m_globalTag = PrimaryTag::None;
-    SecondaryTag m_secondaryTag = SecondaryTag::None;
+  
 
     Scene* m_pScene = nullptr;
     
     int64 m_componentsBitmask = 0;
     UnorderedMap<Component::TypeEnum, uint16> m_components {};
     UnorderedMap<uint16, uint16> m_scripts {};
+
+    std::unordered_set<Tag> m_tags;
 
     Event<> m_destroyEvent;
 

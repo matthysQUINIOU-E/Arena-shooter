@@ -42,6 +42,27 @@ GameObject& GameObject::Create( Scene& scene ) // ask & or *
     return *pNew;
 }
 
+void GameObject::SetTags(std::vector<Tag> tags)
+{
+    for (size_t i = 0; i < tags.size(); i++)
+    {
+        m_tags.insert(tags[i]);
+    }
+}
+
+const bool& GameObject::IsTags(std::vector<Tag> tags) const
+{
+    for (size_t i = 0; i < tags.size(); i++)
+    {
+        if (m_tags.contains(tags[i]) == false)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 void GameObject::Destroy()
 {
     if ( m_destroyed ) return;

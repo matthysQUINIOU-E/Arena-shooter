@@ -99,15 +99,15 @@ std::vector<gce::GameObject*> ImportBlenderScene(std::wstring jsonFile)
         gce::GameObject& gameObject = gce::GameObject::Create(pScene);
 
         if (isSpawnerHeal || isSpawnerGuHuoNiao || isSpawnerJiangshi || isSpawnerMogwai) {
-            gameObject.SetTag1(GlobalTag::TSpawner);
+            gameObject.SetTags({ Tag::TSpawner });
             if (isSpawnerHeal)
-                gameObject.SetTag2(SecondaryTag::THeal);
+                gameObject.SetTags({ Tag::THeal });
             if (isSpawnerGuHuoNiao)
-                gameObject.SetTag2(SecondaryTag::TGuHuoNiao);
+                gameObject.SetTags({ Tag::TGuHuoNiao });
             if (isSpawnerJiangshi)
-                gameObject.SetTag2(SecondaryTag::TJiangshi);
+                gameObject.SetTags({ Tag::TJiangshi });
             if (isSpawnerMogwai)
-                gameObject.SetTag2(SecondaryTag::TMogwai);
+                gameObject.SetTags({Tag::TMogwai});
         }
 
         // gameObject.SetName("importedScene"); // maybe change later just taging everything with the same name

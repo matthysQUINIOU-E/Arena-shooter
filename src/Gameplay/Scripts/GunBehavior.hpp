@@ -89,9 +89,9 @@ void Shoot()
 
 	gce::Vector3f32 spawnPoint = m_pOwner->GetChildren()[0]->transform.GetWorldPosition();
 
-	bullet.SetProperties("Bullet", PrimaryTag::TProjectile, SecondaryTag::None, spawnPoint, { 0, 0, 0 }, { 0.15, 0.15, 0.15 });
+	bullet.SetProperties("Bullet", { Tag::TProjectile }, spawnPoint, { 0, 0, 0 }, { 0.15, 0.15, 0.15 });
 
-	if(m_pOwner->IsTag2(SecondaryTag::TBlunderBuss))
+	if (m_pOwner->IsTags({ Tag::TBlunderBuss }))
 		bullet.transform.LocalScale({ 3, 3, 3 });
 
 	bullet.AddMeshRenderer(gce::SHAPES.SPHERE, "");

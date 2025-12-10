@@ -7,7 +7,7 @@
 void Player::Create()
 {
 	m_pGameObject = &EntityWrapper::Create();
-	m_pGameObject->SetProperties("Player", PrimaryTag::TPlayer, SecondaryTag::None, { 10, 2, 0 });
+	m_pGameObject->SetProperties("Player", { Tag::TPlayer }, { 10, 2, 0 });
 
 	m_pGameObject->AddPhysics(10, 1, 0);
 	m_pGameObject->AddMeshRenderer(gce::SHAPES.CUBE, "");

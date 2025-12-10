@@ -20,7 +20,7 @@ gce::GameObject* InventoryManager::CreateMusket()
 {
 	EntityWrapper& musket = EntityWrapper::Create();
 
-	musket.SetProperties("Musket", PrimaryTag::TWeapon, SecondaryTag::TMusket, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 });
+	musket.SetProperties("Musket", { Tag::TWeapon, Tag::TMusket }, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 });
 	m_pSceneManager->GetCameraObject()->AddChild(musket);
 
 	musket.transform.SetLocalPosition({ 0.25, -0.1f, 0.5f });
@@ -31,7 +31,7 @@ gce::GameObject* InventoryManager::CreateMusket()
 	holePos.z -= 0.5;
 	holePos.y += 0.03;
 
-	hole.SetChildProperties(musket, "Musket Hole", PrimaryTag::TMiscellaneous, SecondaryTag::None, {0, 0, 0}, {0, 0, 0}, {0.05, 0.05, 0.05});
+	hole.SetChildProperties(musket, "Musket Hole", { Tag::TMiscellaneous }, { 0, 0, 0 }, { 0, 0, 0 }, { 0.05, 0.05, 0.05 });
 	hole.transform.LocalTranslate(holePos);
 
 	auto ammoManagerScript = musket.AddScript<WeaponMagazineBehavior>();
@@ -51,7 +51,7 @@ gce::GameObject* InventoryManager::CreateBlunderBuss()
 {
 	EntityWrapper& blunderbuss = EntityWrapper::Create();
 
-	blunderbuss.SetProperties("Blunderbuss", PrimaryTag::TWeapon, SecondaryTag::TBlunderBuss, { 0, 0, 0.f }, { 0, 0, 0 }, { 1, 1, 1 });
+	blunderbuss.SetProperties("Blunderbuss", { Tag::TWeapon, Tag::TBlunderBuss }, { 0, 0, 0.f }, { 0, 0, 0 }, { 1, 1, 1 });
 	m_pSceneManager->GetCameraObject()->AddChild(blunderbuss);
 
 	blunderbuss.transform.SetLocalPosition({ 0.25, -0.1f, 0.5f });
@@ -63,7 +63,7 @@ gce::GameObject* InventoryManager::CreateBlunderBuss()
 	holePos.z -= 0.9;
 	holePos.y += 0;
 
-	hole.SetChildProperties(blunderbuss, "Blunderbuss Hole", PrimaryTag::TMiscellaneous, SecondaryTag::None, { 0, 0, 0 }, { 0, 0, 0 }, { 0.1, 0.1, 0.1 });
+	hole.SetChildProperties(blunderbuss, "Blunderbuss Hole", { Tag::TMiscellaneous }, { 0, 0, 0 }, { 0, 0, 0 }, { 0.1, 0.1, 0.1 });
 	hole.transform.LocalTranslate(holePos);
 
 	auto ammoManagerScript = blunderbuss.AddScript<WeaponMagazineBehavior>();
@@ -85,7 +85,7 @@ gce::GameObject* InventoryManager::CreateBomb()
 	EntityWrapper& bomb = EntityWrapper::Create();
 	m_pSceneManager->GetCameraObject()->AddChild(bomb);
 
-	bomb.SetProperties("Bomb", PrimaryTag::TThrowableWeapon, SecondaryTag::TBomb, { 0, 0, 0 }, { 0, 0, 0 }, { 2, 2, 2 });
+	bomb.SetProperties("Bomb", { Tag::TThrowableWeapon, Tag::TBomb }, { 0, 0, 0 }, { 0, 0, 0 }, { 2, 2, 2 });
 	bomb.transform.SetLocalPosition({ 0.25, -0.1f, 0.5f });
 
 	bomb.AddMeshRenderer(gce::GeometryFactory::LoadGeometry("res/Assets/bomb/bomb.obj"), "res/Assets/bomb/bomb_base_color.png");
@@ -93,7 +93,7 @@ gce::GameObject* InventoryManager::CreateBomb()
 	EntityWrapper& hole = EntityWrapper::Create();
 	gce::Vector3f32 holePos = bomb.transform.GetWorldPosition();
 
-	hole.SetChildProperties(bomb, "Bomb Hole", PrimaryTag::TMiscellaneous, SecondaryTag::None, { 0, 0, 0 }, { 0, 0, 0 }, { 0.05, 0.05, 0.05 });
+	hole.SetChildProperties(bomb, "Bomb Hole", { Tag::TMiscellaneous }, { 0, 0, 0 }, { 0, 0, 0 }, { 0.05, 0.05, 0.05 });
 	hole.transform.SetWorldPosition(holePos);
 
 	m_pSceneManager->LinkObjectToScene(&bomb, SceneType::GamePlayScene);
@@ -110,13 +110,13 @@ void InventoryManager::InitAll()
 	
 	//m_tmpCollectibles.push_back(CreateBomb());
 
-	m_currentInventory.push_back(GetWeapon(SecondaryTag::TBlunderBuss));
-	m_currentInventory.push_back(GetWeapon(SecondaryTag::TMusket));
+	m_currentInventory.push_back(GetWeapon(Tag::TBlunderBuss));
+	m_currentInventory.push_back(GetWeapon(Tag::TMusket));
 
 	// AMMMOS
-	m_ammoStock.push_back(new Ammos(SecondaryTag::THeavyAmmo, 30));
-	m_ammoStock.push_back(new Ammos(SecondaryTag::TNormalAmmo, 100));
-	m_ammoStock.push_back(new Ammos(SecondaryTag::TLightAmmo, 200));
+	m_ammoStock.push_back(new Ammos(Tag::THeavyAmmo, 30));
+	m_ammoStock.push_back(new Ammos(Tag::TNormalAmmo, 100));
+	m_ammoStock.push_back(new Ammos(Tag::TLightAmmo, 200));
 }
 
 void InventoryManager::ResetAll()
@@ -144,21 +144,21 @@ std::vector<gce::GameObject*> InventoryManager::GetWeapons()
 		return weapons;
 	}
 
-	return gce::GameManager::GetSceneManager().GetAllGameObjects(PrimaryTag::TWeapon);
+	return gce::GameManager::GetSceneManager().GetAllGameObjects({ Tag::TWeapon });
 }
 
-gce::GameObject* InventoryManager::GetWeapon(SecondaryTag tag)
+gce::GameObject* InventoryManager::GetWeapon(Tag tag)
 {
 	if(m_tmpWeapons.empty() == false)
 	{
 		for (gce::GameObject* go : m_tmpWeapons)
 		{
-			if (go->IsTag2(tag))
+			if (go->IsTags({ tag }))
 				return go;
 		}
 	}
 
-	return gce::GameManager::GetSceneManager().GetFirstGameObject(PrimaryTag::TWeapon, tag);
+	return gce::GameManager::GetSceneManager().GetFirstGameObject({ Tag::TWeapon, tag });
 }
 
 std::vector<gce::GameObject*> InventoryManager::GetCollectibles()
@@ -170,21 +170,21 @@ std::vector<gce::GameObject*> InventoryManager::GetCollectibles()
 		return collectibles;
 	}
 
-	return gce::GameManager::GetSceneManager().GetAllGameObjects(PrimaryTag::TThrowableWeapon);
+	return gce::GameManager::GetSceneManager().GetAllGameObjects({ Tag::TThrowableWeapon });
 }
 
-gce::GameObject* InventoryManager::GetCollectible(SecondaryTag tag)
+gce::GameObject* InventoryManager::GetCollectible(Tag tag)
 {
 	if (m_tmpCollectibles.empty() == false)
 	{
 		for (gce::GameObject* go : m_tmpCollectibles)
 		{
-			if (go->IsTag2(tag))
+			if (go->IsTags({ tag }))
 				return go;
 		}
 	}
 
-	return gce::GameManager::GetSceneManager().GetFirstGameObject(PrimaryTag::TThrowableWeapon, tag);
+	return gce::GameManager::GetSceneManager().GetFirstGameObject({ Tag::TThrowableWeapon, tag });
 }
 
 void InventoryManager::UnInitTmp()
@@ -224,7 +224,7 @@ void InventoryManager::SwapEquipedObject(bool forward)
 
 	if (auto current = m_currentInventory[m_inventoryIndex])
 	{
-		if(current->IsTag1(PrimaryTag::TWeapon))
+		if (current->IsTags({ Tag::TWeapon }))
 			current->GetScript<GunBehavior>()->OnLeaveWeapon(); // The old weapon
 	}
 
@@ -241,7 +241,7 @@ void InventoryManager::SwapEquipedObject(bool forward)
 			pObject->SetActive(true);
 			m_pEquipedObject = pObject;
 
-			if (pObject->IsTag1(PrimaryTag::TWeapon))
+			if (pObject->IsTags({ Tag::TWeapon }))
 			{
 				pObject->GetScript<GunBehavior>()->OnReceiveWeapon();
 			}
@@ -266,7 +266,7 @@ void InventoryManager::SetEquipedObjectByIndex(int index)
 
 	if (auto current = m_currentInventory[m_inventoryIndex])
 	{
-		if (current->IsTag1(PrimaryTag::TWeapon))
+		if (current->IsTags({ Tag::TWeapon }))
 			current->GetScript<GunBehavior>()->OnLeaveWeapon(); // The old weapon
 	}
 
@@ -283,7 +283,7 @@ void InventoryManager::SetEquipedObjectByIndex(int index)
 			pObject->SetActive(true);
 			m_pEquipedObject = pObject;
 
-			if (pObject->IsTag1(PrimaryTag::TWeapon))
+			if (pObject->IsTags({ Tag::TWeapon }))
 			{
 				pObject->GetScript<GunBehavior>()->OnReceiveWeapon();
 			}
@@ -295,7 +295,7 @@ void InventoryManager::SetEquipedObjectByIndex(int index)
 	}
 }
 
-Ammos* InventoryManager::GetAmmos(SecondaryTag type)
+Ammos* InventoryManager::GetAmmos(Tag type)
 {
 	for (Ammos* a : m_ammoStock)
 	{

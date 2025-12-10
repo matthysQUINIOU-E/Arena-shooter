@@ -14,7 +14,7 @@
 
 #include "Prefabs/UIManager.h"
 #include "Scripts/UIGameplayBehavior.hpp"
-#include "Scripts/UIManagerBehavior.hpp"
+
 #include "Scripts/CameraBehavior.hpp"
 
 #include "Scripts/SceneManagerBehavior.hpp"
@@ -115,8 +115,6 @@ void SceneManager::Init()
 	//MAP
 	for (gce::GameObject* go : ImportBlenderScene(L"scene_base.json"))
 	{
-		go->SetTag1(PrimaryTag::TMapObject);
-
 		m_Map.push_back(go);
 	}
 
@@ -128,7 +126,7 @@ void SceneManager::Init()
 
 	//Scene Manager Behavior
 	m_pEmpty = &EntityWrapper::Create();
-	m_pEmpty->SetProperties("SceneManager Object", PrimaryTag::TMiscellaneous, SecondaryTag::None);
+	m_pEmpty->SetProperties("SceneManager Object", { Tag::TMiscellaneous });
 	m_pEmpty->AddScript<SceneManagerBehavior>();
 
 	//UI
@@ -176,37 +174,20 @@ void SceneManager::LinkObjectToScene(gce::GameObject* obj, SceneType scene)
 	m_SceneObjectsList[scene].push_back(obj);
 }
 
-gce::GameObject* SceneManager::GetFirstGameObject(PrimaryTag tag1, SecondaryTag tag2) 
+gce::GameObject* SceneManager::GetFirstGameObject(std::vector<Tag> tags)
 {
 	auto& gameObjects = GameManager::GetScene().m_gameObjects;
 
 	for (GameObject* pGameObject : gameObjects | std::views::values)
 	{
-		if (pGameObject->IsTag1(tag1) && pGameObject->IsTag2(tag2))
-		{
+		if (pGameObject->IsTags(tags))
 			return pGameObject;
-		}
 	}
 
 	return nullptr;
 }
 
-gce::GameObject* SceneManager::GetFirstGameObject(PrimaryTag tag1)
-{
-	auto& gameObjects = GameManager::GetScene().m_gameObjects;
-
-	for (GameObject* pGameObject : gameObjects | std::views::values)
-	{
-		if (pGameObject->IsTag1(tag1))
-		{
-			return pGameObject;
-		}
-	}
-
-	return nullptr;
-}
-
-std::vector<gce::GameObject*> SceneManager::GetAllGameObjects(PrimaryTag tag1, SecondaryTag tag2)
+std::vector<gce::GameObject*> SceneManager::GetAllGameObjects(std::vector<Tag> tags)
 {
 	auto& gameObjects = GameManager::GetScene().m_gameObjects;
 
@@ -214,27 +195,8 @@ std::vector<gce::GameObject*> SceneManager::GetAllGameObjects(PrimaryTag tag1, S
 
 	for (GameObject* pGameObject : gameObjects | std::views::values)
 	{
-		if (pGameObject->IsTag1(tag1) && pGameObject->IsTag2(tag2))
-		{
+		if (pGameObject->IsTags(tags))
 			finalTab.push_back(pGameObject);
-		}
-	}
-
-	return finalTab;
-}
-
-std::vector<gce::GameObject*> SceneManager::GetAllGameObjects(PrimaryTag tag1)
-{
-	auto& gameObjects = GameManager::GetScene().m_gameObjects;
-
-	std::vector<gce::GameObject*> finalTab;
-
-	for (GameObject* pGameObject : gameObjects | std::views::values)
-	{
-		if (pGameObject->IsTag1(tag1))
-		{
-			finalTab.push_back(pGameObject);
-		}
 	}
 
 	return finalTab;

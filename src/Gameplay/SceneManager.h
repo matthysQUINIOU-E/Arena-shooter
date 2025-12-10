@@ -58,10 +58,8 @@ public:
 	void ChangeScene(SceneType newType);
 	void LinkObjectToScene(gce::GameObject* obj, SceneType scene);
 
-	gce::GameObject* GetFirstGameObject(PrimaryTag tag1, SecondaryTag tag2); // return the first GameObject with the 2 two tags
-	gce::GameObject* GetFirstGameObject(PrimaryTag tag1); // return the first GameObject with the first tag
-	std::vector<gce::GameObject*> GetAllGameObjects(PrimaryTag tag1, SecondaryTag tag2); // return all GameObjects with the 2 two tags
-	std::vector<gce::GameObject*> GetAllGameObjects(PrimaryTag tag1); // return all GameObjects with the first Tag
+	gce::GameObject* GetFirstGameObject(std::vector<Tag> tags); // return the first GameObject with the all the tags
+	std::vector<gce::GameObject*> GetAllGameObjects(std::vector<Tag> tags); // return all GameObjects with all the tags
 
 	InventoryManager* GetInventoryManager() { return m_pInventoryManager; }
 	gce::D12PipelineObject* GetPSO() { return m_pPso; }

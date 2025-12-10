@@ -5,11 +5,11 @@
 
 class Ammos
 {
-	SecondaryTag m_type = SecondaryTag::None;
+	Tag m_type = Tag::None;
 	int m_amount = 0;
 	int m_maxAmountStockage = 0;
 public:
-	Ammos(SecondaryTag type, int beginAmmoCount, int maxAmountStockage = 999) { m_type = type, m_amount = beginAmmoCount, m_maxAmountStockage = maxAmountStockage; }
+	Ammos(Tag type, int beginAmmoCount, int maxAmountStockage = 999) { m_type = type, m_amount = beginAmmoCount, m_maxAmountStockage = maxAmountStockage; }
 
 	const bool& IsEmpty() const
 	{
@@ -27,7 +27,7 @@ public:
 		return false;
 	}
 
-	const bool& IsType(SecondaryTag type) const
+	const bool& IsType(Tag type) const
 	{
 		if (m_type == type)
 			return true;
