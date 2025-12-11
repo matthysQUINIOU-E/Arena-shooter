@@ -30,7 +30,7 @@ void OnLeaveWeapon() // When this weapon will be changed
 	isReloading = false;
 	reloadProgressTime = 0.f;
 	m_pOwner->transform.SetLocalRotation(defaultRotation);
-	unloadProgress = 0.f;
+	unloadProgress = unloadSpeed;
 }
 
 void OnReceiveWeapon() // When this weapon will be the new current one
@@ -42,6 +42,7 @@ void SetAmmoManagerScript(WeaponMagazineBehavior* script) { pMagazineBehavior = 
 void SetUnloadSpeed(float speed)
 {
 	unloadSpeed = std::abs(speed);
+	unloadProgress = unloadSpeed;
 }
 
 void SetReloadTime(float newTime)
@@ -51,6 +52,9 @@ void SetReloadTime(float newTime)
 
 void Reload()
 {
+	if (unloadProgress < unloadSpeed)
+		return;
+
 	if (pMagazineBehavior == nullptr)
 		return;
 
@@ -91,21 +95,27 @@ void Shoot()
 	bullet.AddComponent<SphereCollider>();
 	auto bulletScript = bullet.AddScript<BulletBehavior>();
 
+
+	m_pOwner->transform.SetLocalRotation(defaultRotation);
+
 	switch(m_pOwner->GetUniqueTag({ Tag::TMusket, Tag::TBlunderBuss, Tag::TStarwheel }))
 	{
 	case Tag::TMusket:
 		bulletScript->speed = 100.f;
 		bulletScript->lifeTime = 2.f;
+		m_pOwner->transform.LocalRotate({ 0.35, 0, 0 }); //ANIM
 		break;
 	case Tag::TBlunderBuss:
-		bulletScript->speed = 50.f;
+		bulletScript->speed = 75.f;
 		bulletScript->lifeTime = 1.f;
 		bullet.transform.SetWorldScale({ 1, 1, 1 });
+		m_pOwner->transform.LocalRotate({ 1, 0, 0 }); //ANIM
 		break;
 	case Tag::TStarwheel:
 		bulletScript->speed = 150.f;
 		bulletScript->lifeTime = 3.f;
 		bullet.transform.SetWorldScale({0.1, 0.1, 0.1});
+		m_pOwner->transform.LocalRotate({ 0.25, 0, 0 }); //ANIM
 	}
 
 	GameManager::GetSceneManager().LinkObjectToScene(&bullet, SceneType::GamePlayScene);
@@ -135,17 +145,21 @@ void Update()
 
 	if (isReloading == false)
 	{
-		m_pOwner->transform.SetLocalRotation(defaultRotation);
-
 		if (pMagazineBehavior->IsWeaponEmpty() == false)
 		{
+			m_pOwner->transform.SetLocalRotation(defaultRotation);
 			pMesh->pMaterial->useTextureAlbedo = 0;
 		}
 		else
 		{	
 			if (unloadProgress < unloadSpeed)
 			{
+				m_pOwner->transform.LocalRotate({ -dt, 0, 0 });
 				unloadProgress += dt;
+			}
+			else
+			{
+				m_pOwner->transform.SetLocalRotation(defaultRotation);
 			}
 		}
 	}
