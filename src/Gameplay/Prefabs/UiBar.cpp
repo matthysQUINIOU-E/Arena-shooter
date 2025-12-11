@@ -1,31 +1,34 @@
 #include "UiBar.h"
 #include "EntityWrapper.h"
 
-void UiBar::InitFrame(const char* imgPath, gce::Vector2f32 leftTopRectPos, gce::Vector2f32 imgDimensions, gce::Vector2f32 pos, gce::Vector2f32 scale, float32 rotation)
+void UiBar::InitFrame(const char* imgPath, gce::Vector2f32 imgDimensions, gce::Vector2f32 pos, gce::Vector2f32 scale, gce::Vector2f32 rotation)
 {
 	auto& obj = m_frame.first;
 	obj = &EntityWrapper::Create();
-	obj->AddUiImage(imgPath, leftTopRectPos, imgDimensions, pos, scale, rotation);
 
-	m_frame.second = TransformData(pos, scale, rotation);
+	obj->AddUIButton(pos, rotation, imgDimensions * scale, imgPath, imgPath);
+
+	m_frame.second = TransformData(pos, imgDimensions * scale, rotation);
 }
 
-void UiBar::InitFilledBar(const char* imgPath, gce::Vector2f32 leftTopRectPos, gce::Vector2f32 imgDimensions, gce::Vector2f32 pos, gce::Vector2f32 scale, float32 rotation)
+void UiBar::InitFilledBar(const char* imgPath, gce::Vector2f32 imgDimensions, gce::Vector2f32 pos, gce::Vector2f32 scale, gce::Vector2f32 rotation)
 {
 	auto& obj = m_filledBar.first;
 	obj = &EntityWrapper::Create();
-	obj->AddUiImage(imgPath, leftTopRectPos, imgDimensions, pos, scale, rotation);
 
-	m_filledBar.second = TransformData(pos, scale, rotation);
+	obj->AddUIButton(pos, rotation, imgDimensions * scale, imgPath, imgPath);
+
+	m_filledBar.second = TransformData(pos, imgDimensions * scale, rotation);
 }
 
-void UiBar::InitEmptyBar(const char* imgPath, gce::Vector2f32 leftTopRectPos, gce::Vector2f32 imgDimensions, gce::Vector2f32 pos, gce::Vector2f32 scale, float32 rotation)
+void UiBar::InitEmptyBar(const char* imgPath, gce::Vector2f32 imgDimensions, gce::Vector2f32 pos, gce::Vector2f32 scale, gce::Vector2f32 rotation)
 {
 	auto& obj = m_emptyBar.first;
 	obj = &EntityWrapper::Create();
-	obj->AddUiImage(imgPath, leftTopRectPos, imgDimensions, pos, scale, rotation);
+	
+	obj->AddUIButton(pos, rotation, imgDimensions * scale, imgPath, imgPath);
 
-	m_emptyBar.second = TransformData(pos, scale, rotation);
+	m_emptyBar.second = TransformData(pos, imgDimensions * scale, rotation);
 }
 
 void UiBar::SetFilledBarByRatio(float current, float max)
@@ -37,17 +40,20 @@ void UiBar::SetFilledBarByRatio(float current, float max)
 		return;
 
 	float ratio = current / max;
+	float newScaleX = data.scale.x * ratio;
+	float deltaScale = (data.scale.x - newScaleX) * 0.5f;
 
-	obj->SetUiImageTransform(data.pos, { data.scale.x * ratio, data.scale.y }, data.rotation);
+	obj->transform.SetWorldScale({ newScaleX, data.scale.y, 1 });
+	obj->transform.SetWorldPosition({ data.pos.x - deltaScale, data.pos.y, 0});
 }
 
 void UiBar::SetActive(bool state)
 {
 	if (m_emptyBar.first)
-		m_frame.first->SetActive(state);
+		m_emptyBar.first->SetActive(state);
 
 	if (m_filledBar.first)
-		m_frame.first->SetActive(state);
+		m_filledBar.first->SetActive(state);
 
 	if (m_frame.first)
 		m_frame.first->SetActive(state);

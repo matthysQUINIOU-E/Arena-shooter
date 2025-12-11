@@ -13,24 +13,35 @@ using namespace gce;
 
 DECLARE_SCRIPT(PlayerBehavior, ScriptFlag::Start | ScriptFlag::Update | ScriptFlag::CollisionEnter | ScriptFlag::CollisionStay | ScriptFlag::CollisionExit | ScriptFlag::Destroy)
 
-//Members
-
+//Members /////////////////////////
 PhysicComponent* pPhysic = nullptr;
-
 GameObject* pWeapon = nullptr;
 
-float speed = 5.f;
+float playerSpeed = 5.f;
+gce::Vector3f32 finalDir = {};
+
+//Jump
+bool isJumping = false;
 int jumpsAmount = 0;
 int maxJumpsAmount = 2;
 
-bool isJumping = false;
+//Dash
+bool isDashing = false;
+float maxDashAmount = 2;
+float dashAmount = 0.f;
+float dashReloadTime = 1.5f;
+float dashProgressTime = 0.f;
 
+float dashDuration = 0.15f;
+float dashProgressDuration = 0.f;
+
+//Camera
 float sensitivity = 0.002f;
 gce::Vector2i32 middleScreen = { (int)((float)(WINDOW_WIDTH) * 0.5f), (int)((float)(WINDOW_HEIGHT) * 0.5f) };
 float totalPitchRotation = 0.f;
-
 bool stopLookAround = false;
 
+//Functions
 void LookAround()
 {
 	if (m_pOwner->GetChildren().Empty() || stopLookAround == true)
@@ -69,8 +80,11 @@ void BasicControls() // Move + Jump
 	if (pPhysic == nullptr)
 		return;
 
-	gce::Vector3f32 velocity = pPhysic->GetVelocity();
-	pPhysic->SetVelocity({ 0, velocity.y, 0 });
+	if (isDashing == false)
+	{
+		gce::Vector3f32 velocity = pPhysic->GetVelocity();
+		pPhysic->SetVelocity({ 0, velocity.y, 0 });
+	}
 
 	float dt = GameManager::DeltaTime();
 
@@ -87,18 +101,12 @@ void BasicControls() // Move + Jump
 
 	dir.SelfNormalize();
 
-	gce::Vector3f32 finalDir = m_pOwner->transform.GetWorldForward() * dir.z + m_pOwner->transform.GetWorldRight() * dir.x; // Redirect Direction By Rotation
+	finalDir = m_pOwner->transform.GetWorldForward() * dir.z + m_pOwner->transform.GetWorldRight() * dir.x; // Redirect Direction By Rotation
 
 	if (GetKeyDown(Keyboard::SPACE))
 	{
-	
 		if (jumpsAmount > 0)
 		{
-			m_pOwner->GetScript<HealthBehavior>()->TakeDamage(10);
-
-
-
-
 			isJumping = true;
 			jumpsAmount--;
 
@@ -108,27 +116,77 @@ void BasicControls() // Move + Jump
 			f.norm = 15000;
 			f.useApplicationPoint = true;
 			f.relativeApplicationPoint = { 0, 0, 0 };
-			pPhysic->SetVelocity({ velocity.x, 0, velocity.z });
+
+			pPhysic->AddForce(f);
+		}
+	}
+
+	m_pOwner->transform.WorldTranslate((finalDir * playerSpeed * dt));
+}
+void HandleDash()
+{
+	float dt = GameManager::DeltaTime();
+
+	if (isDashing)
+	{
+		if (dashProgressDuration < dashDuration)
+		{
+			dashProgressDuration += dt;
+
+			gce::Force f;
+			f.direction = finalDir;
+			f.norm = 15000;
+			f.useApplicationPoint = true;
+			f.relativeApplicationPoint = { 0, 0, 0 };
 
 			pPhysic->AddForce(f);
 		}
 		else
 		{
-			m_pOwner->GetScript<HealthBehavior>()->Heal(10);
+			dashProgressDuration = 0.f;
+			isDashing = false;
+		}
+
+		return;
+	}
+
+	if (dashAmount >= maxDashAmount)
+	{
+		dashProgressTime = 0.f;
+	}
+	else
+	{
+		if (dashProgressTime < dashReloadTime)
+		{
+			dashProgressTime += dt;
+		}
+		else
+		{
+			dashAmount++;
+			dashProgressTime = 0.f;
 		}
 	}
 
-	m_pOwner->transform.WorldTranslate((finalDir * speed * dt));
+	if (dashAmount > 0)
+	{
+		if (GetKeyDown(Keyboard::LSHIFT))
+		{
+			pPhysic->SetVelocity({ 0, 0, 0 });
+
+			dashAmount--;
+			isDashing = true;
+		}
+	}
 }
 
-//Functions
 void HandleInput()
 {
 	if (pPhysic == nullptr)
 		return;
 
 	BasicControls();
-	
+	HandleDash();
+
 	// Shoot
 	if (pWeapon != nullptr)
 	{
@@ -155,11 +213,6 @@ void SetCurrentWeapon(GameObject* go) { pWeapon = go; }
 void Start()
 {
 	pPhysic = m_pOwner->GetComponent<PhysicComponent>();
-
-	if (pPhysic == nullptr)
-		return;
-
-	pPhysic->SetBounciness(0.f);
 }
 
 void Update()

@@ -20,7 +20,8 @@ void Start()
 
 void Update()
 {
-	pWaveManager->Update();
+	if(GameManager::GetSceneManager().GetSceneType() == SceneType::GamePlayScene)
+		pWaveManager->Update();
 }
 
 END_SCRIPT

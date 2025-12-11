@@ -45,7 +45,7 @@ std::wstring NOTHING = L"";
 
 
 //Functions
-void UpdateFPSTxt()
+void UpdateFpsUI()
 {
 	if (mRefreshProgress < 0)
 	{
@@ -60,7 +60,7 @@ void UpdateFPSTxt()
 	}
 }
 
-void UpdateAmmoTxt()
+void UpdateAmmosUI()
 {
 	gce::GameObject* pObj = GameManager::GetSceneManager().GetInventoryManager()->GetCurrentEquipedObject();
 
@@ -88,7 +88,7 @@ void UpdateAmmoTxt()
 	pAmmoUI->UpdateDynamicText(ammoTxt);
 }
 
-void UpdateTotalAmmoTxt()
+void UpdateTotalAmmoUI()
 {
 	InventoryManager* pInventory = GameManager::GetSceneManager().GetInventoryManager();
 
@@ -127,7 +127,7 @@ void UpdateTotalAmmoTxt()
 	pTotalAmmoUI->UpdateDynamicText(totalAmmoTxt);
 }
 
-void UpdateHpTxt()
+void UpdateHpUI()
 {
 	gce::GameObject* pPlayer = GameManager::GetSceneManager().GetFirstGameObject({ Tag::TPlayer });
 
@@ -154,7 +154,7 @@ void Start()
 	pUIManager = GameManager::GetSceneManager().GetUIManager();
 
 	pFpsUI = &EntityWrapper::Create();
-	pFpsUI->AddDynamicTextRenderer(fpsTxt, { 0, 0, 300, 300 }, gce::Color::Black);
+	pFpsUI->AddDynamicTextRenderer(fpsTxt, { 1350, 10, 300, 300 }, gce::Color::Black);
 
 	pAmmoUI = &EntityWrapper::Create();
 	gce::Vector3f32 ammoPos = { 1480, 900, 0.f };
@@ -165,28 +165,15 @@ void Start()
 	pTotalAmmoUI->AddDynamicTextRenderer(totalAmmoTxt, { totalAmmmoPos.x, totalAmmmoPos.y, 0, 0 }, gce::Color::Red);
 
 	pHpUI = &EntityWrapper::Create();
-	pHpUI->AddDynamicTextRenderer(hpTxt, { 0, 900, 400, 0 }, gce::Color::Red);
+	pHpUI->AddDynamicTextRenderer(hpTxt, { 0, 900, 400, 0 }, gce::Color::Green);
 
 
 	pCrosshair = &EntityWrapper::Create(); // TEST
+	Vector2f32 center = { (float)WINDOW_WIDTH / 2.f, (float)WINDOW_HEIGHT / 2.f - 20 };
+	pCrosshair->AddUIButton(center, { 0, 0 }, {150, 150}, "res/2D_Assets/crosshair.png");
 
-	Vector2f32 center = { (float)WINDOW_WIDTH / 2.f, (float)WINDOW_HEIGHT / 2.f };
-	Vector2f32 size = { 250, 250 };
-	float scale = 0.25f;
-	Vector2f32 posUi = center - size * 0.5f * scale;
-	pCrosshair->AddUiImage("res/2D_Assets/crosshair.png", posUi, size, { posUi.x, posUi.y - 40 }, { scale, scale }, 0);
-
-
-	Vector2f32 size2 = { 202, 26 };
-	float scale2 = 0.5f;
-	Vector2f32 posBar = (Vector2f32(40, 231) + size2 * 0.5f) * scale2;
-	hpBar.InitFilledBar("res/2D_Assets/hpBar.png", posBar, size2, posBar, { scale2, scale2 }, 0);
-
-
-	Vector2f32 size3 = { 285, 102 };
-	float scale3 = 0.5f;
-	Vector2f32 posBar2 = (Vector2f32(-142, 100) + size3 * 0.5f) * scale3;
-	hpBar.InitFrame("res/2D_Assets/hpBar_frame.png", posBar2, size3, posBar2, {scale3, scale3}, 0);
+	hpBar.InitFilledBar("res/2D_Assets/hpBar.png", {405, 53}, { 190, 69}, { 0.5, 0.5 });
+	hpBar.InitFrame("res/2D_Assets/hpBar_frame.png", { 569, 204 }, { 160, 60 }, { 0.5, 0.5 });
 }
 
 void Update()
@@ -198,13 +185,14 @@ void Update()
 	pHpUI->SetActive(display);
 	pFpsUI->SetActive(display);
 	pCrosshair->SetActive(display);
+	hpBar.SetActive(display);
 
 	if (display == true)
 	{
-		UpdateFPSTxt();
-		UpdateAmmoTxt();
-		UpdateTotalAmmoTxt();
-		UpdateHpTxt();
+		UpdateFpsUI();
+		UpdateAmmosUI();
+		UpdateTotalAmmoUI();
+		UpdateHpUI();
 	}
 
 }

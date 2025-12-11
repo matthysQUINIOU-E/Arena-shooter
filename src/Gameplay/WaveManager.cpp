@@ -77,6 +77,9 @@ WaveManager::WaveManager()
 
 void WaveManager::TryNextWave()
 {
+	if (GameManager::GetSceneManager().GetSceneType() != SceneType::GamePlayScene)
+		return;
+
 	if (m_curentWave == m_maxWave)
 		return;
 
@@ -97,6 +100,9 @@ void WaveManager::TryNextWave()
 
 void WaveManager::TrySpawn()
 {
+	if (GameManager::GetSceneManager().GetSceneType() != SceneType::GamePlayScene)
+		return;
+
 	if (m_currentEnnemiesToSpawn == 0 || m_currentEnnemiesAlives >= m_maxSimultanateEnnemies)
 		return; 
 
@@ -111,6 +117,7 @@ void WaveManager::TrySpawn()
 	int tagIndex = m_ennemyTagDistrubution(m_rng);
 	Tag tag = m_ennemyTag[tagIndex];
 	Agent* ennemy = m_ennemiesFreePool[tag].back();
+
 	m_ennemiesFreePool[tag].pop_back();
 	ennemy->SetActive(true);
 
