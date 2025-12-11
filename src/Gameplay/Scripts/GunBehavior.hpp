@@ -25,10 +25,6 @@ bool isReloading = false;
 WeaponMagazineBehavior* pMagazineBehavior = nullptr;
 Quaternion defaultRotation;
 
-void DisplayUI()
-{
-}
-
 void OnLeaveWeapon() // When this weapon will be changed
 {
 	isReloading = false;
@@ -90,14 +86,27 @@ void Shoot()
 	gce::Vector3f32 spawnPoint = m_pOwner->GetChildren()[0]->transform.GetWorldPosition();
 
 	bullet.SetProperties("Bullet", { Tag::TProjectile }, spawnPoint, { 0, 0, 0 }, { 0.15, 0.15, 0.15 });
-
-	if (m_pOwner->HasTags({ Tag::TBlunderBuss }))
-		bullet.transform.LocalScale({ 3, 3, 3 });
-
 	bullet.AddMeshRenderer(gce::SHAPES.SPHERE, "");
 
 	bullet.AddComponent<SphereCollider>();
-	bullet.AddScript<BulletBehavior>();
+	auto bulletScript = bullet.AddScript<BulletBehavior>();
+
+	switch(m_pOwner->GetUniqueTag({ Tag::TMusket, Tag::TBlunderBuss, Tag::TStarwheel }))
+	{
+	case Tag::TMusket:
+		bulletScript->speed = 100.f;
+		bulletScript->lifeTime = 2.f;
+		break;
+	case Tag::TBlunderBuss:
+		bulletScript->speed = 50.f;
+		bulletScript->lifeTime = 1.f;
+		bullet.transform.SetWorldScale({ 1, 1, 1 });
+		break;
+	case Tag::TStarwheel:
+		bulletScript->speed = 150.f;
+		bulletScript->lifeTime = 3.f;
+		bullet.transform.SetWorldScale({0.1, 0.1, 0.1});
+	}
 
 	GameManager::GetSceneManager().LinkObjectToScene(&bullet, SceneType::GamePlayScene);
 

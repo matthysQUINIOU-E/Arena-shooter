@@ -20,6 +20,7 @@ enum class Tag // Game Objects Tags
     //Weapon
     TBlunderBuss,
     TMusket,
+    TStarwheel,
 
     //Collectibles
     TBomb,

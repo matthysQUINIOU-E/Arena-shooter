@@ -8,6 +8,7 @@
 #include "../SceneManager.h"
 #include "../Prefabs/InventoryManager.h"
 #include "HealthBehavior.hpp"
+#include "KeyBinds.h"
 
 using namespace gce;
 
@@ -90,20 +91,20 @@ void BasicControls() // Move + Jump
 
 	gce::Vector3f32 dir = {};
 
-	if (GetKey(Keyboard::Q))
+	if (GetKey(KeyBinds::GetKeyBind(KeyAction::MoveLeft)))
 		dir.x -= 1;
-	if (GetKey(Keyboard::D))
+	if (GetKey(KeyBinds::GetKeyBind(KeyAction::MoveRight)))
 		dir.x += 1;
-	if (GetKey(Keyboard::Z))
+	if (GetKey(KeyBinds::GetKeyBind(KeyAction::MoveForward)))
 		dir.z += 1;
-	if (GetKey(Keyboard::S))
+	if (GetKey(KeyBinds::GetKeyBind(KeyAction::MoveBackward)))
 		dir.z -= 1;
 
 	dir.SelfNormalize();
 
 	finalDir = m_pOwner->transform.GetWorldForward() * dir.z + m_pOwner->transform.GetWorldRight() * dir.x; // Redirect Direction By Rotation
 
-	if (GetKeyDown(Keyboard::SPACE))
+	if (GetKeyDown(KeyBinds::GetKeyBind(KeyAction::Jump)))
 	{
 		if (jumpsAmount > 0)
 		{
@@ -169,7 +170,7 @@ void HandleDash()
 
 	if (dashAmount > 0)
 	{
-		if (GetKeyDown(Keyboard::LSHIFT))
+		if (GetKeyDown(KeyBinds::GetKeyBind(KeyAction::Dash)))
 		{
 			pPhysic->SetVelocity({ 0, 0, 0 });
 
@@ -197,15 +198,18 @@ void HandleInput()
 	}
 
 	// Swap Weapon
-	if (GetKeyDown(Keyboard::_1))
+	if (GetKeyDown(KeyBinds::GetKeyBind(KeyAction::InventorySlot1)))
 	{
 		GameManager::GetSceneManager().GetInventoryManager()->SetEquipedObjectByIndex(0);
 	}
-	else if (GetKeyDown(Keyboard::_2))
+	else if (GetKeyDown(KeyBinds::GetKeyBind(KeyAction::InventorySlot2)))
 	{
 		GameManager::GetSceneManager().GetInventoryManager()->SetEquipedObjectByIndex(1);
 	}
-
+	else if (GetKeyDown(KeyBinds::GetKeyBind(KeyAction::InventorySlot3)))
+	{
+		GameManager::GetSceneManager().GetInventoryManager()->SetEquipedObjectByIndex(2);
+	}
 }
 
 void SetCurrentWeapon(GameObject* go) { pWeapon = go; }
@@ -221,7 +225,7 @@ void Update()
 
 	HandleInput();
 
-	if (GetKeyDown(Keyboard::NUMPAD0))
+	if (GetKeyDown(KeyBinds::GetKeyBind(KeyAction::LockUnlockMouse)))
 	{
 		stopLookAround = !stopLookAround;
 	}

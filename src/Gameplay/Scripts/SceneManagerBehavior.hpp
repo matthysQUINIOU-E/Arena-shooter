@@ -8,6 +8,7 @@
 #include "../SceneManager.h"
 #include "../Prefabs/InventoryManager.h"
 #include "../Tags.h"
+#include "KeyBinds.h"
 
 using namespace gce;
 
@@ -22,7 +23,7 @@ void Start()
 
 void Update()
 {
-	if (GetKeyDown(Keyboard::NUMPAD8))
+	if (GetKeyDown(KeyBinds::GetKeyBind(KeyAction::Crash)))
 	{
 		abort();
 		return;

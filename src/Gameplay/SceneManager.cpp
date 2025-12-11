@@ -58,6 +58,10 @@ void SceneManager::InitGamePlay()
 	//Clear the Inventory Tmp Objects because GameObjects are pushed back
 	m_pInventoryManager->UnInitTmp();
 	m_pInventoryManager->InitStates();
+
+	EntityWrapper& entityWrapper = EntityWrapper::Create();
+	entityWrapper.AddScript<WaveManagerBehavior>();
+	LinkObjectToScene(&entityWrapper, SceneType::GamePlayScene);
 }
 
 void SceneManager::UnInitGamePlay()
@@ -92,6 +96,9 @@ void SceneManager::UnInitGamePlay()
 
 void SceneManager::Init()
 {
+	//Keys
+	KeyBinds::InitDefaultKeyBinds();
+
 	//PSO
 	m_pPso = new gce::D12PipelineObject(
 		gce::SHADERS.VERTEX,
@@ -102,7 +109,7 @@ void SceneManager::Init()
 	);
 
 	gce::Scene& scene = gce::Scene::Create();
-
+	
 	// LIGHT
 	gce::LightManager::SetLightsProperties(8.0f, 100.0f, 2.0f, 32.0f, 1.f);
 	gce::LightData directionalLight = gce::LightManager::CreateDirectionalLight(gce::Vector3f32(0.0f, -1.f, 0.f), gce::Vector4(1.0f, 1.0f, 1.0f, 1.0f), 3.0f, 3.0f);
@@ -117,11 +124,9 @@ void SceneManager::Init()
 	for (gce::GameObject* go : ImportBlenderScene(L"scene_base.json"))
 	{
 		go->AddTags({ Tag::TMapObject });
+		go->SetActive(false);
 		m_Map.push_back(go);
 	}
-
-	EntityWrapper& entityWrapper = EntityWrapper::Create();
-	entityWrapper.AddScript<WaveManagerBehavior>();
 
 	//INVENTORY
 	m_pInventoryManager = new InventoryManager();
@@ -135,7 +140,7 @@ void SceneManager::Init()
 	m_pUIManager = new UIManager();
 	m_pUIManager->Init();
 
-	InitGamePlay();
+	ChangeScene(SceneType::GamePlayScene);
 }
 
 void SceneManager::ChangeScene(SceneType newType)

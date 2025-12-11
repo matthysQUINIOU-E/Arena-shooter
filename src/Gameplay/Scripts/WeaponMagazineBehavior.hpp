@@ -22,7 +22,7 @@ const Tag& GetAmmoTypeFromWeapon()
 
 	if (m_pOwner)
 	{
-		switch (m_pOwner->GetUniqueTag({ Tag::TMusket, Tag::TBlunderBuss }))
+		switch (m_pOwner->GetUniqueTag({ Tag::TMusket, Tag::TBlunderBuss, Tag::TStarwheel }))
 		{
 		case Tag::TMusket:
 			typeToUse = Tag::TNormalAmmo;
@@ -30,6 +30,9 @@ const Tag& GetAmmoTypeFromWeapon()
 		case Tag::TBlunderBuss:
 			typeToUse = Tag::THeavyAmmo;
 			break;
+		case Tag::TStarwheel:
+			typeToUse = Tag::TLightAmmo;
+
 		default:
 			break;
 		}

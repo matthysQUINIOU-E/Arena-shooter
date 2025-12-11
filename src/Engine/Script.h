@@ -5,7 +5,6 @@
 #include <Containers/Queue.hpp>
 #include "define.h"
 
-
 enum ScriptFlag
 {
 	Start            = 1 << 0,

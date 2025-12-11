@@ -2,6 +2,7 @@
 #include <vector>
 #include <unordered_map>
 #include "Tags.h"
+#include "KeyBinds.h"
 
 class Player;
 class ArenaCamera;
@@ -40,7 +41,7 @@ class SceneManager
 	ArenaCamera* m_pArenaCam = nullptr;
 
 	std::unordered_map<SceneType, std::vector<gce::GameObject*>> m_SceneObjectsList;
-	SceneType m_currentSceneType = SceneType::GamePlayScene;
+	SceneType m_currentSceneType = SceneType::Count;
 
 	InventoryManager* m_pInventoryManager = nullptr;
 

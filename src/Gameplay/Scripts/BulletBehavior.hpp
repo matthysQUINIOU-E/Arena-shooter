@@ -16,6 +16,7 @@ GameObject* pWeapon = nullptr;
 
 float lifeTime = 3.f;
 float speed = 75.f;
+int damage = 1;
 
 gce::Vector3f32 dir = {};
 

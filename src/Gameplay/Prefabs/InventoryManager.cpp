@@ -38,8 +38,8 @@ gce::GameObject* InventoryManager::CreateMusket()
 	ammoManagerScript->SetMaxCapacity(30);
 
 	auto gunBehavior = musket.AddScript<GunBehavior>();
-	gunBehavior->SetUnloadSpeed(0.2);
-	gunBehavior->SetReloadTime(1.f);
+	gunBehavior->SetUnloadSpeed(0.25);
+	gunBehavior->SetReloadTime(1.4f);
 	gunBehavior->SetAmmoManagerScript(ammoManagerScript);
 
 	m_pSceneManager->LinkObjectToScene(&musket, SceneType::GamePlayScene);
@@ -79,6 +79,37 @@ gce::GameObject* InventoryManager::CreateBlunderBuss()
 	return &blunderbuss;
 }
 
+gce::GameObject* InventoryManager::CreateStarwheel()
+{
+	EntityWrapper& starwheel = EntityWrapper::Create();
+
+	starwheel.SetProperties("Starwheel", { Tag::TWeapon, Tag::TStarwheel }, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 });
+	m_pSceneManager->GetCameraObject()->AddChild(starwheel);
+
+	starwheel.transform.SetLocalPosition({ 0.15f, -0.07f, 0.25f });
+
+	starwheel.AddMeshRenderer(gce::GeometryFactory::LoadGeometry("res/Assets/starwheel/starwheel.obj"), "");
+	EntityWrapper& hole = EntityWrapper::Create();
+	gce::Vector3f32 holePos = {};
+	holePos.z -= 0.15;
+	holePos.y += 0.025;
+
+	hole.SetChildProperties(starwheel, "Starwheel Hole", { Tag::TMiscellaneous }, { 0, 0, 0 }, { 0, 0, 0 }, { 0.02, 0.02, 0.02 });
+	hole.transform.LocalTranslate(holePos);
+
+	auto ammoManagerScript = starwheel.AddScript<WeaponMagazineBehavior>();
+	ammoManagerScript->SetMaxCapacity(15);
+
+	auto gunBehavior = starwheel.AddScript<GunBehavior>();
+	gunBehavior->SetUnloadSpeed(0.15);
+	gunBehavior->SetReloadTime(1.f);
+	gunBehavior->SetAmmoManagerScript(ammoManagerScript);
+
+	m_pSceneManager->LinkObjectToScene(&starwheel, SceneType::GamePlayScene);
+
+	return &starwheel;
+}
+
 //Collectibles Content
 gce::GameObject* InventoryManager::CreateBomb()
 {
@@ -107,9 +138,11 @@ void InventoryManager::InitAll()
 
 	m_tmpWeapons.push_back(CreateMusket());
 	m_tmpWeapons.push_back(CreateBlunderBuss());
-	
+	m_tmpWeapons.push_back(CreateStarwheel());
+
 	//m_tmpCollectibles.push_back(CreateBomb());
 
+	m_currentInventory.push_back(GetWeapon(Tag::TStarwheel));
 	m_currentInventory.push_back(GetWeapon(Tag::TBlunderBuss));
 	m_currentInventory.push_back(GetWeapon(Tag::TMusket));
 

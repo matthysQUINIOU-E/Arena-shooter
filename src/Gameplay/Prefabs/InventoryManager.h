@@ -23,6 +23,7 @@ class InventoryManager
 	//Weapons Content
 	gce::GameObject* CreateMusket();
 	gce::GameObject* CreateBlunderBuss();
+	gce::GameObject* CreateStarwheel();
 
 	//Collectibles Content
 	gce::GameObject* CreateBomb();

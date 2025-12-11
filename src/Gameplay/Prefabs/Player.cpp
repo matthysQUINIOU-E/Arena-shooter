@@ -10,9 +10,9 @@ void Player::Create()
 	m_pGameObject->SetProperties("Player", { Tag::TPlayer }, { 10, 2, 0 });
 
 	m_pGameObject->AddPhysics(10, 1, 0);
-	m_pGameObject->AddMeshRenderer(gce::SHAPES.CUBE, "");
+	m_pGameObject->AddMeshRenderer(gce::SHAPES.CYLINDER, "");
 
-	m_pGameObject->AddComponent<BoxCollider>();
+	m_pGameObject->AddComponent<SphereCollider>();
 	auto health = m_pGameObject->AddScript<HealthBehavior>();
 	health->SetMaxHP(100);
 }
