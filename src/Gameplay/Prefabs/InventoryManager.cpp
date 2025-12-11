@@ -25,7 +25,7 @@ gce::GameObject* InventoryManager::CreateMusket()
 
 	musket.transform.SetLocalPosition({ 0.25, -0.1f, 0.5f });
 
-	musket.AddMeshRenderer(gce::GeometryFactory::LoadGeometry("res/Assets/musket/musket.obj"), "res/Assets/musket/musket_base_color.png");
+	musket.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/musket/musket.obj"), "res/Assets/musket/musket_base_color.png");
 	EntityWrapper& hole = EntityWrapper::Create();
 	gce::Vector3f32 holePos = {};
 	holePos.z -= 0.5;
@@ -56,7 +56,7 @@ gce::GameObject* InventoryManager::CreateBlunderBuss()
 
 	blunderbuss.transform.SetLocalPosition({ 0.25, -0.1f, 0.5f });
 
-	blunderbuss.AddMeshRenderer(gce::GeometryFactory::LoadGeometry("res/Assets/blunderbuss/blunderbuss.obj"), "res/Assets/blunderbuss/blunderbuss_base_color.png");
+	blunderbuss.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/blunderbuss/blunderbuss.obj"), "res/Assets/blunderbuss/blunderbuss_base_color.png");
 
 	EntityWrapper& hole = EntityWrapper::Create();
 	gce::Vector3f32 holePos = {};
@@ -88,7 +88,7 @@ gce::GameObject* InventoryManager::CreateBomb()
 	bomb.SetProperties("Bomb", { Tag::TThrowableWeapon, Tag::TBomb }, { 0, 0, 0 }, { 0, 0, 0 }, { 2, 2, 2 });
 	bomb.transform.SetLocalPosition({ 0.25, -0.1f, 0.5f });
 
-	bomb.AddMeshRenderer(gce::GeometryFactory::LoadGeometry("res/Assets/bomb/bomb.obj"), "res/Assets/bomb/bomb_base_color.png");
+	bomb.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/bomb/bomb.obj"), "res/Assets/bomb/bomb_base_color.png");
 
 	EntityWrapper& hole = EntityWrapper::Create();
 	gce::Vector3f32 holePos = bomb.transform.GetWorldPosition();

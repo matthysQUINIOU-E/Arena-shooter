@@ -57,6 +57,19 @@ void Agent::ResetBlockedTime()
 	m_blockedTime = 0.f;
 }
 
+bool Agent::IsTargetInRange()
+{
+	gce::Vector3f32 selfPos = transform.GetWorldPosition();
+	gce::Vector3f32 targetPos = m_pTarget->transform.GetWorldPosition();
+	return (selfPos - targetPos).Norm() < m_stopRange;
+}
+
+float Agent::GetDistanceFromTarget()
+{
+	gce::Vector3f32 targetPos = m_pTarget->transform.GetWorldPosition();
+	return (transform.GetWorldPosition() - targetPos).Norm();
+}
+
 void Agent::CalculateNextLine()
 {
 	if (m_path.size() < 2)
@@ -129,8 +142,9 @@ void Agent::FollowCurrentLine()
 	m_blockedTime = 0.f;
 	m_pCurrentNode = pToNode;
 	m_currentLineNodes.pop();
-	m_distanceToMove = (transform.GetWorldPosition() - m_currentLineTargets.front()).Norm();
 	m_movingTo = m_currentLineTargets.front();
+	m_movingTo.y = transform.GetWorldPosition().y;
+	m_distanceToMove = (transform.GetWorldPosition() - m_movingTo).Norm();
 	m_currentLineTargets.pop();
 	m_isMoving = true;
 	m_currentPathIndex++;
@@ -181,6 +195,7 @@ void Agent::ReleaseTraveledNodes()
 
 bool Agent::AcquireTravelingToNodes(Node<NavTile, Agent>* goToNode)
 {
+	//return true;
 	gce::MeshRenderer* meshRenderer = GetComponent<gce::MeshRenderer>();
 	if (meshRenderer == nullptr)
 		return true;
@@ -259,13 +274,6 @@ void Agent::FindPath()
 	m_noPathTime = 0.f;
 	m_blocked = 0.f;
 	m_needToAcquire.clear();
-}
-
-bool Agent::IsTargetInRange()
-{
-	gce::Vector3f32 selfPos = transform.GetWorldPosition();
-	gce::Vector3f32 targetPos = m_pTarget->transform.GetWorldPosition();
-	return (selfPos - targetPos).Norm() < m_stopRange;
 }
 
 bool Agent::HasTargetMovedTooMuch()

@@ -1,6 +1,7 @@
 #include "WaveManager.h"
 #include "Scripts/AgentBehavior.hpp"
 #include <time.h>
+#include <Enemy.h>
 
 WaveManager* WaveManager::s_instance = nullptr;
 
@@ -92,7 +93,7 @@ void WaveManager::TryNextWave()
 	m_waveTimer = 0.f;
 	m_curentWave++;
 	m_currentEnnemiesToSpawn += GetEnnemiesNumberForWave(m_curentWave);
-	m_baseSpawnTimer = m_currentEnnemiesToSpawn / (m_baseWaveTimer * 0.25);
+	m_baseSpawnTimer = (m_baseWaveTimer * 0.25) / m_currentEnnemiesToSpawn;
 }
 
 void WaveManager::TrySpawn()
@@ -126,30 +127,9 @@ int WaveManager::GetEnnemiesNumberForWave(int wave)
 	return 8 + wave * 4;
 }
 
-void WaveManager::CreateEnnemy(Tag tag, gce::GameObject* player) //TODO :: create real ennemies
+void WaveManager::CreateEnnemy(Tag tag, gce::GameObject* player) 
 {
-	Agent& entity = Agent::Create();
-	AgentBehavior* ab = entity.AddScript<AgentBehavior>();
-	entity.SetTarget(player);
-	entity.SetActive(false);
-
-	switch (tag)
-	{
-	case Tag::TMogwai:
-		entity.AddMeshRenderer(gce::SHAPES.CUBE, "");
-		entity.AddComponent<gce::BoxCollider>();
-		break;
-	case Tag::TJiangshi:
-		entity.AddMeshRenderer(gce::SHAPES.CYLINDER, "");
-		entity.AddComponent<gce::BoxCollider>();
-		break;
-	case Tag::TGuHuoNiao:
-		entity.AddMeshRenderer(gce::SHAPES.SPHERE, "");
-		entity.AddComponent<gce::BoxCollider>();
-		break;
-	default:
-		break;
-	}
-
-	m_ennemiesFreePool[tag].push_back(&entity);
+	Agent& enemy = Enemy::CreateEnemy(player, tag);
+	enemy.SetActive(false);
+	m_ennemiesFreePool[tag].push_back(&enemy);
 }

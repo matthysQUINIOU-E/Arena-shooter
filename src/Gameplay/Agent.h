@@ -16,6 +16,9 @@ public:
 	void SetStopRange(float stopRange);
 	void SetCurrentNode(Node<NavTile, Agent>* node);
 	void ResetBlockedTime();
+	bool IsTargetInRange();
+	float GetDistanceFromTarget();
+
 private:
 	void CalculateNextLine();
 	void FollowCurrentLine();
@@ -24,7 +27,6 @@ private:
 	bool AcquireTravelingToNodes(Node<NavTile, Agent>* goToNode);
 	bool IsNodeInBounds(Node<NavTile,Agent>* node, gce::Vector3f32 min, gce::Vector3f32 max);
 	void FindPath();
-	bool IsTargetInRange();
 	bool HasTargetMovedTooMuch();
 	bool NeedCalculatePath();
 private:
