@@ -9,6 +9,7 @@
 #include "Scripts/WeaponMagazineBehavior.hpp"
 #include "Scripts/GunBehavior.hpp"
 #include "Scripts/HealthBehavior.hpp"
+#include "Scripts/PlayerBehavior.hpp"
 
 #include "GameManager.h"
 #include "SceneManager.h"
@@ -34,15 +35,12 @@ std::wstring ammoTxt;
 EntityWrapper* pTotalAmmoUI = nullptr;
 std::wstring totalAmmoTxt;
 
-EntityWrapper* pHpUI = nullptr;
-std::wstring hpTxt;
-
 EntityWrapper* pCrosshair = nullptr;
 
 UiBar hpBar;
+UiBar dashBar;
 
 std::wstring NOTHING = L"";
-
 
 //Functions
 void UpdateFpsUI()
@@ -127,6 +125,33 @@ void UpdateTotalAmmoUI()
 	pTotalAmmoUI->UpdateDynamicText(totalAmmoTxt);
 }
 
+void UpdateDashUI()
+{
+	gce::GameObject* pPlayer = GameManager::GetSceneManager().GetFirstGameObject({ Tag::TPlayer });
+
+	if (pPlayer == nullptr)
+		return;
+
+	PlayerBehavior* script = pPlayer->GetScript<PlayerBehavior>();
+
+	if (script)
+	{
+		int dashAmount = script->dashAmount;
+		int dashReloadTimeHalf = script->dashTotalReloadTime / script->maxDashAmount;
+
+		if (script->dashProgressReloadTime < dashReloadTimeHalf)
+		{
+			dashBar.SetFilledBar1ByRatio(script->dashProgressReloadTime, dashReloadTimeHalf);
+			dashBar.SetFilledBar2ByRatio(0.f, 1.f);
+		}
+		else
+		{
+			dashBar.SetFilledBar1ByRatio(1.f, 1.f);
+			dashBar.SetFilledBar2ByRatio(-dashReloadTimeHalf + script->dashProgressReloadTime, dashReloadTimeHalf);
+		}
+	}
+}
+
 void UpdateHpUI()
 {
 	gce::GameObject* pPlayer = GameManager::GetSceneManager().GetFirstGameObject({ Tag::TPlayer });
@@ -138,15 +163,8 @@ void UpdateHpUI()
 
 	if (health)
 	{
-		hpTxt = L"HP : " + std::to_wstring(health->health) + L"/" + std::to_wstring(health->maxHealth);
-		hpBar.SetFilledBarByRatio(health->health, health->maxHealth);
+		hpBar.SetFilledBar1ByRatio(health->health, health->maxHealth);
 	}
-	else
-	{
-		hpTxt = NOTHING;
-	}
-
-	pHpUI->UpdateDynamicText(hpTxt);
 }
 
 void Start()
@@ -164,16 +182,16 @@ void Start()
 	gce::Vector3f32 totalAmmmoPos = { 1480, 850, 0.f };
 	pTotalAmmoUI->AddDynamicTextRenderer(totalAmmoTxt, { totalAmmmoPos.x, totalAmmmoPos.y, 0, 0 }, gce::Color::Red);
 
-	pHpUI = &EntityWrapper::Create();
-	pHpUI->AddDynamicTextRenderer(hpTxt, { 0, 900, 400, 0 }, gce::Color::Green);
-
-
-	pCrosshair = &EntityWrapper::Create(); // TEST
+	pCrosshair = &EntityWrapper::Create();
 	Vector2f32 center = { (float)WINDOW_WIDTH / 2.f, (float)WINDOW_HEIGHT / 2.f - 20 };
 	pCrosshair->AddUIButton(center, { 0, 0 }, {150, 150}, "res/2D_Assets/crosshair.png");
 
-	hpBar.InitFilledBar("res/2D_Assets/hpBar.png", {405, 53}, { 190, 69}, { 0.5, 0.5 });
+	hpBar.InitFilledBar1("res/2D_Assets/hpBar.png", {405, 53}, { 190, 69}, { 0.5, 0.5 });
 	hpBar.InitFrame("res/2D_Assets/hpBar_frame.png", { 569, 204 }, { 160, 60 }, { 0.5, 0.5 });
+
+	dashBar.InitFilledBar1("res/2D_Assets/dashBar.png", { 416, 63 }, { 225, 172 }, { 0.5, 0.5 });
+	dashBar.InitFilledBar2("res/2D_Assets/dashBar_full.png", { 416, 63 }, { 225, 172 }, { 0.5, 0.5 });
+	dashBar.InitFrame("res/2D_Assets/dashBar_frame.png", { 704, 186 }, { 160, 160 }, { 0.5, 0.5 });
 }
 
 void Update()
@@ -182,10 +200,10 @@ void Update()
 
 	pAmmoUI->SetActive(display);
 	pTotalAmmoUI->SetActive(display);
-	pHpUI->SetActive(display);
 	pFpsUI->SetActive(display);
 	pCrosshair->SetActive(display);
 	hpBar.SetActive(display);
+	dashBar.SetActive(display);
 
 	if (display == true)
 	{
@@ -193,6 +211,7 @@ void Update()
 		UpdateAmmosUI();
 		UpdateTotalAmmoUI();
 		UpdateHpUI();
+		UpdateDashUI();
 	}
 
 }

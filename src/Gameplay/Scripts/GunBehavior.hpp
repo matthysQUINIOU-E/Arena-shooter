@@ -147,6 +147,7 @@ void Update()
 	{
 		if (pMagazineBehavior->IsWeaponEmpty() == false)
 		{
+			unloadProgress = unloadSpeed;
 			m_pOwner->transform.SetLocalRotation(defaultRotation);
 			pMesh->pMaterial->useTextureAlbedo = 0;
 		}

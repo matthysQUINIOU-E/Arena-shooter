@@ -30,10 +30,10 @@ int maxJumpsAmount = 2;
 bool isDashing = false;
 float maxDashAmount = 2;
 float dashAmount = 0.f;
-float dashReloadTime = 1.5f;
-float dashProgressTime = 0.f;
+float dashTotalReloadTime = 6.f;
+float dashProgressReloadTime = 0.f;
 
-float dashDuration = 0.15f;
+float dashDuration = 0.1f;
 float dashProgressDuration = 0.f;
 
 //Camera
@@ -136,7 +136,7 @@ void HandleDash()
 
 			gce::Force f;
 			f.direction = finalDir;
-			f.norm = 15000;
+			f.norm = 22750;
 			f.useApplicationPoint = true;
 			f.relativeApplicationPoint = { 0, 0, 0 };
 
@@ -151,22 +151,12 @@ void HandleDash()
 		return;
 	}
 
-	if (dashAmount >= maxDashAmount)
+	if (dashProgressReloadTime < dashTotalReloadTime)
 	{
-		dashProgressTime = 0.f;
+		dashProgressReloadTime += dt;
 	}
-	else
-	{
-		if (dashProgressTime < dashReloadTime)
-		{
-			dashProgressTime += dt;
-		}
-		else
-		{
-			dashAmount++;
-			dashProgressTime = 0.f;
-		}
-	}
+
+	dashAmount = (int)(maxDashAmount * dashProgressReloadTime / dashTotalReloadTime);
 
 	if (dashAmount > 0)
 	{
@@ -174,7 +164,7 @@ void HandleDash()
 		{
 			pPhysic->SetVelocity({ 0, 0, 0 });
 
-			dashAmount--;
+			dashProgressReloadTime -= dashTotalReloadTime / (float)maxDashAmount;
 			isDashing = true;
 		}
 	}

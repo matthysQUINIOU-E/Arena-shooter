@@ -1,5 +1,6 @@
 #include "UiBar.h"
 #include "EntityWrapper.h"
+#include <algorithm>
 
 void UiBar::InitFrame(const char* imgPath, gce::Vector2f32 imgDimensions, gce::Vector2f32 pos, gce::Vector2f32 scale, gce::Vector2f32 rotation)
 {
@@ -11,14 +12,24 @@ void UiBar::InitFrame(const char* imgPath, gce::Vector2f32 imgDimensions, gce::V
 	m_frame.second = TransformData(pos, imgDimensions * scale, rotation);
 }
 
-void UiBar::InitFilledBar(const char* imgPath, gce::Vector2f32 imgDimensions, gce::Vector2f32 pos, gce::Vector2f32 scale, gce::Vector2f32 rotation)
+void UiBar::InitFilledBar1(const char* imgPath, gce::Vector2f32 imgDimensions, gce::Vector2f32 pos, gce::Vector2f32 scale, gce::Vector2f32 rotation)
 {
-	auto& obj = m_filledBar.first;
+	auto& obj = m_filledBar1.first;
 	obj = &EntityWrapper::Create();
 
 	obj->AddUIButton(pos, rotation, imgDimensions * scale, imgPath, imgPath);
 
-	m_filledBar.second = TransformData(pos, imgDimensions * scale, rotation);
+	m_filledBar1.second = TransformData(pos, imgDimensions * scale, rotation);
+}
+
+void UiBar::InitFilledBar2(const char* imgPath, gce::Vector2f32 imgDimensions, gce::Vector2f32 pos, gce::Vector2f32 scale, gce::Vector2f32 rotation)
+{
+	auto& obj = m_filledBar2.first;
+	obj = &EntityWrapper::Create();
+
+	obj->AddUIButton(pos, rotation, imgDimensions * scale, imgPath, imgPath);
+
+	m_filledBar2.second = TransformData(pos, imgDimensions * scale, rotation);
 }
 
 void UiBar::InitEmptyBar(const char* imgPath, gce::Vector2f32 imgDimensions, gce::Vector2f32 pos, gce::Vector2f32 scale, gce::Vector2f32 rotation)
@@ -31,15 +42,15 @@ void UiBar::InitEmptyBar(const char* imgPath, gce::Vector2f32 imgDimensions, gce
 	m_emptyBar.second = TransformData(pos, imgDimensions * scale, rotation);
 }
 
-void UiBar::SetFilledBarByRatio(float current, float max)
+void UiBar::SetFilledBar1ByRatio(float current, float max)
 {
-	auto obj = m_filledBar.first;
-	auto data = m_filledBar.second;
+	auto obj = m_filledBar1.first;
+	auto data = m_filledBar1.second;
 
 	if (obj == nullptr)
 		return;
 
-	float ratio = current / max;
+	float ratio = std::clamp(current / max, 0.f, 1.f);
 	float newScaleX = data.scale.x * ratio;
 	float deltaScale = (data.scale.x - newScaleX) * 0.5f;
 
@@ -47,13 +58,29 @@ void UiBar::SetFilledBarByRatio(float current, float max)
 	obj->transform.SetWorldPosition({ data.pos.x - deltaScale, data.pos.y, 0});
 }
 
+void UiBar::SetFilledBar2ByRatio(float current, float max)
+{
+	auto obj = m_filledBar2.first;
+	auto data = m_filledBar2.second;
+
+	if (obj == nullptr)
+		return;
+
+	float ratio = std::clamp(current / max, 0.f, 1.f);
+	float newScaleX = data.scale.x * ratio;
+	float deltaScale = (data.scale.x - newScaleX) * 0.5f;
+
+	obj->transform.SetWorldScale({ newScaleX, data.scale.y, 1 });
+	obj->transform.SetWorldPosition({ data.pos.x - deltaScale, data.pos.y, 0 });
+}
+
 void UiBar::SetActive(bool state)
 {
 	if (m_emptyBar.first)
 		m_emptyBar.first->SetActive(state);
 
-	if (m_filledBar.first)
-		m_filledBar.first->SetActive(state);
+	if (m_filledBar1.first)
+		m_filledBar1.first->SetActive(state);
 
 	if (m_frame.first)
 		m_frame.first->SetActive(state);
