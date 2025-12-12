@@ -181,9 +181,15 @@ void HandleInput()
 	// Shoot
 	if (pWeapon != nullptr)
 	{
-		if (GetButton(Mouse::LEFT))
+		GunBehavior* gunScript = pWeapon->GetScript<GunBehavior>();
+
+		if (gunScript->IsReadyToUse())
 		{
-			pWeapon->GetScript<GunBehavior>()->Shoot();
+			if (GetButton(Mouse::LEFT))
+				gunScript->Shoot();
+
+			if (GetKeyDown(KeyBinds::GetKeyBind(KeyAction::Reload)))
+				gunScript->TriggerReload();
 		}
 	}
 

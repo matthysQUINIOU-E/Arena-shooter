@@ -24,6 +24,7 @@ void KeyBinds::InitDefaultKeyBinds()
 
 	AddKeyBind(KeyAction::Jump, gce::Keyboard::SPACE); // TODO Remove
 	AddKeyBind(KeyAction::Dash, gce::Keyboard::LSHIFT);
+	AddKeyBind(KeyAction::Reload, gce::Keyboard::R);
 
 	AddKeyBind(KeyAction::InventorySlot1, gce::Keyboard::_1);
 	AddKeyBind(KeyAction::InventorySlot2, gce::Keyboard::_2);

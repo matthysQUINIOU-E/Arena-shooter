@@ -189,9 +189,9 @@ void Start()
 	hpBar.InitFilledBar1("res/2D_Assets/hpBar.png", {405, 53}, { 190, 69}, { 0.5, 0.5 });
 	hpBar.InitFrame("res/2D_Assets/hpBar_frame.png", { 569, 204 }, { 160, 60 }, { 0.5, 0.5 });
 
-	dashBar.InitFilledBar1("res/2D_Assets/dashBar.png", { 416, 63 }, { 225, 172 }, { 0.5, 0.5 });
-	dashBar.InitFilledBar2("res/2D_Assets/dashBar_full.png", { 416, 63 }, { 225, 172 }, { 0.5, 0.5 });
-	dashBar.InitFrame("res/2D_Assets/dashBar_frame.png", { 704, 186 }, { 160, 160 }, { 0.5, 0.5 });
+	dashBar.InitFilledBar1("res/2D_Assets/dashBar.png", { 416, 63 }, { 218, 170 }, { 0.4, 0.4 });
+	dashBar.InitFilledBar2("res/2D_Assets/dashBar_full.png", { 416, 63 }, { 218, 170 }, { 0.4, 0.4 });
+	dashBar.InitFrame("res/2D_Assets/dashBar_frame.png", { 704, 186 }, { 160, 160 }, { 0.4, 0.4 });
 }
 
 void Update()
@@ -213,7 +213,6 @@ void Update()
 		UpdateHpUI();
 		UpdateDashUI();
 	}
-
 }
 
 END_SCRIPT

@@ -22,7 +22,6 @@ gce::Vector3f32 dir = {};
 
 void Start()
 {
-	dir = GameManager::GetSceneManager().GetCameraObject()->transform.GetWorldForward();
 }
 
 void Update()

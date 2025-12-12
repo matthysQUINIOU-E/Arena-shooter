@@ -88,7 +88,7 @@ gce::GameObject* InventoryManager::CreateStarwheel()
 
 	starwheel.transform.SetLocalPosition({ 0.15f, -0.07f, 0.25f });
 
-	starwheel.AddMeshRenderer(gce::GeometryFactory::LoadGeometry("res/Assets/starwheel/starwheel.obj"), "");
+	starwheel.AddMeshRenderer(gce::GeometryFactory::LoadGeometry("res/Assets/starwheel/starwheel.obj"), "res/Assets/starwheel/starwheel_base_color.png");
 	EntityWrapper& hole = EntityWrapper::Create();
 	gce::Vector3f32 holePos = {};
 	holePos.z -= 0.15;

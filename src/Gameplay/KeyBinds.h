@@ -11,6 +11,7 @@ enum class KeyAction
 	MoveBackward,
 	Jump,
 	Dash,
+	Reload, 
 
 	InventorySlot1,
 	InventorySlot2,
