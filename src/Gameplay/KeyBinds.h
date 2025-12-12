@@ -11,11 +11,14 @@ enum class KeyAction
 	MoveBackward,
 	Jump,
 	Dash,
-	Reload, 
+	Reload,
 
 	InventorySlot1,
 	InventorySlot2,
 	InventorySlot3,
+
+
+	ToggleFullScreen,
 
 	// DEBUG FEATURES // TODO REMOVE AT THE END
 	Crash,

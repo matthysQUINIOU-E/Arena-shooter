@@ -96,6 +96,7 @@ void SceneManager::UnInitGamePlay()
 
 void SceneManager::Init()
 {
+
 	//Keys
 	KeyBinds::InitDefaultKeyBinds();
 
@@ -212,5 +213,40 @@ std::vector<gce::GameObject*> SceneManager::GetAllGameObjects(std::vector<Tag> t
 gce::GameObject* SceneManager::GetCameraObject()
 {
 	return m_pArenaCam->GetGameObject();
+}
+
+void SceneManager::SetFullScreenMode(bool state)
+{
+	if (m_fullScreen == state)
+		return;
+
+	m_fullScreen = state;
+
+	auto win = GameManager::GetWindow();
+
+	if (m_fullScreen == false)
+	{
+		win->SetFullScreen(gce::FullScreenMode::WINDOWED);
+	}
+	else
+	{
+		win->SetFullScreen(gce::FullScreenMode::BORDERLESS);
+	}
+}
+
+void SceneManager::ToggleFullScreenMode()
+{
+	m_fullScreen = !m_fullScreen;
+
+	auto win = GameManager::GetWindow();
+
+	if (m_fullScreen == false)
+	{
+		win->SetFullScreen(gce::FullScreenMode::WINDOWED);
+	}
+	else
+	{
+		win->SetFullScreen(gce::FullScreenMode::BORDERLESS);
+	}
 }
 

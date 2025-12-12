@@ -47,7 +47,7 @@ void UiBar::SetFilledBar1ByRatio(float current, float max)
 	auto obj = m_filledBar1.first;
 	auto data = m_filledBar1.second;
 
-	if (obj == nullptr)
+	if (obj == nullptr || obj->IsActive() == false)
 		return;
 
 	float ratio = std::clamp(current / max, 0.f, 1.f);
@@ -63,7 +63,7 @@ void UiBar::SetFilledBar2ByRatio(float current, float max)
 	auto obj = m_filledBar2.first;
 	auto data = m_filledBar2.second;
 
-	if (obj == nullptr)
+	if (obj == nullptr || obj->IsActive() == false)
 		return;
 
 	float ratio = std::clamp(current / max, 0.f, 1.f);
@@ -81,6 +81,9 @@ void UiBar::SetActive(bool state)
 
 	if (m_filledBar1.first)
 		m_filledBar1.first->SetActive(state);
+
+	if (m_filledBar2.first)
+		m_filledBar2.first->SetActive(state);
 
 	if (m_frame.first)
 		m_frame.first->SetActive(state);

@@ -15,6 +15,7 @@ using namespace gce;
 DECLARE_SCRIPT(SceneManagerBehavior, ScriptFlag::Start | ScriptFlag::Update)
 
 SceneManager* pSceneManager = nullptr;
+bool windowFullscreen = true;
 
 void Start()
 {
@@ -23,14 +24,19 @@ void Start()
 
 void Update()
 {
+	if (pSceneManager == nullptr)
+		return;
+
 	if (GetKeyDown(KeyBinds::GetKeyBind(KeyAction::Crash)))
 	{
 		abort();
 		return;
 	}
 
-	if (pSceneManager == nullptr)
-		return;
+	if (GetKeyDown(KeyBinds::GetKeyBind(KeyAction::ToggleFullScreen)))
+	{
+		pSceneManager->ToggleFullScreenMode();
+	}
 
 	if (GetKeyDown(Keyboard::H)) // DESTROY ALLL JFHOIDHFOIDHFOIDFHOIUFHO
 	{

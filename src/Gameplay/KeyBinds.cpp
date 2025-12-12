@@ -30,8 +30,11 @@ void KeyBinds::InitDefaultKeyBinds()
 	AddKeyBind(KeyAction::InventorySlot2, gce::Keyboard::_2);
 	AddKeyBind(KeyAction::InventorySlot3, gce::Keyboard::_3);
 
+
+	AddKeyBind(KeyAction::ToggleFullScreen, gce::Keyboard::F11);
+
 	//DEBUG FEATURES // TODO REMOVE AT THE END
-	AddKeyBind(KeyAction::Crash, gce::Keyboard::NUMPAD8);
+	AddKeyBind(KeyAction::Crash, gce::Keyboard::ESCAPE);
 	AddKeyBind(KeyAction::LockUnlockMouse, gce::Keyboard::NUMPAD0);
 }
 

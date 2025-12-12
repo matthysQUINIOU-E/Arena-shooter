@@ -47,6 +47,7 @@ class SceneManager
 
 	gce::D12PipelineObject* m_pPso = nullptr;
 
+	bool m_fullScreen = true;
 public:
 	SceneManager() = default;
 	~SceneManager() { delete m_pPso; }
@@ -67,5 +68,9 @@ public:
 	gce::GameObject* GetCameraObject();
 	const SceneType& GetSceneType() const { return m_currentSceneType; }
 	UIManager* GetUIManager() { return m_pUIManager; }
+
+	const bool& GetFullScreenMode() const { return m_fullScreen; }
+	void SetFullScreenMode(bool state);
+	void ToggleFullScreenMode();
 };
 
