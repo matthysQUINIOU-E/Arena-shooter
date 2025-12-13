@@ -2,24 +2,14 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <functional>
+#include "Conditiones.h"
+#include "Actiones.h"
 
 enum class State
 {
 	MELEE_ATTACK,
 	DISTANCE_ATTACK,
 	MOVE
-};
-
-class Conditione
-{
-public:
-	virtual bool Get() { return true; }
-};
-
-class Actione
-{
-public:
-	virtual void Update(float deltaTime) {}
 };
 
 class StateMachinee

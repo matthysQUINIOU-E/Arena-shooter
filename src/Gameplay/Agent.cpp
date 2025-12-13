@@ -64,6 +64,11 @@ bool Agent::IsTargetInRange()
 	return (selfPos - targetPos).Norm() < m_stopRange;
 }
 
+float Agent::GetStopRange()
+{
+	return m_stopRange;
+}
+
 float Agent::GetDistanceFromTarget()
 {
 	gce::Vector3f32 targetPos = m_pTarget->transform.GetWorldPosition();

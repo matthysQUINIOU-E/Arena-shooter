@@ -17,6 +17,7 @@ public:
 	void SetCurrentNode(Node<NavTile, Agent>* node);
 	void ResetBlockedTime();
 	bool IsTargetInRange();
+	float GetStopRange();
 	float GetDistanceFromTarget();
 
 private:
