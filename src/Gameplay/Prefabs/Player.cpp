@@ -13,6 +13,8 @@ void Player::Create()
 	m_pGameObject->AddMeshRenderer(gce::SHAPES.CYLINDER, "");
 
 	m_pGameObject->AddComponent<SphereCollider>();
+	m_pGameObject->AddScript<PlayerBehavior>();
+
 	auto health = m_pGameObject->AddScript<HealthBehavior>();
 	health->SetMaxHP(100);
 }

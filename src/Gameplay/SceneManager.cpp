@@ -8,20 +8,18 @@
 
 #include "Prefabs/ArenaCamera.h"
 #include "Prefabs/Player.h"
-#include "Scripts/PlayerBehavior.hpp"
 
 #include "Prefabs/EntityWrapper.h"
-
 #include "Prefabs/UIManager.h"
-#include "Scripts/UIGameplayBehavior.hpp"
 
 #include "Scripts/CameraBehavior.hpp"
 
 #include "Scripts/SceneManagerBehavior.hpp"
 
-#include "Scripts/GunBehavior.hpp"
 #include "Scripts/AgentBehavior.hpp"
 #include "Scripts/WaveManagerBehavior.hpp"
+
+#include "Prefabs/BonusManager.h"
 
 #include "Utils.h"
 #include "Agent.h"
@@ -45,12 +43,10 @@ void SceneManager::InitGamePlay()
 	gce::GameObject* pGameObject = m_pPlayer->GetGameObject();
 	
 	pGameObject->AddChild(*GetCameraObject());
-	m_pPlayer->GetGameObject()->AddScript<PlayerBehavior>();
 
 	LinkObjectToScene(pGameObject, SceneType::GamePlayScene);
 
 	float camOffsetY = m_pPlayer->GetGameObject()->transform.GetWorldScale().y * 0.5f;
-
 	GetCameraObject()->transform.SetLocalPosition({ 0, camOffsetY, 0 });
 
 	m_pInventoryManager->InitAll();
@@ -62,6 +58,10 @@ void SceneManager::InitGamePlay()
 	EntityWrapper& entityWrapper = EntityWrapper::Create();
 	entityWrapper.AddScript<WaveManagerBehavior>();
 	LinkObjectToScene(&entityWrapper, SceneType::GamePlayScene);
+
+	BonusManager::CreateNem({ 5, 2, 0 });
+	BonusManager::CreateRiceBowl({ 5, 2, -1 });
+	BonusManager::CreateNoodles({ 5, 2, 1 });
 }
 
 void SceneManager::UnInitGamePlay()
