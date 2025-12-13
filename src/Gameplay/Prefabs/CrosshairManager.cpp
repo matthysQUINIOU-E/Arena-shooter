@@ -1,0 +1,58 @@
+#include "CrosshairManager.h"
+#include "GameManager.h"
+#include "../SceneManager.h"
+#include "../Prefabs/InventoryManager.h"
+
+void CrosshairManager::Init()
+{
+	gce::Vector2f32 center = { (float)WINDOW_WIDTH / 2.f + 10, (float)WINDOW_HEIGHT / 2.f }; // TODO see if the UI accuracy depends of the screen resolution
+
+	m_pDefaultCrosshair = &EntityWrapper::Create();
+	m_pDefaultCrosshair->AddUIButton(center, { 0, 0 }, { 150, 150 }, "res/2D_Assets/crosshair.png");
+
+	m_pMusketCrosshair = &EntityWrapper::Create();
+	m_pMusketCrosshair->AddUIButton(center, { 0, 0 }, { 75, 75 }, "res/2D_Assets/crosshair_musket.png");
+
+	m_pBlunderbussCrosshair = &EntityWrapper::Create();
+	m_pBlunderbussCrosshair->AddUIButton(center, { 0, 0 }, { 75, 75 }, "res/2D_Assets/crosshair_blunderbuss.png");
+}
+
+void CrosshairManager::Update()
+{
+	SetActive(false);
+
+	gce::GameObject* currentEquiped = gce::GameManager::GetSceneManager().GetInventoryManager()->GetCurrentEquipedObject();
+
+	switch (currentEquiped->GetUniqueTag({ Tag::TStarwheel, Tag::TBlunderBuss, Tag::TMusket }))
+	{
+	case Tag::TBlunderBuss:
+		m_pBlunderbussCrosshair->SetActive(true);
+		break;
+	case Tag::TMusket:
+		m_pMusketCrosshair->SetActive(true);
+		break;
+	default:
+		m_pDefaultCrosshair->SetActive(true);
+		break;
+	}
+}
+
+void CrosshairManager::SetActive(bool state)
+{
+	if (state == true)
+	{
+		return;
+	}
+
+	if (m_pMeleeCrosshair)
+		m_pMeleeCrosshair->SetActive(false);
+
+	if (m_pMusketCrosshair)
+		m_pMusketCrosshair->SetActive(false);
+
+	if (m_pBlunderbussCrosshair)
+		m_pBlunderbussCrosshair->SetActive(false);
+
+	if (m_pDefaultCrosshair)
+		m_pDefaultCrosshair->SetActive(false);
+}

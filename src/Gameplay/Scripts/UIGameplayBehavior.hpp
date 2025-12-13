@@ -2,8 +2,10 @@
 #include <Render.h>
 #include <Engine.h>
 #include <Script.h>
-#include <algorithm>
 #include "Components.h"
+#include "GameManager.h"
+#include "SceneManager.h"
+
 #include "Prefabs/EntityWrapper.h"
 
 #include "Scripts/WeaponMagazineBehavior.hpp"
@@ -11,12 +13,10 @@
 #include "Scripts/HealthBehavior.hpp"
 #include "Scripts/PlayerBehavior.hpp"
 
-#include "GameManager.h"
-#include "SceneManager.h"
 #include "../Prefabs/InventoryManager.h"
 #include "../Prefabs/UIManager.h"
-
 #include "../Prefabs/UiBar.h"
+#include "../Prefabs/CrosshairManager.h"
 
 using namespace gce;
 
@@ -35,7 +35,7 @@ std::wstring ammoTxt;
 EntityWrapper* pTotalAmmoUI = nullptr;
 std::wstring totalAmmoTxt;
 
-EntityWrapper* pCrosshair = nullptr;
+CrosshairManager crosshair;
 
 UiBar hpBar;
 UiBar dashBar;
@@ -57,7 +57,6 @@ void UpdateFpsUI()
 		mRefreshProgress -= GameManager::DeltaTime();
 	}
 }
-
 void UpdateAmmosUI()
 {
 	gce::GameObject* pObj = GameManager::GetSceneManager().GetInventoryManager()->GetCurrentEquipedObject();
@@ -85,7 +84,6 @@ void UpdateAmmosUI()
 
 	pAmmoUI->UpdateDynamicText(ammoTxt);
 }
-
 void UpdateTotalAmmoUI()
 {
 	InventoryManager* pInventory = GameManager::GetSceneManager().GetInventoryManager();
@@ -124,7 +122,6 @@ void UpdateTotalAmmoUI()
 
 	pTotalAmmoUI->UpdateDynamicText(totalAmmoTxt);
 }
-
 void UpdateDashUI()
 {
 	gce::GameObject* pPlayer = GameManager::GetSceneManager().GetFirstGameObject({ Tag::TPlayer });
@@ -151,7 +148,6 @@ void UpdateDashUI()
 		}
 	}
 }
-
 void UpdateHpUI()
 {
 	gce::GameObject* pPlayer = GameManager::GetSceneManager().GetFirstGameObject({ Tag::TPlayer });
@@ -165,6 +161,10 @@ void UpdateHpUI()
 	{
 		hpBar.SetFilledBar1ByRatio(health->health, health->maxHealth);
 	}
+}
+void UpdateCrosshair()
+{
+	crosshair.Update();
 }
 
 void Start()
@@ -182,9 +182,7 @@ void Start()
 	gce::Vector3f32 totalAmmmoPos = { 1480, 850, 0.f };
 	pTotalAmmoUI->AddDynamicTextRenderer(totalAmmoTxt, { totalAmmmoPos.x, totalAmmmoPos.y, 0, 0 }, gce::Color::Red);
 
-	pCrosshair = &EntityWrapper::Create();
-	Vector2f32 center = { (float)WINDOW_WIDTH / 2.f, (float)WINDOW_HEIGHT / 2.f - 20 };
-	pCrosshair->AddUIButton(center, { 0, 0 }, {150, 150}, "res/2D_Assets/crosshair.png");
+	crosshair.Init();
 
 	hpBar.InitFilledBar1("res/2D_Assets/hpBar.png", {405, 53}, { 190, 69}, { 0.5, 0.5 });
 	hpBar.InitFrame("res/2D_Assets/hpBar_frame.png", { 569, 204 }, { 160, 60 }, { 0.5, 0.5 });
@@ -201,7 +199,7 @@ void Update()
 	pAmmoUI->SetActive(display);
 	pTotalAmmoUI->SetActive(display);
 	pFpsUI->SetActive(display);
-	pCrosshair->SetActive(display);
+	crosshair.SetActive(display);
 	hpBar.SetActive(display);
 	dashBar.SetActive(display);
 
@@ -210,6 +208,7 @@ void Update()
 		UpdateFpsUI();
 		UpdateAmmosUI();
 		UpdateTotalAmmoUI();
+		UpdateCrosshair();
 		UpdateHpUI();
 		UpdateDashUI();
 	}
