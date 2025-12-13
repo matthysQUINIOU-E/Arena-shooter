@@ -42,9 +42,54 @@ gce::Vector2i32 middleScreen = { (int)((float)(WINDOW_WIDTH) * 0.5f), (int)((flo
 float totalPitchRotation = 0.f;
 bool stopLookAround = false;
 
+bool isDead = false;
+float dyingAnimationDuration = 1.f;
+float dyingAnimationProgressDuration = 0.f;
+
+Quaternion currentRotation = {};
+
 //Functions
+void HandleHealth()
+{
+	if (HealthBehavior* pScript = m_pOwner->GetScript<HealthBehavior>())
+	{
+		if (GetKeyDown(Keyboard::K))
+		{
+			pScript->TakeDamage(100);
+		}
+
+		isDead = !pScript->IsAlive();
+	}
+
+	return;
+}
+
+void DeathAnimation()
+{
+	if (dyingAnimationProgressDuration < dyingAnimationDuration)
+	{
+		pWeapon->SetActive(false);
+
+		float ratio = dyingAnimationProgressDuration / dyingAnimationDuration;
+		ratio = std::clamp(ratio, 0.f, 1.f);
+		float easing = pow(ratio, 3.f); // Acceleration animation
+
+		Quaternion rotation = {};
+		rotation.SetRotationAxis(m_pOwner->transform.GetWorldRight(), gce::PI / 2 * easing);
+
+		m_pOwner->transform.SetWorldRotation(currentRotation * rotation);
+
+		dyingAnimationProgressDuration += GameManager::DeltaTime();
+	}
+}
+
 void LookAround()
 {
+	if (GetKeyDown(KeyBinds::GetKeyBind(KeyAction::LockUnlockMouse)))
+	{
+		stopLookAround = !stopLookAround;
+	}
+
 	if (m_pOwner->GetChildren().Empty() || stopLookAround == true)
 	{
 		ShowMouseCursor();
@@ -74,6 +119,8 @@ void LookAround()
 	pCamera->transform.SetLocalRotation(pitchQ);
 
 	SetCursorPos(middleScreen.x, middleScreen.y);
+
+	currentRotation = m_pOwner->transform.GetWorldRotation();
 }
 
 void BasicControls() // Move + Jump
@@ -217,15 +264,15 @@ void Start()
 
 void Update()
 {
-	SetCurrentWeapon(GameManager::GetSceneManager().GetInventoryManager()->GetCurrentEquipedObject());
-
-	HandleInput();
-
-	if (GetKeyDown(KeyBinds::GetKeyBind(KeyAction::LockUnlockMouse)))
+	if (isDead)
 	{
-		stopLookAround = !stopLookAround;
+		DeathAnimation();
+		return;
 	}
 
+	SetCurrentWeapon(GameManager::GetSceneManager().GetInventoryManager()->GetCurrentEquipedObject());
+	HandleInput();
+	HandleHealth();
 	LookAround();
 }
 

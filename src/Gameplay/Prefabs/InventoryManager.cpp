@@ -136,9 +136,9 @@ void InventoryManager::InitAll()
 {
 	m_pSceneManager = &GameManager::GetSceneManager();
 
-	m_tmpWeapons.push_back(CreateMusket());
-	m_tmpWeapons.push_back(CreateBlunderBuss());
-	m_tmpWeapons.push_back(CreateStarwheel());
+	m_allWeapons.push_back(CreateMusket());
+	m_allWeapons.push_back(CreateBlunderBuss());
+	m_allWeapons.push_back(CreateStarwheel());
 
 	//m_tmpCollectibles.push_back(CreateBomb());
 
@@ -157,7 +157,6 @@ void InventoryManager::ResetAll()
 	m_inventoryIndex = 0;
 	m_pEquipedObject = nullptr;
 
-	UnInitTmp();
 	m_currentInventory.clear();
 
 	for (Ammos* ammos : m_ammoStock)
@@ -165,14 +164,17 @@ void InventoryManager::ResetAll()
 		delete ammos;
 	}
 
+	m_allWeapons.clear();
+	m_allCollectibles.clear();
+
 	m_ammoStock.clear();
 }
 
 std::vector<gce::GameObject*> InventoryManager::GetWeapons()
 {
-	if (m_tmpWeapons.empty() == false)
+	if (m_allWeapons.empty() == false)
 	{
-		std::vector<gce::GameObject*> weapons = m_tmpWeapons;
+		std::vector<gce::GameObject*> weapons = m_allWeapons;
 
 		return weapons;
 	}
@@ -182,9 +184,9 @@ std::vector<gce::GameObject*> InventoryManager::GetWeapons()
 
 gce::GameObject* InventoryManager::GetWeapon(Tag tag)
 {
-	if(m_tmpWeapons.empty() == false)
+	if(m_allWeapons.empty() == false)
 	{
-		for (gce::GameObject* go : m_tmpWeapons)
+		for (gce::GameObject* go : m_allWeapons)
 		{
 			if (go->HasTags({ tag }))
 				return go;
@@ -196,9 +198,9 @@ gce::GameObject* InventoryManager::GetWeapon(Tag tag)
 
 std::vector<gce::GameObject*> InventoryManager::GetCollectibles()
 {
-	if (m_tmpCollectibles.empty() == false)
+	if (m_allCollectibles.empty() == false)
 	{
-		std::vector<gce::GameObject*> collectibles = m_tmpCollectibles;
+		std::vector<gce::GameObject*> collectibles = m_allCollectibles;
 
 		return collectibles;
 	}
@@ -208,9 +210,9 @@ std::vector<gce::GameObject*> InventoryManager::GetCollectibles()
 
 gce::GameObject* InventoryManager::GetCollectible(Tag tag)
 {
-	if (m_tmpCollectibles.empty() == false)
+	if (m_allCollectibles.empty() == false)
 	{
-		for (gce::GameObject* go : m_tmpCollectibles)
+		for (gce::GameObject* go : m_allCollectibles)
 		{
 			if (go->HasTags({ tag }))
 				return go;
@@ -220,28 +222,23 @@ gce::GameObject* InventoryManager::GetCollectible(Tag tag)
 	return gce::GameManager::GetSceneManager().GetFirstGameObject({ Tag::TThrowableWeapon, tag });
 }
 
-void InventoryManager::UnInitTmp()
+void InventoryManager::InitInventoryState()
 {
-	m_tmpWeapons.clear();
-	m_tmpCollectibles.clear();
-}
-
-void InventoryManager::InitStates()
-{
-	for (gce::GameObject* pObject : m_currentInventory)
+	for (gce::GameObject* pWeapon : m_allWeapons)
 	{
-		//Only the new Equiped Object is active
-		gce::GameObject* first = m_currentInventory[0];
+		pWeapon->SetActive(false);
+	}
 
-		if (pObject == first) // if the current checked Object among the inventory is the new equiped
-		{
-			pObject->SetActive(true);
-			m_pEquipedObject = pObject;
-		}
-		else
-		{
-			pObject->SetActive(false);
-		}
+	for (gce::GameObject* pCollectible : m_allCollectibles)
+	{
+		pCollectible->SetActive(false);
+	}
+
+
+	if (gce::GameObject* first = m_currentInventory[0])
+	{
+		first->SetActive(true);
+		m_pEquipedObject = first;
 	}
 }
 

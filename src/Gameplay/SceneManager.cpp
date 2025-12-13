@@ -50,10 +50,7 @@ void SceneManager::InitGamePlay()
 	GetCameraObject()->transform.SetLocalPosition({ 0, camOffsetY, 0 });
 
 	m_pInventoryManager->InitAll();
-
-	//Clear the Inventory Tmp Objects because GameObjects are pushed back
-	m_pInventoryManager->UnInitTmp();
-	m_pInventoryManager->InitStates();
+	m_pInventoryManager->InitInventoryState();
 
 	EntityWrapper& entityWrapper = EntityWrapper::Create();
 	entityWrapper.AddScript<WaveManagerBehavior>();

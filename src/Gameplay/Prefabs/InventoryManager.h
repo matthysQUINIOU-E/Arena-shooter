@@ -11,8 +11,8 @@ class InventoryManager
 
 	int m_inventoryIndex = 0;
 
-	std::vector<gce::GameObject*> m_tmpWeapons; // GetWeapons before the gameobject pushback (only for the Init SceneManager)
-	std::vector<gce::GameObject*> m_tmpCollectibles; // GetCollectibles before the gameobject pushback (only for the Init SceneManager)
+	std::vector<gce::GameObject*> m_allWeapons;
+	std::vector<gce::GameObject*> m_allCollectibles;
 
 	std::vector<gce::GameObject*> m_currentInventory;
 
@@ -39,9 +39,7 @@ public:
 	std::vector<gce::GameObject*> GetCollectibles();
 	gce::GameObject* GetCollectible(Tag tag);
 
-	void UnInitTmp();
-
-	void InitStates();
+	void InitInventoryState();
 
 	void SwapEquipedObject(bool forward); // Forward = true to go on the next item in the Inventory, false to go backward
 	void SetEquipedObjectByIndex(int index); // Equip instantly the new object with based on its location in the Inventory
