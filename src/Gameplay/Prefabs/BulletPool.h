@@ -10,7 +10,7 @@ public:
 	static void SetActive(gce::GameObject* e, bool state);
 	static void Init();
 	static EntityWrapper* Generate();
-	static void Push(EntityWrapper* e);
+	static void Desactive(gce::GameObject* e);
 	static void DesactivateAllBullets();
 };
 

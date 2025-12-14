@@ -1,7 +1,7 @@
 #include "BulletPool.h"
 #include "../Scripts/BulletBehavior.hpp"
 
-int BulletPool::m_maxAmount = 15;
+int BulletPool::m_maxAmount = 10;
 std::queue<EntityWrapper*> BulletPool::m_bulletsFreePool = {};
 
 void BulletPool::SetActive(gce::GameObject* e, bool state)
@@ -41,14 +41,15 @@ EntityWrapper* BulletPool::Generate()
 	if(pCurrent->HasComponent<PhysicComponent>() == false)
 		pCurrent->AddPhysics(0, 0, 0);
 
+	m_bulletsFreePool.push(pCurrent);
+
 	SetActive(pCurrent, true);
 	return pCurrent;
 }
 
-void BulletPool::Push(EntityWrapper* e)
+void BulletPool::Desactive(gce::GameObject* e)
 {
 	SetActive(e, false);
-	m_bulletsFreePool.push(e);
 }
 
 void BulletPool::DesactivateAllBullets()

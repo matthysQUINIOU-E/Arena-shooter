@@ -41,7 +41,7 @@ void Reset()
 	dir = {};
 	headseeker = false;
 
-	BulletPool::Push(dynamic_cast<EntityWrapper*>(m_pOwner));
+	BulletPool::Desactive(m_pOwner);
 }
 
 gce::GameObject* GetNearestEnemy()
