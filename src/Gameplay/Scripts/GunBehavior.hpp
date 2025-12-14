@@ -5,6 +5,7 @@
 #include <algorithm>
 #include "Components.h"
 
+#include "../Prefabs/BulletPool.h"
 #include "BulletBehavior.hpp"
 #include "../Prefabs/EntityWrapper.h"
 #include "WeaponMagazineBehavior.hpp"
@@ -152,7 +153,7 @@ void Reload(float dt) // After the reloading animation
 		isReloading = false;
 		reloadProgressTime = 0.f;
 
-		Ammos* ammoToDecrease = GameManager::GetSceneManager().GetInventoryManager()->GetAmmos(pMagazineBehavior->GetAmmoTypeFromWeapon());
+		Ammos* ammoToDecrease = GameManager::GetSceneManager().GetInventoryManager()->GetAmmos(pMagazineBehavior->typeOfAmmo);
 
 		int amount = pMagazineBehavior->maxCapacity - pMagazineBehavior->ammosLeft;
 		int ammoInStock = ammoToDecrease->GetAmount();
@@ -185,8 +186,6 @@ void Shoot()
 
 	gce::Scene& scene = GameManager::GetScene();
 
-	EntityWrapper& bullet = EntityWrapper::Create();
-
 	if (m_pOwner->GetChildren().Empty()) // No Spawn point ?
 	{
 		return;
@@ -194,33 +193,36 @@ void Shoot()
 
 	gce::Vector3f32 spawnPoint = m_pOwner->GetChildren()[0]->transform.GetWorldPosition();
 
-	bullet.SetProperties("Bullet", { Tag::TProjectile }, spawnPoint, { 0, 0, 0 }, { 0.15, 0.15, 0.15 });
-	bullet.AddMeshRenderer(gce::SHAPES.SPHERE, "");
-	bullet.AddComponent<SphereCollider>();
-	auto bulletScript = bullet.AddScript<BulletBehavior>();
+	EntityWrapper* pCurrent = BulletPool::Generate();
+	
+	if (pCurrent == nullptr)
+		return;
+
+	pCurrent->transform.SetWorldPosition(spawnPoint);
+
+	auto bulletScript = pCurrent->GetScript<BulletBehavior>();
 
 	switch (m_pOwner->GetUniqueTag({ Tag::TMusket, Tag::TBlunderBuss, Tag::TStarwheel }))
 	{
 	case Tag::TMusket:
-		SetWeaponProperties(bulletScript, bullet, 100.f, 2.f, 0.15f, 0.25f, 2.f);
+		SetWeaponProperties(bulletScript, *pCurrent, 100.f, 2.f, 0.15f, 0.075f, 2.f);
 		break;
 	case Tag::TBlunderBuss:
-		SetWeaponProperties(bulletScript, bullet, 75.f, 1.f, 1.f, 0.6f, 1.5f);
+		SetWeaponProperties(bulletScript, *pCurrent, 75.f, 1.f, 1.f, 0.25f, 1.5f);
 		break;
 	case Tag::TStarwheel:
-		SetWeaponProperties(bulletScript, bullet, 150.f, 3.f, 0.1f, 0.15f, 3.f);
+		SetWeaponProperties(bulletScript, *pCurrent, 150.f, 3.f, 0.1f, 0.05f, 3.f);
 		break;
 	}
 
 	bulletScript->dir = -m_pOwner->transform.GetWorldForward();
+	bulletScript->defaultDir = bulletScript->dir;
 
-	if (totalRecoil < gce::PI / 4)
+	if (totalRecoil < gce::PI / 8)
 	{
 		totalRecoil += recoilFactor;
 		m_pOwner->transform.LocalRotate({ recoilFactor, 0, 0 }); //ANIM
 	}
-
-	GameManager::GetSceneManager().LinkObjectToScene(&bullet, SceneType::GamePlayScene);
 
 	unloadProgress = 0.f;
 	pMagazineBehavior->UseWeaponAmmo();

@@ -11,6 +11,7 @@ enum class Tag // Game Objects Tags
     TGround,
     TEnemy,
     TProjectile,
+    TBullet,
     TMiscellaneous,
     TSpawner,
     TMapObject,
@@ -18,6 +19,7 @@ enum class Tag // Game Objects Tags
     THeal,
 
     //Weapon
+    TMelee,
     TBlunderBuss,
     TMusket,
     TStarwheel,

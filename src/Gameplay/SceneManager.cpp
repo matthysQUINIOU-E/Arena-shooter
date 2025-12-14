@@ -20,6 +20,7 @@
 #include "Scripts/WaveManagerBehavior.hpp"
 
 #include "Prefabs/BonusManager.h"
+#include "Prefabs/BulletPool.h"
 
 #include "Utils.h"
 #include "Agent.h"
@@ -85,6 +86,8 @@ void SceneManager::UnInitGamePlay()
 	delete m_pPlayer;
 	m_pPlayer = nullptr;
 
+	BulletPool::DesactivateAllBullets();
+
 	for (gce::GameObject* go : m_Map)
 	{
 		go->SetActive(false);
@@ -128,6 +131,9 @@ void SceneManager::Init()
 
 	//INVENTORY
 	m_pInventoryManager = new InventoryManager();
+
+	//BulletPool
+	BulletPool::Init();
 
 	//Scene Manager Behavior
 	m_pEmpty = &EntityWrapper::Create();

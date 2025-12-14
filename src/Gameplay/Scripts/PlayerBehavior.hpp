@@ -216,16 +216,8 @@ void HandleDash()
 		}
 	}
 }
-
-void HandleInput()
+void HandleWeapon()
 {
-	if (pPhysic == nullptr)
-		return;
-
-	BasicControls();
-	HandleDash();
-
-	// Shoot
 	if (pWeapon != nullptr)
 	{
 		GunBehavior* gunScript = pWeapon->GetScript<GunBehavior>();
@@ -240,7 +232,6 @@ void HandleInput()
 		}
 	}
 
-	// Swap Weapon
 	if (GetKeyDown(KeyBinds::GetKeyBind(KeyAction::InventorySlot1)))
 	{
 		GameManager::GetSceneManager().GetInventoryManager()->SetEquipedObjectByIndex(0);
@@ -253,6 +244,24 @@ void HandleInput()
 	{
 		GameManager::GetSceneManager().GetInventoryManager()->SetEquipedObjectByIndex(2);
 	}
+	else if (GetKeyDown(KeyBinds::GetKeyBind(KeyAction::InventorySlot4)))
+	{
+		GameManager::GetSceneManager().GetInventoryManager()->SetEquipedObjectByIndex(3);
+	}
+	else if (GetKeyDown(KeyBinds::GetKeyBind(KeyAction::InventorySlot5)))
+	{
+		GameManager::GetSceneManager().GetInventoryManager()->SetEquipedObjectByIndex(4);
+	}
+}
+
+void HandleInput()
+{
+	if (pPhysic == nullptr)
+		return;
+
+	BasicControls();
+	HandleDash();
+	HandleWeapon();
 }
 
 void SetCurrentWeapon(GameObject* go) { pWeapon = go; }

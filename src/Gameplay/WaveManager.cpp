@@ -136,6 +136,8 @@ int WaveManager::GetEnnemiesNumberForWave(int wave)
 void WaveManager::CreateEnnemy(Tag tag, gce::GameObject* player) //TODO :: create real ennemies
 {
 	Agent& entity = Agent::Create();
+	entity.AddTags({ Tag::TEnemy });
+
 	AgentBehavior* ab = entity.AddScript<AgentBehavior>();
 	entity.SetTarget(player);
 	GameManager::GetSceneManager().LinkObjectToScene(&entity, SceneType::GamePlayScene);
