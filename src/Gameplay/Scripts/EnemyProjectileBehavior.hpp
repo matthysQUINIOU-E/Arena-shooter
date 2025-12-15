@@ -48,7 +48,7 @@ void Shoot(gce::Vector3f32 from, gce::Vector3f32 toward)
 
 void CollisionEnter(GameObject* other)
 {
-	if (other->IsTags({ Tag::TPlayer }))
+	if (other->HasTags({ Tag::TPlayer }))
 		other->GetScript<HealthBehavior>()->TakeDamage(m_damage);
 	m_pOwner->SetActive(false);
 }
