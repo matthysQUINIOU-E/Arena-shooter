@@ -1,5 +1,4 @@
 #include "ArenaCamera.h"
-#include "Scripts/CameraBehavior.hpp"
 #include "EntityWrapper.h"
 
 gce::GameObject* ArenaCamera::Create()

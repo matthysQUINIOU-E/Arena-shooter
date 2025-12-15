@@ -112,7 +112,7 @@ void SetWeaponProperties(BulletBehavior* script, EntityWrapper& bullet, float bu
 {
 	script->speed = bulletSpeed;
 	script->lifeTime = bulletLifeTime;
-	bullet.transform.SetWorldScale({ bulletSize, bulletSize, bulletSize });
+	bullet.transform.WorldScale({ bulletSize, bulletSize, bulletSize });
 	recoilFactor = _recoilFactor;
 	recoilRecoverFactor = _recoilRecoverFactor;
 }
@@ -201,18 +201,17 @@ void Shoot()
 	pCurrent->transform.SetWorldPosition(spawnPoint);
 
 	auto bulletScript = pCurrent->GetScript<BulletBehavior>();
-	bulletScript->ActiveHeadSeeker();
 
 	switch (m_pOwner->GetUniqueTag({ Tag::TMusket, Tag::TBlunderBuss, Tag::TStarwheel }))
 	{
 	case Tag::TMusket:
-		SetWeaponProperties(bulletScript, *pCurrent, 100.f, 2.f, 0.15f, 0.075f, 2.f);
+		SetWeaponProperties(bulletScript, *pCurrent, 100.f, 2.f, 2.f, 0.075f, 2.f);
 		break;
 	case Tag::TBlunderBuss:
-		SetWeaponProperties(bulletScript, *pCurrent, 75.f, 1.f, 1.f, 0.25f, 1.5f);
+		SetWeaponProperties(bulletScript, *pCurrent, 75.f, 1.f, 3.f, 0.25f, 1.5f);
 		break;
 	case Tag::TStarwheel:
-		SetWeaponProperties(bulletScript, *pCurrent, 150.f, 3.f, 0.1f, 0.05f, 3.f);
+		SetWeaponProperties(bulletScript, *pCurrent, 150.f, 3.f, 1.f, 0.05f, 3.f);
 		break;
 	}
 

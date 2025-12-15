@@ -19,8 +19,33 @@ float speed = 0.f;
 int damage = 1;
 bool headseeker = false;
 
+float easingTime = 0.1f; // The more the value is, the less the headseeker will be efficient
+float easingProgressTime = 0.f;
+
 gce::Vector3f32 defaultDir = {};
 gce::Vector3f32 dir = {};
+
+gce::GameObject* CheckCollision()
+{
+	for (gce::GameObject* go : GameManager::GetSceneManager().GetAllGameObjects({ Tag::TEnemy }))
+	{
+		gce::Vector3f32 pos1 = m_pOwner->transform.GetWorldPosition();
+		gce::Vector3f32 scale1 = m_pOwner->transform.GetWorldScale();
+
+		gce::Vector3f32 pos2 = go->transform.GetWorldPosition();
+		gce::Vector3f32 scale2 = go->transform.GetWorldScale();
+
+		bool collision =
+			std::abs(pos1.x - pos2.x) <= (scale1.x * 0.5f + scale2.x * 0.5f) &&
+			std::abs(pos1.y - pos2.y) <= (scale1.y * 0.5f + scale2.y * 0.5f) &&
+			std::abs(pos1.z - pos2.z) <= (scale1.z * 0.5f + scale2.z * 0.5f);
+
+		if (collision)
+			return go;
+	}
+
+	return nullptr;
+}
 
 void ActiveHeadSeeker()
 {
@@ -29,7 +54,6 @@ void ActiveHeadSeeker()
 
 void Start()
 {
-	speed = 10.f;
 }
 
 void Reset()
@@ -51,7 +75,7 @@ gce::GameObject* GetNearestEnemy()
 
 	gce::GameObject* pNearestEnemy = nullptr;
 
-	float maxDistanceDetection = 2.f;
+	float maxDistanceDetection = 5.f;
 
 	for (gce::GameObject* pCurrent : enemies)
 	{
@@ -78,15 +102,28 @@ void SeekEnemy(gce::GameObject* pEnemy) // Change the direction
 		return;
 	}
 
-	gce::Vector3f32 bulletPos = m_pOwner->transform.GetWorldPosition();
-	gce::Vector3f32 enemyPos = pEnemy->transform.GetWorldPosition();
+	if (easingProgressTime < easingProgressTime)
+	{
+		easingProgressTime += GameManager::DeltaTime();
+		return;
+	}
+	else
+	{
+		easingProgressTime = 0.f;
 
-	dir = enemyPos - bulletPos;
-	dir.SelfNormalize();
+		gce::Vector3f32 bulletPos = m_pOwner->transform.GetWorldPosition();
+		gce::Vector3f32 enemyPos = pEnemy->transform.GetWorldPosition();
+
+		dir = enemyPos - bulletPos;
+		dir.SelfNormalize();
+	}
 }
 
 void Update()
 {
+	speed = 10.f;
+	maxLifeTime = 10.f;
+
 	float dt = GameManager::DeltaTime();
 
 	if (lifeTime < 0)
@@ -104,6 +141,11 @@ void Update()
 
 		m_pOwner->transform.WorldTranslate(dir * speed * dt);
 	}
+
+	if (gce::GameObject* pCollided = CheckCollision())
+	{
+		Reset();
+	}
 }
 
 void Destroy()
@@ -112,10 +154,7 @@ void Destroy()
 
 void CollisionEnter(GameObject* other)
 {
-	if (other->HasTags({ Tag::TPlayer }))
-		return;
 
-	Reset();
 }
 
 END_SCRIPT

@@ -12,8 +12,6 @@
 #include "Prefabs/EntityWrapper.h"
 #include "Prefabs/UIManager.h"
 
-#include "Scripts/CameraBehavior.hpp"
-
 #include "Scripts/SceneManagerBehavior.hpp"
 
 #include "Scripts/AgentBehavior.hpp"
@@ -28,7 +26,7 @@
 
 void SceneManager::InitGamePlay()
 {
-	if (m_IsGamePlayInit == true)
+	if (m_IsGamePlayInit == true) // bonobo
 		return;
 	
 	m_IsGamePlayInit = true;
@@ -80,7 +78,7 @@ void SceneManager::UnInitGamePlay()
 		if (go->HasTags({ Tag::TMapObject }) == false)
 			go->Destroy();
 	}
-
+	// sigma
 	m_SceneObjectsList[SceneType::GamePlayScene].clear();
 
 	delete m_pPlayer;

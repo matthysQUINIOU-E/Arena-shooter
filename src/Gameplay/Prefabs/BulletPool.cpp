@@ -6,23 +6,18 @@ std::queue<EntityWrapper*> BulletPool::m_bulletsFreePool = {};
 
 void BulletPool::SetActive(gce::GameObject* e, bool state)
 {
-	if(auto pc = e->GetComponent<PhysicComponent>())
-		pc->SetActive(state);
-
-	e->GetComponent<SphereCollider>()->SetActive(state);
+	e->GetComponent<BoxCollider>()->SetActive(state);
 	e->SetActive(state);
 }
 
 void BulletPool::Init()
 {
-	Geometry* pGeo = gce::SHAPES.SPHERE;
-
 	for (size_t i = 0; i < m_maxAmount; i++)
 	{
 		EntityWrapper& bullet = EntityWrapper::Create();
-		bullet.SetProperties("Bullet", { Tag::TProjectile, Tag::TBullet }, { 0, 0, 0 }, { 0, 0, 0 }, { 0.15, 0.15, 0.15 });
-		bullet.AddMeshRenderer(pGeo, "");
-		bullet.AddComponent<gce::SphereCollider>();
+		bullet.SetProperties("Bullet", { Tag::TProjectile, Tag::TBullet }, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 });
+		bullet.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/ammo/ammo.obj"), "res/Assets/ammo/ammo_base_color.png");
+		bullet.AddComponent<gce::BoxCollider>();
 		bullet.AddScript<BulletBehavior>();
 
 		SetActive(&bullet, false);
@@ -38,8 +33,9 @@ EntityWrapper* BulletPool::Generate()
 	EntityWrapper* pCurrent = m_bulletsFreePool.front();
 	m_bulletsFreePool.pop();
 
-	if(pCurrent->HasComponent<PhysicComponent>() == false)
-		pCurrent->AddPhysics(0, 0, 0);
+	pCurrent->transform.SetWorldPosition({ 0, 0, 0 });
+	pCurrent->transform.SetWorldRotation({ 0, 0, 0 });
+	pCurrent->transform.SetWorldScale({ 1, 1, 1 });
 
 	m_bulletsFreePool.push(pCurrent);
 

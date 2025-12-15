@@ -42,7 +42,49 @@ UiBar dashBar;
 
 std::wstring NOTHING = L"";
 
+EntityWrapper* pTakeDamageUI = nullptr;
+int oldPlayerHp = -1;
+bool takeDamageTriggerVisual = false;
+float takeDamageDuration = 1.f;
+float takeDamageProgressDuration;
+
 //Functions
+void UpdateTakeDamageUI()
+{
+	auto pPlayer = GameManager::GetSceneManager().GetFirstGameObject({ Tag::TPlayer });
+
+	if (takeDamageTriggerVisual)
+	{
+		if (takeDamageProgressDuration < takeDamageDuration)
+		{
+			takeDamageProgressDuration += GameManager::DeltaTime();
+			pTakeDamageUI->SetActive(true);
+		}
+		else
+		{
+			takeDamageProgressDuration = 0.f;
+			takeDamageTriggerVisual = false;
+			pTakeDamageUI->SetActive(false);
+		}
+	}
+
+	if (HealthBehavior* pScript = pPlayer->GetScript<HealthBehavior>())
+	{
+		if (oldPlayerHp == -1)
+		{
+			oldPlayerHp = pScript->health;
+			return;
+		}
+
+		if (pScript->health < oldPlayerHp || pScript->health <= 0)
+		{
+			oldPlayerHp = pScript->health;
+			takeDamageProgressDuration = 0.f;
+			takeDamageTriggerVisual = true;
+		}
+	}
+}
+
 void UpdateFpsUI()
 {
 	if (mRefreshProgress < 0)
@@ -182,6 +224,11 @@ void Start()
 	gce::Vector3f32 totalAmmmoPos = { 1480, 850, 0.f };
 	pTotalAmmoUI->AddDynamicTextRenderer(totalAmmoTxt, { totalAmmmoPos.x, totalAmmmoPos.y, 0, 0 }, gce::Color::Red);
 
+	pTakeDamageUI = &EntityWrapper::Create();
+	gce::Vector2f32 takeDamagePos = { WINDOW_WIDTH / 2.f, WINDOW_HEIGHT / 2.f };
+	pTakeDamageUI->AddUIButton(takeDamagePos, { 0, 0 }, { WINDOW_WIDTH, WINDOW_HEIGHT }, "res/2D_Assets/takedamage_screen.png");
+	pTakeDamageUI->SetActive(false);
+
 	crosshair.Init();
 
 	hpBar.InitFilledBar1("res/2D_Assets/hpBar.png", {405, 53}, { 190, 69}, { 0.5, 0.5 });
@@ -211,6 +258,12 @@ void Update()
 		UpdateCrosshair();
 		UpdateHpUI();
 		UpdateDashUI();
+		UpdateTakeDamageUI();
+	}
+	else
+	{
+		pTakeDamageUI->SetActive(false);
+		takeDamageTriggerVisual = false;
 	}
 }
 
