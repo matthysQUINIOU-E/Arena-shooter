@@ -19,6 +19,9 @@ float speed = 0.f;
 int damage = 1;
 bool headseeker = false;
 
+float easingTime = 0.1f; // The more the value is, the less the headseeker will be efficient
+float easingProgressTime = 0.f;
+
 gce::Vector3f32 defaultDir = {};
 gce::Vector3f32 dir = {};
 
@@ -29,7 +32,6 @@ void ActiveHeadSeeker()
 
 void Start()
 {
-	speed = 10.f;
 }
 
 void Reset()
@@ -51,7 +53,7 @@ gce::GameObject* GetNearestEnemy()
 
 	gce::GameObject* pNearestEnemy = nullptr;
 
-	float maxDistanceDetection = 2.f;
+	float maxDistanceDetection = 5.f;
 
 	for (gce::GameObject* pCurrent : enemies)
 	{
@@ -78,15 +80,28 @@ void SeekEnemy(gce::GameObject* pEnemy) // Change the direction
 		return;
 	}
 
-	gce::Vector3f32 bulletPos = m_pOwner->transform.GetWorldPosition();
-	gce::Vector3f32 enemyPos = pEnemy->transform.GetWorldPosition();
+	if (easingProgressTime < easingProgressTime)
+	{
+		easingProgressTime += GameManager::DeltaTime();
+		return;
+	}
+	else
+	{
+		easingProgressTime = 0.f;
 
-	dir = enemyPos - bulletPos;
-	dir.SelfNormalize();
+		gce::Vector3f32 bulletPos = m_pOwner->transform.GetWorldPosition();
+		gce::Vector3f32 enemyPos = pEnemy->transform.GetWorldPosition();
+
+		dir = enemyPos - bulletPos;
+		dir.SelfNormalize();
+	}
 }
 
 void Update()
 {
+	speed = 10.f;
+	maxLifeTime = 10.f;
+
 	float dt = GameManager::DeltaTime();
 
 	if (lifeTime < 0)

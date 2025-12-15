@@ -137,6 +137,7 @@ int WaveManager::GetEnnemiesNumberForWave(int wave)
 void WaveManager::CreateEnnemy(Tag tag, gce::GameObject* player) 
 {
 	Agent& enemy = Enemy::CreateEnemy(player, tag);
+	enemy.AddTags({ Tag::TEnemy });
 	enemy.SetActive(false);
 	m_ennemiesFreePool[tag].push_back(&enemy);
 	GameManager::GetSceneManager().LinkObjectToScene(&enemy, SceneType::GamePlayScene);

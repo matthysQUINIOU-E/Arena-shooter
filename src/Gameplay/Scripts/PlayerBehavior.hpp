@@ -43,7 +43,7 @@ float totalPitchRotation = 0.f;
 bool stopLookAround = false;
 
 bool isDead = false;
-float dyingAnimationDuration = 1.f;
+float dyingAnimationDuration = 1.5f;
 float dyingAnimationProgressDuration = 0.f;
 
 Quaternion currentRotation = {};
@@ -80,6 +80,10 @@ void DeathAnimation()
 		m_pOwner->transform.SetWorldRotation(currentRotation * rotation);
 
 		dyingAnimationProgressDuration += GameManager::DeltaTime();
+	}
+	else
+	{
+		GameManager::GetSceneManager().ChangeScene(SceneType::GameOverScene);
 	}
 }
 
