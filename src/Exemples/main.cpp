@@ -64,7 +64,7 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
 	shapeCustom.transform.SetWorldPosition({ 0.0f,3.0f,0.0f });
 	MeshRenderer* pMeshRenderer3 = shapeCustom.AddComponent<MeshRenderer>();
 	// Pensez à inverser l'axe Y des uv quand vous loadez des OBJ (sinon ça casse vos textures)
-	pMeshRenderer3->pGeometry = GeometryFactory::LoadGeometry("res/Exemple/testplane.obj");
+	pMeshRenderer3->pGeometry = GeometryFactory::GetCustomGeometry("res/Exemple/testplane.obj");
 	pMeshRenderer3->pPso = &defaultPso;
 	pMeshRenderer3->pMaterial->albedoTextureID = pNewTexture->GetTextureID();
 	pMeshRenderer3->pMaterial->useTextureAlbedo = 1;
