@@ -1,8 +1,21 @@
 #pragma once
 #include <vector>
 #include <unordered_map>
+#include "Tags.h"
+#include "KeyBinds.h"
 
-enum  SceneType
+class Player;
+class ArenaCamera;
+class EntityWrapper;
+class InventoryManager;
+class UIManager;
+
+namespace gce
+{
+	class D12PipelineObject;
+}
+
+enum SceneType
 {
 	MenuScene,
 	GamePlayScene,
@@ -12,20 +25,52 @@ enum  SceneType
 	Options,
 	Count
 };
+
 namespace gce {
 	class Scene;
 	class GameObject;
 }
-class SceneManager
-{ 
-	std::unordered_map<SceneType, std::vector<gce::GameObject*> > m_SceneObjectsList;
 
-	gce::GameObject* m_pPlayer = nullptr;
+class SceneManager
+{
+	std::vector<gce::GameObject*> m_Map; // All the objects imported by the json
+	EntityWrapper* m_pEmpty = nullptr; // Need to handle the SceneManager Script
+	UIManager* m_pUIManager = nullptr; // Handle all the 2D objects
+
+	Player* m_pPlayer = nullptr;
+	ArenaCamera* m_pArenaCam = nullptr;
+
+	std::unordered_map<SceneType, std::vector<gce::GameObject*>> m_SceneObjectsList;
+	SceneType m_currentSceneType = SceneType::Count;
+
+	InventoryManager* m_pInventoryManager = nullptr;
+
+	gce::D12PipelineObject* m_pPso = nullptr;
+
+	bool m_fullScreen = true;
 public:
-	SceneManager() {};
-	void InitGamePlayScene(gce::Scene& scene1);
+	SceneManager() = default;
+	~SceneManager() { delete m_pPso; }
+
 	void Init();
-	gce::GameObject* GetPlayer() { return m_pPlayer; }
-	static void Button();
+	void InitGamePlay();
+	void UnInitGamePlay();
+	bool m_IsGamePlayInit = false;
+
+	void ChangeScene(SceneType newType);
+	void LinkObjectToScene(gce::GameObject* obj, SceneType scene);
+
+	gce::GameObject* GetFirstGameObject(std::vector<Tag> tags); // return the first GameObject with the all the tags
+	std::vector<gce::GameObject*> GetAllGameObjects(std::vector<Tag> tags); // return all GameObjects with all the tags
+
+	InventoryManager* GetInventoryManager() { return m_pInventoryManager; }
+	gce::D12PipelineObject* GetPSO() { return m_pPso; }
+	gce::GameObject* GetCameraObject();
+	const SceneType& GetSceneType() const { return m_currentSceneType; }
+	UIManager* GetUIManager() { return m_pUIManager; }
+
+	const bool& GetFullScreenMode() const { return m_fullScreen; }
+	void SetFullScreenMode(bool state);
+	void ToggleFullScreenMode();
 };
 

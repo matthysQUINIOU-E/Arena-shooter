@@ -5,7 +5,7 @@ namespace gce {
 
 
 	inline void GameManager::Create() { if (s_pInstance != nullptr) return; s_pInstance = new GameManager(); }
-	inline void GameManager::Run(WindowParam& param) { if (s_pInstance == nullptr) return; s_pInstance->m_sceneManager.Init(); s_pInstance->GameLoop(param);  }
+	inline void GameManager::Run(WindowParam& param) { if (s_pInstance == nullptr) return; s_pInstance->m_sceneManager.Init(); s_pInstance->GameLoop(param); }
 	inline void GameManager::Destroy() { delete s_pInstance; }
 
 	inline float32 GameManager::DeltaTime() { return s_pInstance->m_deltaTime; }

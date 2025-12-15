@@ -1,13 +1,12 @@
 #include "ArenaCamera.h"
 #include "Scripts/CameraBehavior.hpp"
+#include "EntityWrapper.h"
 
-gce::GameObject* ArenaCamera::Create(gce::Scene& scene)
+gce::GameObject* ArenaCamera::Create()
 {
-	m_pGameObject = &gce::GameObject::Create(scene);
-	m_pGameObject->transform.LocalTranslate({ 0, 0, -10 });
+	m_pGameObject = &EntityWrapper::Create();
 
 	m_pCamera = m_pGameObject->AddComponent<gce::Camera>();
-	m_pGameObject->AddScript<CameraBehavior>();
 
 	m_pCamera->SetMainCamera();
 	m_pCamera->SetType(gce::PERSPECTIVE);

@@ -34,6 +34,7 @@ namespace gce {
         // GLOBAL STRUCTS Init
         SHAPES.Init();
         SHADERS.Init();
+        m_pWhiteTexture = new gce::Texture("res/Assets/white.png");
     }
 
     GameManager::~GameManager()
@@ -58,6 +59,15 @@ namespace gce {
 
         if (param.isSplitScreen) m_pWindow = new SplitScreenWindow(param.title, param.width, param.height, param.screenDisposition);
         else m_pWindow = new RenderWindow(param.title, param.width, param.height);
+ 
+        if (m_sceneManager.GetFullScreenMode())
+        {
+            m_pWindow->SetFullScreen(gce::FullScreenMode::BORDERLESS);
+        }
+        else
+        {
+            m_pWindow->SetFullScreen(gce::FullScreenMode::WINDOWED);
+        }
 
         LightManager::SetLightsProperties(8.0f, 100.0f, 2.0f, 32.0f, 0.1f);
 
@@ -118,7 +128,7 @@ namespace gce {
 
             m_pWindow->Update();
 
-            // Update audio parceque l'utilisateur n'a pas accès à la boucle de d'update !!!!!
+            // Update audio parceque l'utilisateur n'a pas accï¿½s ï¿½ la boucle de d'update !!!!!
             AudioUse::Update(m_deltaTime);
         }
 
@@ -145,7 +155,7 @@ namespace gce {
                 m_frameCount = 0;
             }
         }
+
+        m_windowParam.title = std::to_wstring((int)GameManager::FPS());
     }
-
-
 }

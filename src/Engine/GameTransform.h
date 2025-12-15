@@ -12,6 +12,9 @@
 #include <DynamicBuffer.h>
 #include <Structs.h>
 
+class EntityWrapper;
+class Agent;
+
 namespace gce {
 
 class GameObject;
@@ -127,6 +130,8 @@ private:
 	friend struct BoxCollider2D;
     friend struct BoxCollider;
     friend class GameObject;
+    friend class EntityWrapper;
+    friend class ::Agent;
     friend class RenderSystem;
 
     friend Dirty::Enum operator|( Dirty::Enum, Dirty::Enum );

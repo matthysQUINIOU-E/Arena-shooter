@@ -377,6 +377,33 @@ namespace gce
 		ResizeWindow(width, height);
 	}
 
+	void Window::ExitFullScreen()
+	{
+		RECT rect = { 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN) };
+		AdjustWindowRect(&rect, WS_POPUP | WS_VISIBLE, false);
+
+		int width = rect.right - rect.left;
+		int height = rect.bottom - rect.top;
+
+		DXGI_MODE_DESC desc = {};
+		desc.Width = width;
+		desc.Height = height;
+		desc.Format = BackBufferFormat;
+		desc.RefreshRate.Numerator = 144;
+		desc.RefreshRate.Denominator = 1;
+		desc.Scaling = DXGI_MODE_SCALING_STRETCHED;
+
+		m_pSwapChain->ResizeTarget(&desc);
+		m_pSwapChain->SetFullscreenState(false, nullptr);
+
+		SetWindowPos(m_windowHandle, nullptr, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+
+		desc.RefreshRate.Numerator = 0;
+		m_pSwapChain->ResizeTarget(&desc);
+
+		ResizeWindow(width, height);
+	}
+
 	void Window::BeginUI()
 	{
 		// Acquire our wrapped render target resource for the current back buffer.

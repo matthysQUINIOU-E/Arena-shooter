@@ -42,6 +42,43 @@ GameObject& GameObject::Create( Scene& scene ) // ask & or *
     return *pNew;
 }
 
+void GameObject::AddTags(std::vector<Tag> tags)
+{
+    for (size_t i = 0; i < tags.size(); i++)
+    {
+        m_tags.insert(tags[i]);
+    }
+}
+
+const Tag& GameObject::GetUniqueTag(std::vector<Tag> tags)
+{
+    Tag res = Tag::None;
+    for (size_t i = 0; i < tags.size(); i++)
+    {
+        Tag tag = tags[i];
+        if (m_tags.contains(tag))
+            if (res == Tag::None)
+                res = tag;
+            else
+                return Tag::None;
+    }
+
+    return res;
+}
+
+const bool& GameObject::HasTags(std::vector<Tag> tags) const
+{
+    for (size_t i = 0; i < tags.size(); i++)
+    {
+        if (m_tags.contains(tags[i]) == false)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 void GameObject::Destroy()
 {
     if ( m_destroyed ) return;
@@ -62,6 +99,10 @@ void GameObject::Destroy()
     if ( HasComponent<SphereCollider>() ) RemoveComponent<SphereCollider>();
     if ( HasComponent<BoxCollider>() ) RemoveComponent<BoxCollider>();
     if ( HasComponent<PhysicComponent>() ) RemoveComponent<PhysicComponent>();
+    if ((HasComponent<TextRenderer>())) RemoveComponent<TextRenderer>();
+    if ((HasComponent<UIButton>())) RemoveComponent<UIButton>();
+    if ((HasComponent<UiImage>())) RemoveComponent<UiImage>();
+    if ((HasComponent<SkyBoxComponent>())) RemoveComponent<SkyBoxComponent>();
 
     GameManager::GetLifespanSystem().m_toDelete.gameObjects.Push( this );
 
@@ -69,5 +110,6 @@ void GameObject::Destroy()
         pChild->Destroy();
 }
 
+void GameObject::Cast() {}
 
 }

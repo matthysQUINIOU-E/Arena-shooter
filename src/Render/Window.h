@@ -58,7 +58,7 @@ namespace gce
 		void OnWindowResizeCallBack(std::function<void(Window*)> const& func) { m_ResizeCallBack = func; }
 		void SetTitle(std::wstring_view const& title) const;
 		void SetFullScreen(FullScreenMode mode);
-
+		void ExitFullScreen();
 		//----
 		virtual void Begin3D() = 0;
 		virtual void SetScreenToDraw(uint8 screenID) {};

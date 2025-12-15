@@ -12,7 +12,7 @@
 
 // Button
 #include "Engine/Components/UIButton.h"
-
+#include "Engine/Components/UiImage.h"
 
 
 /* ----- 2D ----- */

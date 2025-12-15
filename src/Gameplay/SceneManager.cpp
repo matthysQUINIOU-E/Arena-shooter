@@ -3,23 +3,102 @@
 #include <windows.h>
 #include <Render.h>
 #include <Engine.h>
+
+#include "Prefabs/InventoryManager.h"
+
 #include "Prefabs/ArenaCamera.h"
-#include "Scripts/PlayerBehavior.hpp"
+#include "Prefabs/Player.h"
+
+#include "Prefabs/EntityWrapper.h"
+#include "Prefabs/UIManager.h"
+
 #include "Scripts/CameraBehavior.hpp"
-#include "Scripts/FpsBehavior.hpp"
-#include "Scripts/EnemiBehavior.hpp"
-#include "Scripts/MogwaiAttackBehavior.hpp"
+
+#include "Scripts/SceneManagerBehavior.hpp"
+
+#include "Scripts/AgentBehavior.hpp"
+#include "Scripts/WaveManagerBehavior.hpp"
+
+#include "Prefabs/BonusManager.h"
+
 #include "Utils.h"
+#include "Agent.h"
+#include <ranges>
 
-
-void SceneManager::InitGamePlayScene(gce::Scene& scene)
+void SceneManager::InitGamePlay()
 {
-	ArenaCamera ac;
-	ac.Create(scene);
-	ac.SetParams(XM_PIDIV4, 0.001f, 500.0f, 1000.0f / 800.0f);
+	if (m_IsGamePlayInit == true)
+		return;
+	
+	m_IsGamePlayInit = true;
 
+	for (gce::GameObject* go : m_Map)
+	{
+		go->SetActive(true);
+	}
 
-	gce::D12PipelineObject* pso = new gce::D12PipelineObject( // TODO ::change
+	m_pPlayer = new Player();
+	m_pPlayer->Create();
+
+	gce::GameObject* pGameObject = m_pPlayer->GetGameObject();
+	
+	pGameObject->AddChild(*GetCameraObject());
+
+	LinkObjectToScene(pGameObject, SceneType::GamePlayScene);
+
+	float camOffsetY = m_pPlayer->GetGameObject()->transform.GetWorldScale().y * 0.5f;
+	GetCameraObject()->transform.SetLocalPosition({ 0, camOffsetY, 0 });
+
+	m_pInventoryManager->InitAll();
+	m_pInventoryManager->InitInventoryState();
+
+	EntityWrapper& entityWrapper = EntityWrapper::Create();
+	entityWrapper.AddScript<WaveManagerBehavior>();
+	LinkObjectToScene(&entityWrapper, SceneType::GamePlayScene);
+
+	BonusManager::CreateNem({ 5, 2, 0 });
+	BonusManager::CreateRiceBowl({ 5, 2, -1 });
+	BonusManager::CreateNoodles({ 5, 2, 1 });
+}
+
+void SceneManager::UnInitGamePlay()
+{
+	m_IsGamePlayInit = false;
+
+	for (gce::GameObject* go : m_pInventoryManager->GetCurrentInventory())
+	{
+		m_pArenaCam->GetGameObject()->RemoveChild(*go);
+	}
+
+	m_pInventoryManager->ResetAll();
+
+	m_pPlayer->GetGameObject()->RemoveChild(*GetCameraObject());
+
+	for (gce::GameObject* go : m_SceneObjectsList[SceneType::GamePlayScene])
+	{
+		if (go->HasTags({ Tag::TMapObject }) == false)
+			go->Destroy();
+	}
+
+	m_SceneObjectsList[SceneType::GamePlayScene].clear();
+
+	delete m_pPlayer;
+	m_pPlayer = nullptr;
+
+	for (gce::GameObject* go : m_Map)
+	{
+		go->SetActive(false);
+	}
+}
+
+void SceneManager::Init()
+{
+
+	//Keys
+	KeyBinds::InitDefaultKeyBinds();
+
+	//PSO
+	m_pPso = new gce::D12PipelineObject(
 		gce::SHADERS.VERTEX,
 		gce::SHADERS.PIXEL,
 		gce::SHADERS.HULL,
@@ -27,97 +106,145 @@ void SceneManager::InitGamePlayScene(gce::Scene& scene)
 		gce::SHADERS.ROOT_SIGNATURE
 	);
 
-	gce::Texture* pWhiteTexture = new gce::Texture("res/Assets/white.png");
-
+	gce::Scene& scene = gce::Scene::Create();
+	
+	// LIGHT
 	gce::LightManager::SetLightsProperties(8.0f, 100.0f, 2.0f, 32.0f, 1.f);
-	gce::LightData directionalLight = gce::LightManager::CreateDirectionalLight(gce::Vector3f32(0.0f, 0.0f, 1.0f), gce::Vector4(1.0f, 1.0f, 1.0f, 1.0f), 1.0f, 1.0f);
+	gce::LightData directionalLight = gce::LightManager::CreateDirectionalLight(gce::Vector3f32(0.0f, -1.f, 0.f), gce::Vector4(1.0f, 1.0f, 1.0f, 1.0f), 3.0f, 3.0f);
 	gce::LightManager::AddLight(directionalLight);
 
-	gce::GameObject& player = gce::GameObject::Create(scene);
-	player.SetName("Player");
-	player.transform.SetWorldScale({ 1, 2, 1 });
-	gce::PhysicComponent* pPhysic = player.AddComponent<gce::PhysicComponent>();
-	gce::MeshRenderer* pPlayerMesh = player.AddComponent<gce::MeshRenderer>();
-	pPlayerMesh->pGeometry = gce::SHAPES.CUBE;
+	//CAM
+	m_pArenaCam = new ArenaCamera();
+	m_pArenaCam->Create();
+	m_pArenaCam->SetParams(XM_PIDIV4, 0.001f, 500.0f, 1000.0f / 800.0f);
 
-	pPlayerMesh->pMaterial->albedoTextureID = pWhiteTexture->GetTextureID();
-	pPlayerMesh->pMaterial->useTextureAlbedo = 1;
-	pPlayerMesh->pMaterial->subsurface = 1;
-	pPlayerMesh->pPso = pso;
-	m_pPlayer = &player;
-	gce::BoxCollider* bCollider = player.AddComponent<gce::BoxCollider>();
+	//MAP
+	for (gce::GameObject* go : ImportBlenderScene(L"scene_base.json"))
+	{
+		go->AddTags({ Tag::TMapObject });
+		go->SetActive(false);
+		m_Map.push_back(go);
+	}
 
-	PlayerBehavior* pScript = player.AddScript<PlayerBehavior>();
+	//INVENTORY
+	m_pInventoryManager = new InventoryManager();
 
-	ac.GetScript<CameraBehavior>()->SetGameObjectToFollow(&player);
+	//Scene Manager Behavior
+	m_pEmpty = &EntityWrapper::Create();
+	m_pEmpty->SetProperties("SceneManager Object", { Tag::TMiscellaneous });
+	m_pEmpty->AddScript<SceneManagerBehavior>();
 
-	Texture* pArmsBaseColor = new Texture("res/Assets/zhu_rong_arms/Arms_Base_Color.png");
+	//UI
+	m_pUIManager = new UIManager();
+	m_pUIManager->Init();
 
-	gce::GameObject& playerArms = gce::GameObject::Create(scene);
-	playerArms.SetName("Player_Arms");
-	playerArms.transform.SetLocalPosition(ac.GetGameObject()->transform.GetWorldPosition());
-	playerArms.transform.SetWorldScale({ 3, 3, 3 });
-	gce::MeshRenderer* pArmsMesh = playerArms.AddComponent<gce::MeshRenderer>();
-	pArmsMesh->pGeometry = gce::GeometryFactory::LoadGeometry("res/Assets/zhu_rong_arms/Arms.obj");
-	pArmsMesh->pMaterial->albedoTextureID = pArmsBaseColor->GetTextureID();
-	pArmsMesh->pMaterial->useTextureAlbedo = 1;
-	pArmsMesh->pMaterial->subsurface = 1;
-	pArmsMesh->pPso = pso;
-
-	ac.GetGameObject()->AddChild(playerArms);
-
-	gce::GameObject& floor = gce::GameObject::Create(scene);
-	floor.transform.SetLocalScale({ 50, 1, 50 });
-	floor.transform.SetWorldPosition({ 0, -2, 0 });
-	floor.SetName("Floor");
-	gce::MeshRenderer* pFloorMesh = floor.AddComponent<gce::MeshRenderer>();
-	pFloorMesh->pGeometry = gce::SHAPES.CUBE;
-
-	pFloorMesh->pMaterial->albedoTextureID = pWhiteTexture->GetTextureID();
-	pFloorMesh->pMaterial->useTextureAlbedo = 1;
-	pFloorMesh->pMaterial->subsurface = 1;
-	pFloorMesh->pPso = pso;
-
-	Texture* pMogwaiBaseColor = new Texture("res/Assets/mogwai/mogwai_Base_Color.png");
-
-	gce::GameObject& Ennemi = gce::GameObject::Create(scene);
-	Ennemi.transform.SetLocalPosition({ 1,3,1 });
-	Ennemi.SetName("Mogwai");
-	gce::MeshRenderer* pEnnemiMesh = Ennemi.AddComponent<gce::MeshRenderer>();
-	gce::PhysicComponent* pEnnemiPhysic = Ennemi.AddComponent<gce::PhysicComponent>();
-	EnemiBehavior* pEnnemiBehavior = Ennemi.AddScript<EnemiBehavior>();
-	pEnnemiMesh->pGeometry = gce::GeometryFactory::LoadGeometry("res/Assets/mogwai/mogwai.obj");
-	pEnnemiMesh->pMaterial->albedoTextureID = pMogwaiBaseColor->GetTextureID();
-	pEnnemiMesh->pMaterial->useTextureAlbedo = 1;
-	pEnnemiMesh->pMaterial->subsurface = 1;
-	pEnnemiMesh->pPso = pso;
-	gce::BoxCollider* EnnemibCollider = Ennemi.AddComponent<gce::BoxCollider>();
-
-	gce::GameObject& MogwaiAttack = gce::GameObject::Create(scene);
-	MogwaiAttack.SetName("Mogwai_Attack");
-	gce::MeshRenderer* pMeshRendererChild = MogwaiAttack.AddComponent<gce::MeshRenderer>();
-	pMeshRendererChild->pGeometry = SHAPES.CUBE;
-	pMeshRendererChild->pPso = pso;
-	gce::BoxCollider* DmgHitbox = MogwaiAttack.AddComponent<gce::BoxCollider>();
-	MogwaiAttack.AddScript<MogwaiAttackBehavior>();
-	Ennemi.AddChild(MogwaiAttack);
-	
-
-	BoxCollider* pFloorBox = floor.AddComponent<BoxCollider>();
-
-	gce::GameObject& fps = gce::GameObject::Create(scene);
-	auto txt = fps.AddComponent<TextRenderer>();
-	txt->pFont = new Font(L"Arial");
-	txt->pBrush = new ColorBrush(Color::Red);
-	txt->text = L"FPS";
-	txt->rectPosF = new RectanglePosF(0.0f, 0.0f, 200.0f, 50.0f);
-	fps.AddScript<FpsBehavior>();
+	ChangeScene(SceneType::GamePlayScene);
 }
 
-void SceneManager::Init()
+void SceneManager::ChangeScene(SceneType newType)
 {
-	gce::Scene& scene = gce::Scene::Create();
-	InitGamePlayScene(scene);
+	if (m_currentSceneType == newType)
+		return;
+
+	switch (m_currentSceneType)
+	{
+	case SceneType::GamePlayScene:
+		UnInitGamePlay();
+		break;
+	default:
+		for (gce::GameObject* go : m_SceneObjectsList[m_currentSceneType])
+		{
+			go->SetActive(false);
+		}
+	}
+
+	switch (newType)
+	{
+	case SceneType::GamePlayScene:
+		m_IsGamePlayInit = false;
+		InitGamePlay();
+		break;
+	default:
+		for (gce::GameObject* go : m_SceneObjectsList[newType])
+		{
+			go->SetActive(true);
+		}
+	}
+
+	m_currentSceneType = newType;
+}
+
+void SceneManager::LinkObjectToScene(gce::GameObject* obj, SceneType scene)
+{
+	m_SceneObjectsList[scene].push_back(obj);
+}
+
+gce::GameObject* SceneManager::GetFirstGameObject(std::vector<Tag> tags)
+{
+	auto& gameObjects = GameManager::GetScene().m_gameObjects;
+
+	for (GameObject* pGameObject : gameObjects | std::views::values)
+	{
+		if (pGameObject->HasTags(tags))
+			return pGameObject;
+	}
+
+	return nullptr;
+}
+
+std::vector<gce::GameObject*> SceneManager::GetAllGameObjects(std::vector<Tag> tags)
+{
+	auto& gameObjects = GameManager::GetScene().m_gameObjects;
+
+	std::vector<gce::GameObject*> finalTab;
+
+	for (GameObject* pGameObject : gameObjects | std::views::values)
+	{
+		if (pGameObject->HasTags(tags))
+			finalTab.push_back(pGameObject);
+	}
+
+	return finalTab;
+}
+
+gce::GameObject* SceneManager::GetCameraObject()
+{
+	return m_pArenaCam->GetGameObject();
+}
+
+void SceneManager::SetFullScreenMode(bool state)
+{
+	if (m_fullScreen == state)
+		return;
+
+	m_fullScreen = state;
+
+	auto win = GameManager::GetWindow();
+
+	if (m_fullScreen == false)
+	{
+		win->SetFullScreen(gce::FullScreenMode::WINDOWED);
+	}
+	else
+	{
+		win->SetFullScreen(gce::FullScreenMode::BORDERLESS);
+	}
+}
+
+void SceneManager::ToggleFullScreenMode()
+{
+	m_fullScreen = !m_fullScreen;
+
+	auto win = GameManager::GetWindow();
+
+	if (m_fullScreen == false)
+	{
+		win->SetFullScreen(gce::FullScreenMode::WINDOWED);
+	}
+	else
+	{
+		win->SetFullScreen(gce::FullScreenMode::BORDERLESS);
+	}
 }
 
 void SceneManager::Button()

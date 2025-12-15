@@ -1,0 +1,267 @@
+#pragma once
+#include <Render.h>
+#include <Engine.h>
+#include <Script.h>
+#include <algorithm>
+#include "Components.h"
+
+#include "BulletBehavior.hpp"
+#include "../Prefabs/EntityWrapper.h"
+#include "WeaponMagazineBehavior.hpp"
+#include "../Prefabs/Ammos.h"
+#include "../KeyBinds.h"
+
+using namespace gce;
+
+DECLARE_SCRIPT(GunBehavior, ScriptFlag::Start | ScriptFlag::Update)
+
+float unloadSpeed = 0.1f;
+float unloadProgress = 0.f;
+
+float reloadTime = 1.f;
+float reloadProgressTime = 0.f;
+
+bool isReloading = false;
+
+float totalRecoil = 0.f;
+float recoilRecoverFactor = 1.f; // Speed to cancel recoil
+float recoilFactor = 0.f; // For the animation
+
+float gettingWeaponTime = 0.5f; // To prevent switching very fast weapon to shoot instantly
+float gettingWeaponProgressTime = 0.f;
+
+WeaponMagazineBehavior* pMagazineBehavior = nullptr;
+Quaternion defaultRotation;
+
+const bool& IsReadyToUse() const
+{
+	return gettingWeaponProgressTime >= gettingWeaponTime;
+}
+void OnLeaveWeapon() // When this weapon will be changed
+{
+	isReloading = false;
+	reloadProgressTime = 0.f;
+	m_pOwner->transform.SetLocalRotation(defaultRotation);
+	unloadProgress = unloadSpeed;
+	totalRecoil = 0.f;
+}
+void OnReceiveWeapon() // When this weapon will be the new current one
+{
+	gettingWeaponProgressTime = 0.f;
+}
+
+// IN CLASS METHODS, DO NOT USE SOMEWHERE ELSE
+void HandleGettingWeaponAnimation(float dt, MeshRenderer* pMesh)
+{
+	float ratio = gettingWeaponProgressTime / gettingWeaponTime;
+	float valueRatio = (gce::PI / 4) * (1 - ratio);
+
+	Quaternion rotationAnim = {};
+	rotationAnim.SetRotationEuler({ valueRatio, 0, 0 });
+
+	m_pOwner->transform.SetLocalRotation(defaultRotation * rotationAnim);
+	pMesh->pMaterial->useTextureAlbedo = 0;
+
+	gettingWeaponProgressTime += dt;
+}
+void HandleReloadingAnimation(float dt)
+{
+	int turns = 2;
+
+	float value = (2.f * gce::PI / reloadTime) * turns;
+
+	m_pOwner->transform.LocalRotate({ value * dt, 0, 0 });
+}
+void HandleRecoilAnimation(float dt)
+{
+	if (totalRecoil > 0)
+	{
+		// Calcule combien redescendre cette frame
+		float recoverStep = recoilRecoverFactor * recoilFactor * dt;
+
+		if (recoverStep > totalRecoil)
+			recoverStep = totalRecoil; // clamp pour pas dépasser
+
+		// Descendre la rotation progressivement
+		m_pOwner->transform.LocalRotate({ -recoverStep, 0, 0 });
+
+		// Mettre à jour le totalRecoil
+		totalRecoil -= recoverStep;
+	}
+	else
+	{
+		m_pOwner->transform.SetLocalRotation(defaultRotation);
+	}
+}
+void HandleEmptyAnimation(MeshRenderer* pMesh)
+{
+	if (pMagazineBehavior->IsWeaponEmpty() == false)
+	{
+		unloadSpeed = unloadSpeed;
+		pMesh->pMaterial->useTextureAlbedo = 0;
+	}
+	else
+	{
+		pMesh->pMaterial->useTextureAlbedo = 1;
+	}
+}
+
+void SetWeaponProperties(BulletBehavior* script, EntityWrapper& bullet, float bulletSpeed, float bulletLifeTime, float bulletSize, float _recoilFactor, float _recoilRecoverFactor)
+{
+	script->speed = bulletSpeed;
+	script->lifeTime = bulletLifeTime;
+	bullet.transform.SetWorldScale({ bulletSize, bulletSize, bulletSize });
+	recoilFactor = _recoilFactor;
+	recoilRecoverFactor = _recoilRecoverFactor;
+}
+///////////////////////////////////////////////
+
+void SetAmmoManagerScript(WeaponMagazineBehavior* script) { pMagazineBehavior = script; }
+void SetUnloadSpeed(float speed)
+{
+	unloadSpeed = std::abs(speed);
+	unloadProgress = unloadSpeed;
+}
+void SetReloadTime(float newTime)
+{
+	reloadTime = std::abs(newTime);
+}
+
+void TriggerReload()
+{
+	if (unloadProgress < unloadSpeed || totalRecoil > 0)  // Can't reload while the gun isn't stable
+		return;
+
+	if (pMagazineBehavior == nullptr)
+		return;
+
+	if (isReloading == false && pMagazineBehavior->CanReload())
+	{
+		isReloading = true;
+		reloadProgressTime = 0.f;
+	}
+}
+void Reload(float dt) // After the reloading animation
+{
+	if (reloadProgressTime < reloadTime)
+	{
+		reloadProgressTime += dt;
+	}
+	else
+	{
+		isReloading = false;
+		reloadProgressTime = 0.f;
+
+		Ammos* ammoToDecrease = GameManager::GetSceneManager().GetInventoryManager()->GetAmmos(pMagazineBehavior->GetAmmoTypeFromWeapon());
+
+		int amount = pMagazineBehavior->maxCapacity - pMagazineBehavior->ammosLeft;
+		int ammoInStock = ammoToDecrease->GetAmount();
+
+		if (ammoInStock > amount)
+		{
+			pMagazineBehavior->FillWeaponAmmos();
+		}
+		else
+		{
+			pMagazineBehavior->ammosLeft += ammoInStock; // Reload the rest
+		}
+
+		ammoToDecrease->UseAmmos(amount);
+	}
+}
+
+void Shoot()
+{
+	if (pMagazineBehavior == nullptr)
+		return;
+
+	//Conditions to shoot
+	if (isReloading || pMagazineBehavior->IsWeaponEmpty() == false)
+		return;
+
+	//Cap the shooting speed
+	if (unloadProgress < unloadSpeed)
+		return;
+
+	gce::Scene& scene = GameManager::GetScene();
+
+	EntityWrapper& bullet = EntityWrapper::Create();
+
+	if (m_pOwner->GetChildren().Empty()) // No Spawn point ?
+	{
+		return;
+	}
+
+	gce::Vector3f32 spawnPoint = m_pOwner->GetChildren()[0]->transform.GetWorldPosition();
+
+	bullet.SetProperties("Bullet", { Tag::TProjectile }, spawnPoint, { 0, 0, 0 }, { 0.15, 0.15, 0.15 });
+	bullet.AddMeshRenderer(gce::SHAPES.SPHERE, "");
+	bullet.AddComponent<SphereCollider>();
+	auto bulletScript = bullet.AddScript<BulletBehavior>();
+
+	switch (m_pOwner->GetUniqueTag({ Tag::TMusket, Tag::TBlunderBuss, Tag::TStarwheel }))
+	{
+	case Tag::TMusket:
+		SetWeaponProperties(bulletScript, bullet, 100.f, 2.f, 0.15f, 0.25f, 2.f);
+		break;
+	case Tag::TBlunderBuss:
+		SetWeaponProperties(bulletScript, bullet, 75.f, 1.f, 1.f, 0.6f, 1.5f);
+		break;
+	case Tag::TStarwheel:
+		SetWeaponProperties(bulletScript, bullet, 150.f, 3.f, 0.1f, 0.15f, 3.f);
+		break;
+	}
+
+	bulletScript->dir = -m_pOwner->transform.GetWorldForward();
+
+	if (totalRecoil < gce::PI / 4)
+	{
+		totalRecoil += recoilFactor;
+		m_pOwner->transform.LocalRotate({ recoilFactor, 0, 0 }); //ANIM
+	}
+
+	GameManager::GetSceneManager().LinkObjectToScene(&bullet, SceneType::GamePlayScene);
+
+	unloadProgress = 0.f;
+	pMagazineBehavior->UseWeaponAmmo();
+}
+
+void Start()
+{
+	m_pOwner->transform.SetLocalRotation(defaultRotation);
+}
+
+void Update()
+{
+	defaultRotation.SetIdentity();
+	defaultRotation.SetRotationEuler({ 0, gce::PI, 0 });
+
+	float dt = GameManager::DeltaTime();
+	MeshRenderer* pMesh = m_pOwner->GetComponent<MeshRenderer>();
+
+	if (pMesh == nullptr)
+		return;
+
+	if (IsReadyToUse() == false)
+	{
+		HandleGettingWeaponAnimation(dt, pMesh);
+		return;
+	}
+
+	if (isReloading == false)
+	{
+		HandleEmptyAnimation(pMesh);
+
+		if (unloadProgress < unloadSpeed)
+			unloadProgress += dt;
+
+		HandleRecoilAnimation(dt);
+	}
+	else
+	{
+		HandleReloadingAnimation(dt);
+		Reload(dt);
+	}
+}
+
+END_SCRIPT
