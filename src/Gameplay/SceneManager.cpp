@@ -247,8 +247,4 @@ void SceneManager::ToggleFullScreenMode()
 	}
 }
 
-void SceneManager::Button()
-{
-	std::cout << "Test";
-}
 
