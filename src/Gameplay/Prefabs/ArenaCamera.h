@@ -8,6 +8,8 @@ class ArenaCamera
 public:
 	gce::GameObject* Create();
 
+	void Shake();
+
 	void SetParams(float32 fov, float32 nearplane, float32 farplane, float32 aspectRatio);
 
 	gce::GameObject* GetGameObject() { return m_pGameObject; }

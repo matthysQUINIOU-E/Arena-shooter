@@ -65,6 +65,8 @@ public:
 
 	InventoryManager* GetInventoryManager() { return m_pInventoryManager; }
 	gce::D12PipelineObject* GetPSO() { return m_pPso; }
+
+	ArenaCamera* GetArenaCamera() { return m_pArenaCam; }
 	gce::GameObject* GetCameraObject();
 	const SceneType& GetSceneType() const { return m_currentSceneType; }
 	UIManager* GetUIManager() { return m_pUIManager; }

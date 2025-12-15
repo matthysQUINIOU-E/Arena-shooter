@@ -15,13 +15,11 @@ void BulletPool::SetActive(gce::GameObject* e, bool state)
 
 void BulletPool::Init()
 {
-	Geometry* pGeo = gce::SHAPES.SPHERE;
-
 	for (size_t i = 0; i < m_maxAmount; i++)
 	{
 		EntityWrapper& bullet = EntityWrapper::Create();
-		bullet.SetProperties("Bullet", { Tag::TProjectile, Tag::TBullet }, { 0, 0, 0 }, { 0, 0, 0 }, { 0.15, 0.15, 0.15 });
-		bullet.AddMeshRenderer(pGeo, "");
+		bullet.SetProperties("Bullet", { Tag::TProjectile, Tag::TBullet }, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 });
+		bullet.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/ammo/ammo.obj"), "res/Assets/ammo/ammo_base_color.png");
 		bullet.AddComponent<gce::SphereCollider>();
 		bullet.AddScript<BulletBehavior>();
 
@@ -37,6 +35,10 @@ EntityWrapper* BulletPool::Generate()
 
 	EntityWrapper* pCurrent = m_bulletsFreePool.front();
 	m_bulletsFreePool.pop();
+
+	pCurrent->transform.SetWorldPosition({ 0, 0, 0 });
+	pCurrent->transform.SetWorldRotation({ 0, 0, 0 });
+	pCurrent->transform.SetWorldScale({ 1, 1, 1 });
 
 	if(pCurrent->HasComponent<PhysicComponent>() == false)
 		pCurrent->AddPhysics(0, 0, 0);

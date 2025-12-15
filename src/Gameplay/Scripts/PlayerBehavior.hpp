@@ -48,6 +48,14 @@ float dyingAnimationProgressDuration = 0.f;
 
 Quaternion currentRotation = {};
 
+void SetLookingAround(bool state)
+{
+	if (isDead)
+		return;
+
+	stopLookAround = !state;
+}
+
 //Functions
 void HandleHealth()
 {
@@ -55,7 +63,8 @@ void HandleHealth()
 	{
 		if (GetKeyDown(Keyboard::K))
 		{
-			pScript->TakeDamage(100);
+			pScript->TakeDamage(10);
+
 		}
 
 		isDead = !pScript->IsAlive();
@@ -207,6 +216,7 @@ void HandleDash()
 		dashProgressReloadTime += dt;
 	}
 
+	dashProgressReloadTime = std::clamp(dashProgressReloadTime, 0.f, dashTotalReloadTime);
 	dashAmount = (int)(maxDashAmount * dashProgressReloadTime / dashTotalReloadTime);
 
 	if (dashAmount > 0)
