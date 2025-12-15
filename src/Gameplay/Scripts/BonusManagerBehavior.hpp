@@ -42,7 +42,7 @@ void CollisionEnter(GameObject* other)
 	if (other->HasTags({ Tag::TPlayer }))
 	{
 		other->GetScript<HealthBehavior>()->Heal(healValue);
-		m_pOwner->Destroy();
+		m_pOwner->SetActive(false);
 	}
 }
 

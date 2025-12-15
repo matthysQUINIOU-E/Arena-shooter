@@ -11,23 +11,47 @@ using namespace gce;
 
 DECLARE_SCRIPT(HealSpawnerBehavior, ScriptFlag::Start | ScriptFlag::Update)
 
-GameObject* HealGenerate;
+GameObject* Noodle = nullptr;
+GameObject* Nem = nullptr;
+GameObject* RiceBowl = nullptr;
+float CDTime = 0.f;
 
-void Start()
+void GenerateHeal()
 {
+	Noodle->SetActive(false);
+	Nem->SetActive(false);
+	RiceBowl->SetActive(false);
 	int random = rand() & 11;
 	if (random == 10)
 	{
-		HealGenerate = BonusManager::CreateNoodles(m_pOwner->transform.GetWorldPosition());
+		Noodle->SetActive(true);
 	}
 	else if (random >= 7)
 	{
-		HealGenerate = BonusManager::CreateNem(m_pOwner->transform.GetWorldPosition());
+		Nem->SetActive(true);
 	}
 	else
 	{
-		HealGenerate = BonusManager::CreateRiceBowl(m_pOwner->transform.GetWorldPosition());
+		RiceBowl->SetActive(true);
 	}
+	CDTime = 60.f;
+}
+void Start()
+{
+	gce::Vector3f32 pos = m_pOwner->transform.GetWorldPosition();
+	pos.y += 1;
+	Noodle = BonusManager::CreateNoodles(pos);
+	Nem = BonusManager::CreateNem(pos);
+	RiceBowl = BonusManager::CreateRiceBowl(pos);
+	GenerateHeal();
+}
+void Update()
+{
+	if (!Noodle->IsActive() && !Nem->IsActive() && !RiceBowl->IsActive())
+		CDTime -= GameManager::DeltaTime();
 
+	if (CDTime <= 0)
+		GenerateHeal();
+	
 }
 END_SCRIPT
