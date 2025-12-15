@@ -99,7 +99,7 @@ void UpdateTotalAmmoUI()
 
 		if (pScript)
 		{
-			Ammos* pAmmoToDisplay = pInventory->GetAmmos(pScript->GetAmmoTypeFromWeapon());
+			Ammos* pAmmoToDisplay = pInventory->GetAmmos(pScript->typeOfAmmo);
 
 			if (pAmmoToDisplay)
 			{

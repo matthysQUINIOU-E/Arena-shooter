@@ -13,33 +13,12 @@ using namespace gce;
 
 DECLARE_SCRIPT(WeaponMagazineBehavior, ScriptFlag::Start | ScriptFlag::Update)
 
+Tag typeOfAmmo = Tag::None;
+
 int ammosLeft = 0;
 int maxCapacity = 0;
 
-const Tag& GetAmmoTypeFromWeapon()
-{
-	Tag typeToUse = Tag::None;
-
-	if (m_pOwner)
-	{
-		switch (m_pOwner->GetUniqueTag({ Tag::TMusket, Tag::TBlunderBuss, Tag::TStarwheel }))
-		{
-		case Tag::TMusket:
-			typeToUse = Tag::TNormalAmmo;
-			break;
-		case Tag::TBlunderBuss:
-			typeToUse = Tag::THeavyAmmo;
-			break;
-		case Tag::TStarwheel:
-			typeToUse = Tag::TLightAmmo;
-
-		default:
-			break;
-		}
-	}
-
-	return typeToUse;
-}
+void SetAmmoType(Tag type) { typeOfAmmo = type; }
 
 const bool& IsWeaponEmpty() const
 {
@@ -74,7 +53,7 @@ bool CanReload() // Pick ammos from your inventory ammo stock if possible and tr
 	if (ammosLeft >= maxCapacity)
 		return false;
 
-	Ammos* ammoToDecrease = GameManager::GetSceneManager().GetInventoryManager()->GetAmmos(GetAmmoTypeFromWeapon());
+	Ammos* ammoToDecrease = GameManager::GetSceneManager().GetInventoryManager()->GetAmmos(typeOfAmmo);
 
 	if (ammoToDecrease->IsEmpty())
 		return false;

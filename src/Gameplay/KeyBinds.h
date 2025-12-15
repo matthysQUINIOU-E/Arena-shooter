@@ -16,6 +16,8 @@ enum class KeyAction
 	InventorySlot1,
 	InventorySlot2,
 	InventorySlot3,
+	InventorySlot4,
+	InventorySlot5,
 
 
 	ToggleFullScreen,

@@ -35,6 +35,7 @@ gce::GameObject* InventoryManager::CreateMusket()
 	hole.transform.LocalTranslate(holePos);
 
 	auto ammoManagerScript = musket.AddScript<WeaponMagazineBehavior>();
+	ammoManagerScript->SetAmmoType(Tag::TNormalAmmo);
 	ammoManagerScript->SetMaxCapacity(30);
 
 	auto gunBehavior = musket.AddScript<GunBehavior>();
@@ -67,6 +68,7 @@ gce::GameObject* InventoryManager::CreateBlunderBuss()
 	hole.transform.LocalTranslate(holePos);
 
 	auto ammoManagerScript = blunderbuss.AddScript<WeaponMagazineBehavior>();
+	ammoManagerScript->SetAmmoType(Tag::THeavyAmmo);
 	ammoManagerScript->SetMaxCapacity(8);
 
 	auto gunBehavior = blunderbuss.AddScript<GunBehavior>();
@@ -83,21 +85,21 @@ gce::GameObject* InventoryManager::CreateStarwheel()
 {
 	EntityWrapper& starwheel = EntityWrapper::Create();
 
-	starwheel.SetProperties("Starwheel", { Tag::TWeapon, Tag::TStarwheel }, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 });
+	starwheel.SetProperties("Starwheel", { Tag::TWeapon, Tag::TStarwheel }, { 0, 0, 0 }, { 0, 0, 0 }, { 2.f, 2.f, 2.f });
 	m_pSceneManager->GetCameraObject()->AddChild(starwheel);
 
-	starwheel.transform.SetLocalPosition({ 0.15f, -0.07f, 0.25f });
-
+	starwheel.transform.SetLocalPosition({ 0.3f, -0.15f, 0.5f });
 	starwheel.AddMeshRenderer(gce::GeometryFactory::LoadGeometry("res/Assets/starwheel/starwheel.obj"), "res/Assets/starwheel/starwheel_base_color.png");
 	EntityWrapper& hole = EntityWrapper::Create();
 	gce::Vector3f32 holePos = {};
-	holePos.z -= 0.15;
+	holePos.z -= 0.2f;
 	holePos.y += 0.025;
 
 	hole.SetChildProperties(starwheel, "Starwheel Hole", { Tag::TMiscellaneous }, { 0, 0, 0 }, { 0, 0, 0 }, { 0.02, 0.02, 0.02 });
 	hole.transform.LocalTranslate(holePos);
 
 	auto ammoManagerScript = starwheel.AddScript<WeaponMagazineBehavior>();
+	ammoManagerScript->SetAmmoType(Tag::TLightAmmo);
 	ammoManagerScript->SetMaxCapacity(15);
 
 	auto gunBehavior = starwheel.AddScript<GunBehavior>();
