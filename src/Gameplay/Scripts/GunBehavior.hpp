@@ -106,6 +106,7 @@ void HandleEmptyAnimation(MeshRenderer* pMesh)
 		pMesh->pMaterial->useTextureAlbedo = 1;
 	}
 }
+///////////////////////////////////////////////
 
 void SetWeaponProperties(BulletBehavior* script, EntityWrapper& bullet, float bulletSpeed, float bulletLifeTime, float bulletSize, float _recoilFactor, float _recoilRecoverFactor)
 {
@@ -115,7 +116,6 @@ void SetWeaponProperties(BulletBehavior* script, EntityWrapper& bullet, float bu
 	recoilFactor = _recoilFactor;
 	recoilRecoverFactor = _recoilRecoverFactor;
 }
-///////////////////////////////////////////////
 
 void SetAmmoManagerScript(WeaponMagazineBehavior* script) { pMagazineBehavior = script; }
 void SetUnloadSpeed(float speed)
@@ -201,6 +201,7 @@ void Shoot()
 	pCurrent->transform.SetWorldPosition(spawnPoint);
 
 	auto bulletScript = pCurrent->GetScript<BulletBehavior>();
+	bulletScript->ActiveHeadSeeker();
 
 	switch (m_pOwner->GetUniqueTag({ Tag::TMusket, Tag::TBlunderBuss, Tag::TStarwheel }))
 	{

@@ -118,7 +118,4 @@ void CollisionEnter(GameObject* other)
 	Reset();
 }
 
-void CollisionExit(GameObject* other)
-{
-}
 END_SCRIPT
