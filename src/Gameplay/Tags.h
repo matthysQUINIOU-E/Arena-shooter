@@ -15,6 +15,7 @@ enum class Tag // Game Objects Tags
     TMiscellaneous,
     TSpawner,
     TMapObject,
+    TDestructible,
 
     THeal,
 

@@ -26,6 +26,7 @@ std::vector<gce::GameObject*> ImportBlenderScene(std::wstring jsonFile)
 
     std::regex patternPhysic("^[^_]*P");
     std::regex patternCollider("^[^_]*C");
+    std::regex patternDestructible("^[^_]*D");
     std::regex patternNavMesh("^[^_]*NM");
     std::regex patternSpawnerHeal("^[^_]*SH");
     std::regex patternSpawnerGuHuoNiao("^[^_]*SG");
@@ -47,6 +48,7 @@ std::vector<gce::GameObject*> ImportBlenderScene(std::wstring jsonFile)
         std::string name = obj.value("n", "Unnamed");
         bool hasPhysic = std::regex_search(name, patternPhysic);
         bool hasCollider = std::regex_search(name, patternCollider);
+        bool isDestructible = std::regex_search(name, patternDestructible);
         bool isNavMesh = std::regex_search(name, patternNavMesh);
         bool isSpawnerHeal = std::regex_search(name, patternSpawnerHeal);
         bool isSpawnerGuHuoNiao = std::regex_search(name, patternSpawnerGuHuoNiao);
@@ -109,6 +111,8 @@ std::vector<gce::GameObject*> ImportBlenderScene(std::wstring jsonFile)
             if (isSpawnerMogwai)
                 gameObject.AddTags({Tag::TMogwai});
         }
+        if (isDestructible)
+            gameObject.AddTags({ Tag::TDestructible });
 
         // gameObject.SetName("importedScene"); // maybe change later just taging everything with the same name
         gameObject.transform.SetWorldPosition(position);
