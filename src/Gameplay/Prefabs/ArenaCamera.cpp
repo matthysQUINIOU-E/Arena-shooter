@@ -1,5 +1,4 @@
 #include "ArenaCamera.h"
-#include "Scripts/CameraAnimationBehavior.hpp"
 #include "EntityWrapper.h"
 
 gce::GameObject* ArenaCamera::Create()
@@ -10,14 +9,8 @@ gce::GameObject* ArenaCamera::Create()
 
 	m_pCamera->SetMainCamera();
 	m_pCamera->SetType(gce::PERSPECTIVE);
-	m_pGameObject->AddScript<CameraAnimationBehavior>();
 
 	return m_pGameObject;
-}
-
-void ArenaCamera::Shake()
-{
-	m_pGameObject->GetScript<CameraAnimationBehavior>()->TriggerShakingAnimation();
 }
 
 void ArenaCamera::SetParams(float32 fov, float32 nearplane, float32 farplane, float32 aspectRatio)

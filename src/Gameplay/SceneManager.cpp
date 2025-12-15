@@ -12,8 +12,6 @@
 #include "Prefabs/EntityWrapper.h"
 #include "Prefabs/UIManager.h"
 
-#include "Scripts/CameraBehavior.hpp"
-
 #include "Scripts/SceneManagerBehavior.hpp"
 
 #include "Scripts/AgentBehavior.hpp"

@@ -25,6 +25,28 @@ float easingProgressTime = 0.f;
 gce::Vector3f32 defaultDir = {};
 gce::Vector3f32 dir = {};
 
+gce::GameObject* CheckCollision()
+{
+	for (gce::GameObject* go : GameManager::GetSceneManager().GetAllGameObjects({ Tag::TEnemy }))
+	{
+		gce::Vector3f32 pos1 = m_pOwner->transform.GetWorldPosition();
+		gce::Vector3f32 scale1 = m_pOwner->transform.GetWorldScale();
+
+		gce::Vector3f32 pos2 = go->transform.GetWorldPosition();
+		gce::Vector3f32 scale2 = go->transform.GetWorldScale();
+
+		bool collision =
+			std::abs(pos1.x - pos2.x) <= (scale1.x * 0.5f + scale2.x * 0.5f) &&
+			std::abs(pos1.y - pos2.y) <= (scale1.y * 0.5f + scale2.y * 0.5f) &&
+			std::abs(pos1.z - pos2.z) <= (scale1.z * 0.5f + scale2.z * 0.5f);
+
+		if (collision)
+			return go;
+	}
+
+	return nullptr;
+}
+
 void ActiveHeadSeeker()
 {
 	headseeker = true;
@@ -119,6 +141,11 @@ void Update()
 
 		m_pOwner->transform.WorldTranslate(dir * speed * dt);
 	}
+
+	if (gce::GameObject* pCollided = CheckCollision())
+	{
+		Reset();
+	}
 }
 
 void Destroy()
@@ -127,10 +154,7 @@ void Destroy()
 
 void CollisionEnter(GameObject* other)
 {
-	if (other->HasTags({ Tag::TPlayer }))
-		return;
 
-	Reset();
 }
 
 END_SCRIPT
