@@ -20,7 +20,6 @@ void Agent::FollowPathToTarget()
 {
 	if (IsTargetInRange() || m_pTarget == nullptr )
 		return;
-
 	if (NeedCalculatePath())
 		FindPath();
 
@@ -159,7 +158,6 @@ void Agent::FollowCurrentLine()
 		m_blockedTime += gce::GameManager::DeltaTime();
 		return;
 	}
-
 	m_blockedTime = 0.f;
 	m_pCurrentNode = pToNode;
 	m_currentLineNodes.pop();
@@ -224,6 +222,7 @@ bool Agent::AcquireTravelingToNodes(Node<NavTile, Agent>* goToNode)
 	if (m_needToAcquire.empty())
 	{
 		NavMesh::Instance()->ResetVisited();
+
 		std::queue<Node<NavTile, Agent>*> queue;
 
 		gce::Vector3f32 currentPos = transform.GetWorldPosition();
@@ -234,6 +233,7 @@ bool Agent::AcquireTravelingToNodes(Node<NavTile, Agent>* goToNode)
 		gce::Vector3f32 max = maxPos + meshRenderer->pGeometry->max;
 
 		queue.push(goToNode);
+		uint32 visitedVersion = NavMesh::Instance()->GetCurrentVisitedVersion();
 
 		while (!queue.empty())
 		{
@@ -244,8 +244,8 @@ bool Agent::AcquireTravelingToNodes(Node<NavTile, Agent>* goToNode)
 				m_needToAcquire.push_back(testAcquire);
 				for (Node<NavTile, Agent>* neighbor : testAcquire->neighbors)
 				{
-					if (!neighbor->visited) {
-						neighbor->visited = true;
+					if (!(neighbor->visitedVersion == visitedVersion)) {
+						neighbor->visitedVersion = visitedVersion;
 						queue.push(neighbor);
 					}
 				}

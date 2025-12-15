@@ -22,10 +22,13 @@ NavMesh* NavMesh::Instance()
 
 void NavMesh::ResetVisited()
 {
-	for (size_t i = 0; i < m_nodes.size(); i++)
+	if (++m_currentVersion == 0)
 	{
-		Node<NavTile, Agent>* node = m_nodes[i];
-		node->visited = false;
+		for (size_t i = 0; i < m_nodes.size(); i++)
+		{
+			Node<NavTile, Agent>* node = m_nodes[i];
+			node->visitedVersion = 1;
+		}
 	}
 }
 
@@ -68,6 +71,11 @@ bool NavMesh::DoesSegmentGoThroughObstacles(const gce::Vector3f32& A, const gce:
 			return true;
 	}
 	return false;
+}
+
+uint32 NavMesh::GetCurrentVisitedVersion()
+{
+	return m_currentVersion;
 }
 
 NavMesh::NavMesh(gce::Vector<gce::Vertex> vertices, gce::Vector<uint32> indices, std::vector<gce::GameObject*> obstacles)

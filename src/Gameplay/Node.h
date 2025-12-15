@@ -11,7 +11,7 @@ struct Node
 	Node<T,Agent>* cameFrom;
 	std::unordered_set<Node<T, Agent>*> neighbors;
 
-	bool visited;
+	uint32 visitedVersion;
 
 	float distanceToStart;
 	float distanceToTarget;

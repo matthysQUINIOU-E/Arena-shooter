@@ -45,6 +45,8 @@ std::vector<Node<NavTile, Agent>*> PathFinder::AStar(Node<NavTile, Agent>* fromN
 	fromNode->distanceToStart = 0;
 	fromNode->CalculateEuclidieanDistance(toNode);
 
+	uint32 visitedVersion = NavMesh::Instance()->GetCurrentVisitedVersion();
+
 	while (!queue.empty() && toNode->cameFrom == nullptr)
 	{
 		Node<NavTile, Agent>* node = queue.top();
@@ -61,10 +63,10 @@ std::vector<Node<NavTile, Agent>*> PathFinder::AStar(Node<NavTile, Agent>* fromN
 				break;
 			}
 
-			if (neighbor->visited)
+			if (neighbor->visitedVersion == visitedVersion)
 				continue;
 
-			neighbor->visited = true;
+			neighbor->visitedVersion = visitedVersion;
 			neighbor->cameFrom = node;
 
 			neighbor->distanceToStart = node->distanceToStart + neighbor->CalculateEuclidieanDistance(node);

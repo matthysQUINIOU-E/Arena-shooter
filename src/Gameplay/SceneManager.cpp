@@ -96,7 +96,6 @@ void SceneManager::UnInitGamePlay()
 
 void SceneManager::Init()
 {
-
 	//Keys
 	KeyBinds::InitDefaultKeyBinds();
 
