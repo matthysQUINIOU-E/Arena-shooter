@@ -76,10 +76,9 @@ namespace gce
         //          ", BeginFrame - Current Fence: " + std::to_string(m_currentFenceValue) +
         //          ", GPU Fence: " + std::to_string(m_fence->GetCompletedValue()) +
         //          ", CPU / Frame Fence: " + std::to_string(currentFrameResource->m_fenceValue) + "\n").c_str());
-
         while (instance.m_pFence->GetCompletedValue() < instance.m_currentFenceValue)
         {
-            Sleep(1);
+            // Sleep(1);
 
             HANDLE eventHandle = CreateEventEx(nullptr, nullptr, false, EVENT_ALL_ACCESS);
             if (eventHandle)
