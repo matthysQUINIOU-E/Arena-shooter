@@ -119,7 +119,7 @@ void SceneManager::Init()
 	m_pArenaCam->SetParams(XM_PIDIV4, 0.001f, 500.0f, 1000.0f / 800.0f);
 
 	//MAP
-	for (gce::GameObject* go : ImportBlenderScene(L"scene_v2.json"))
+	for (gce::GameObject* go : ImportBlenderScene(L"scene_base.json"))
 	{
 		go->AddTags({ Tag::TMapObject });
 		go->SetActive(false);

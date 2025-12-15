@@ -108,10 +108,11 @@ void HandleEmptyAnimation(MeshRenderer* pMesh)
 }
 ///////////////////////////////////////////////
 
-void SetWeaponProperties(BulletBehavior* script, EntityWrapper& bullet, float bulletSpeed, float bulletLifeTime, float bulletSize, float _recoilFactor, float _recoilRecoverFactor)
+void SetWeaponProperties(BulletBehavior* script, EntityWrapper& bullet, float bulletSpeed, float bulletLifeTime, float bulletSize, int bulletDamage, float _recoilFactor, float _recoilRecoverFactor)
 {
 	script->speed = bulletSpeed;
 	script->lifeTime = bulletLifeTime;
+	script->damage = bulletDamage;
 	bullet.transform.WorldScale({ bulletSize, bulletSize, bulletSize });
 	recoilFactor = _recoilFactor;
 	recoilRecoverFactor = _recoilRecoverFactor;
@@ -205,13 +206,13 @@ void Shoot()
 	switch (m_pOwner->GetUniqueTag({ Tag::TMusket, Tag::TBlunderBuss, Tag::TStarwheel }))
 	{
 	case Tag::TMusket:
-		SetWeaponProperties(bulletScript, *pCurrent, 100.f, 2.f, 2.f, 0.075f, 2.f);
+		SetWeaponProperties(bulletScript, *pCurrent, 100.f, 2.f, 4.f, 1, 0.075f, 3.f);
 		break;
 	case Tag::TBlunderBuss:
-		SetWeaponProperties(bulletScript, *pCurrent, 75.f, 1.f, 3.f, 0.25f, 1.5f);
+		SetWeaponProperties(bulletScript, *pCurrent, 75.f, 1.f, 6.f, 1, 0.25f, 1.5f);
 		break;
 	case Tag::TStarwheel:
-		SetWeaponProperties(bulletScript, *pCurrent, 150.f, 3.f, 1.f, 0.05f, 3.f);
+		SetWeaponProperties(bulletScript, *pCurrent, 100.f, 2.f, 2.5f, 1, 0.05f, 4.f);
 		break;
 	}
 

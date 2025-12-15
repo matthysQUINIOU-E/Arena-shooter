@@ -25,6 +25,10 @@ float easingProgressTime = 0.f;
 gce::Vector3f32 defaultDir = {};
 gce::Vector3f32 dir = {};
 
+bool triggerAnim = false;
+float animDuration = 0.25f;
+float animProgressDuration = 0.f;
+
 gce::GameObject* CheckCollision()
 {
 	for (gce::GameObject* go : GameManager::GetSceneManager().GetAllGameObjects({ Tag::TEnemy }))
@@ -64,6 +68,9 @@ void Reset()
 	defaultDir = {};
 	dir = {};
 	headseeker = false;
+
+	triggerAnim = false;
+	animProgressDuration = 0.f;
 
 	BulletPool::Desactive(m_pOwner);
 }
@@ -121,14 +128,29 @@ void SeekEnemy(gce::GameObject* pEnemy) // Change the direction
 
 void Update()
 {
-	speed = 10.f;
-	maxLifeTime = 10.f;
-
 	float dt = GameManager::DeltaTime();
+
+	if (triggerAnim)
+	{
+		if (animProgressDuration < animDuration)
+		{
+			animProgressDuration += dt;
+
+			float val = 2 * dt;
+
+			m_pOwner->transform.WorldScale({ 1 + val, 1 + val, 1 + val });
+		}
+		else
+		{
+			Reset();
+		}
+
+		return;
+	}
 
 	if (lifeTime < 0)
 	{
-		Reset();
+		triggerAnim = true;
 	}
 	else
 	{
@@ -139,12 +161,26 @@ void Update()
 
 		lifeTime -= dt;
 
+		float yaw = atan2(dir.x, dir.z);
+		float pitch = atan2(
+			-dir.y,
+			sqrt(dir.x * dir.x + dir.z * dir.z)
+		);
+
+		gce::Quaternion rot = {};
+		rot.SetRotationEuler(pitch, yaw, 0.0f);
+
+		Quaternion flip = {};
+		flip.SetRotationEuler({ 0, gce::PI, 0 });
+
+		m_pOwner->transform.SetWorldRotation(rot * flip);
+
 		m_pOwner->transform.WorldTranslate(dir * speed * dt);
 	}
 
 	if (gce::GameObject* pCollided = CheckCollision())
 	{
-		Reset();
+		triggerAnim = true;
 	}
 }
 
