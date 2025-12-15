@@ -10,11 +10,17 @@ void CrosshairManager::Init()
 	m_pDefaultCrosshair = &EntityWrapper::Create();
 	m_pDefaultCrosshair->AddUIButton(center, { 0, 0 }, { 150, 150 }, "res/2D_Assets/crosshair.png");
 
+	m_pStarwheelCrosshair = &EntityWrapper::Create();
+	m_pStarwheelCrosshair->AddUIButton(center, { 0, 0 }, { 100, 50 }, "res/2D_Assets/crosshair_pistolet.png");
+
 	m_pMusketCrosshair = &EntityWrapper::Create();
-	m_pMusketCrosshair->AddUIButton(center, { 0, 0 }, { 75, 75 }, "res/2D_Assets/crosshair_musket.png");
+	m_pMusketCrosshair->AddUIButton(center, { 0, 0 }, { 50, 50 }, "res/2D_Assets/crosshair_musket.png");
 
 	m_pBlunderbussCrosshair = &EntityWrapper::Create();
 	m_pBlunderbussCrosshair->AddUIButton(center, { 0, 0 }, { 75, 75 }, "res/2D_Assets/crosshair_blunderbuss.png");
+
+	m_pThrowableWeaponCrosshair = &EntityWrapper::Create();
+	m_pThrowableWeaponCrosshair->AddUIButton(center, { 0, 0 }, { 50, 50 }, "res/2D_Assets/crosshair_throwable.png");
 }
 
 void CrosshairManager::Update()
@@ -23,13 +29,19 @@ void CrosshairManager::Update()
 
 	gce::GameObject* currentEquiped = gce::GameManager::GetSceneManager().GetInventoryManager()->GetCurrentEquipedObject();
 
-	switch (currentEquiped->GetUniqueTag({ Tag::TStarwheel, Tag::TBlunderBuss, Tag::TMusket }))
+	switch (currentEquiped->GetUniqueTag({ Tag::TStarwheel, Tag::TBlunderBuss, Tag::TMusket, Tag::TThrowableWeapon }))
 	{
+	case Tag::TStarwheel:
+		m_pStarwheelCrosshair->SetActive(true);
+		break;
 	case Tag::TBlunderBuss:
 		m_pBlunderbussCrosshair->SetActive(true);
 		break;
 	case Tag::TMusket:
 		m_pMusketCrosshair->SetActive(true);
+		break;
+	case Tag::TThrowableWeapon:
+		m_pThrowableWeaponCrosshair->SetActive(true);
 		break;
 	default:
 		m_pDefaultCrosshair->SetActive(true);
@@ -47,11 +59,17 @@ void CrosshairManager::SetActive(bool state)
 	if (m_pMeleeCrosshair)
 		m_pMeleeCrosshair->SetActive(false);
 
+	if (m_pStarwheelCrosshair)
+		m_pStarwheelCrosshair->SetActive(false);
+
 	if (m_pMusketCrosshair)
 		m_pMusketCrosshair->SetActive(false);
 
 	if (m_pBlunderbussCrosshair)
 		m_pBlunderbussCrosshair->SetActive(false);
+
+	if (m_pThrowableWeaponCrosshair)
+		m_pThrowableWeaponCrosshair->SetActive(false);
 
 	if (m_pDefaultCrosshair)
 		m_pDefaultCrosshair->SetActive(false);
