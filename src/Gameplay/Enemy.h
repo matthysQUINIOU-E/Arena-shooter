@@ -4,8 +4,6 @@
 class Enemy
 {
 private:
-	Enemy() = delete;
-
 	static void CreateMogwai(Agent& agent);
 	static void CreateJiangshi(Agent& agent);
 	static void CreateGuHuoNiao(Agent& agent);

@@ -19,6 +19,7 @@ public:
 	bool IsTargetInRange();
 	float GetStopRange();
 	float GetDistanceFromTarget();
+	gce::GameObject* GetTarget();
 
 private:
 	void CalculateNextLine();
@@ -30,7 +31,12 @@ private:
 	void FindPath();
 	bool HasTargetMovedTooMuch();
 	bool NeedCalculatePath();
+	void RotateTowardDirection();
 private:
+	gce::Vector3f32 m_targetForward;
+	float m_rotationSpeed = 3.f;
+	bool m_isRotating = false;
+
 	float m_speed = 3.f;
 	float m_stopRange = 2.f;
 

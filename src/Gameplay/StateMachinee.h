@@ -20,8 +20,8 @@ public:
 	void AddStateCondition(State beginState, State endState, Conditione& condition);
 	void AddStateAction(State state, Actione& action);
 private:
-	std::unordered_map<State, std::vector<std::pair<Conditione,State>>> m_stateConditionMap;
-	std::unordered_map<State, std::vector<Actione>> m_stateActionMap;
+	std::unordered_map<State, std::vector<std::pair<Conditione*,State>>> m_stateConditionMap;
+	std::unordered_map<State, std::vector<Actione*>> m_stateActionMap;
 	State m_currentState;
 };
 

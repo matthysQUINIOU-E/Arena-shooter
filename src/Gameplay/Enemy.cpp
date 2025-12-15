@@ -15,7 +15,7 @@ void Enemy::CreateMogwai(Agent& agent)
 
 void Enemy::CreateJiangshi(Agent& agent)
 {
-    Geometry* customGeo = gce::GeometryFactory::GetCustomGeometry("res/Assets/jiangshi/jiangshinoclothes.obj");
+    Geometry* customGeo = gce::GeometryFactory::GetCustomGeometry("res/Assets/jiangshi/jiangshi.obj");
     agent.AddMeshRenderer(customGeo, "res/Assets/jiangshi/jiangshi_base_color.png");
     agent.transform.WorldTranslate({ 0.f, abs(customGeo->max.y) + abs(customGeo->min.y), 0.f });
     agent.SetSpeed(3.f);

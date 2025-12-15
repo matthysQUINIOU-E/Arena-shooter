@@ -24,6 +24,9 @@ void Agent::FollowPathToTarget()
 	if (NeedCalculatePath())
 		FindPath();
 
+	if (m_isRotating)
+		RotateTowardDirection();
+
 	if (m_isMoving)
 		MoveToTarget();
 	else if (m_currentLineNodes.empty())
@@ -73,6 +76,11 @@ float Agent::GetDistanceFromTarget()
 {
 	gce::Vector3f32 targetPos = m_pTarget->transform.GetWorldPosition();
 	return (transform.GetWorldPosition() - targetPos).Norm();
+}
+
+gce::GameObject* Agent::GetTarget()
+{
+	return m_pTarget;
 }
 
 void Agent::CalculateNextLine()
@@ -129,6 +137,14 @@ void Agent::CalculateNextLine()
 	}
 
 	m_direction = (lastNodePos - transform.GetWorldPosition()).Normalize();
+	m_targetForward = lastNodePos - transform.GetWorldPosition();
+	m_targetForward.y = 0.f;
+
+	if (m_targetForward.Norm() < 0.0001f)
+		return;
+
+	m_targetForward.SelfNormalize();
+	m_isRotating = true;
 }
 
 void Agent::FollowCurrentLine()
@@ -308,4 +324,35 @@ bool Agent::NeedCalculatePath()
 	}
 
 	return HasTargetMovedTooMuch();
+}
+
+void Agent::RotateTowardDirection()
+{
+	gce::Vector3f32 currentForward = transform.GetWorldForward();
+	currentForward.y = 0.f;
+
+	if (currentForward.Norm() < 0.0001f)
+		return;
+
+	currentForward.SelfNormalize();
+
+	gce::Vector3f32 targetForward = m_targetForward;
+	targetForward.y = 0.f;
+	targetForward.SelfNormalize();
+
+	float dot = gce::Clamp(currentForward.DotProduct(targetForward), -1.f, 1.f);
+	float angle = acosf(dot);
+
+	gce::Vector3f32 cross = currentForward.CrossProduct(targetForward);
+	float sign = (cross.y >= 0.f) ? 1.f : -1.f;
+
+	float deltaYaw = angle * sign;
+
+	float maxStep = m_rotationSpeed * gce::GameManager::DeltaTime();
+	float step = gce::Clamp(deltaYaw, -maxStep, maxStep);
+
+	transform.WorldRotate({ 0.f, step, 0.f });
+
+	if (fabs(deltaYaw) < 0.001f)
+		m_isRotating = false;
 }
