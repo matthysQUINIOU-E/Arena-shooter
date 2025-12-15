@@ -29,6 +29,8 @@ void KeyBinds::InitDefaultKeyBinds()
 	AddKeyBind(KeyAction::InventorySlot1, gce::Keyboard::_1);
 	AddKeyBind(KeyAction::InventorySlot2, gce::Keyboard::_2);
 	AddKeyBind(KeyAction::InventorySlot3, gce::Keyboard::_3);
+	AddKeyBind(KeyAction::InventorySlot4, gce::Keyboard::_4);
+	AddKeyBind(KeyAction::InventorySlot5, gce::Keyboard::_5);
 
 
 	AddKeyBind(KeyAction::ToggleFullScreen, gce::Keyboard::F11);

@@ -15,9 +15,9 @@ BEGIN_TEST( Obj )
 
     D12PipelineObject pso{ SHADERS.VERTEX, SHADERS.PIXEL, SHADERS.HULL, SHADERS.DOMAIN_, SHADERS.ROOT_SIGNATURE };
 
-    Geometry* pCustomGeo1 = GeometryFactory::LoadGeometry(RES_PATH"res/Test/Obj/bugatti.obj");
-    Geometry* pCustomGeo2 = GeometryFactory::LoadGeometry(RES_PATH"res/Test/Obj/barrel_large.obj");
-    Geometry* pCustomGeo3 = GeometryFactory::LoadGeometry(RES_PATH"res/Test/Obj/Penguin.obj");
+    Geometry* pCustomGeo1 = GeometryFactory::GetCustomGeometry(RES_PATH"res/Test/Obj/bugatti.obj");
+    Geometry* pCustomGeo2 = GeometryFactory::GetCustomGeometry(RES_PATH"res/Test/Obj/barrel_large.obj");
+    Geometry* pCustomGeo3 = GeometryFactory::GetCustomGeometry(RES_PATH"res/Test/Obj/Penguin.obj");
 
     GameObject& object1 = GameObject::Create(scene);
     object1.AddScript<ObjMovement>();

@@ -22,14 +22,18 @@ namespace gce
 		static Geometry* CreateDonutGeo(float32 majorRadius, float32 minorRadius, uint32 majorSegments, uint32 minorSegments);
 		static Geometry* CreatePlaneGeo(float32 width, float32 height);
 		static Geometry* Create2DPlane();
+		static Geometry* GetCustomGeometry(StringView path);
 
-		static Geometry* LoadGeometry(StringView path);
 	private:
+		static Geometry* LoadGeometry(StringView path);
 		static Vertex MidPoint(Vertex const& v0, Vertex const& v1);
 		static void Subdivide(Vector<uint32>& indices, Vector<Vertex>& vertices);
 		static void BuildCylinderBody(float32 topRadius, float32 bottomRadius, float32 height, uint32 sliceCount, uint32 stackCount, Vector<Vertex>& vertices, Vector<uint32>& indices);
 		static void BuildCylinderCap(float32 radius, float32 height, uint32 sliceCount, Vector<Vertex>& vertices, Vector<uint32>& indices, bool isTop);
 		static void BuildHalfSphere(float32 topRadius, uint32 sliceCount, uint32 stackCount, Vector<Vertex>& vertices, Vector<uint32>& indices, bool isTop, float32 height = 0.0f);
+
+	private:
+		static std::unordered_map<StringView, gce::Geometry*> s_loadedGeometries;
 	};
 }
 #endif

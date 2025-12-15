@@ -9,8 +9,11 @@
 
 using namespace DirectX;
 
+
 namespace gce
 {
+	std::unordered_map<StringView, Geometry*> GeometryFactory::s_loadedGeometries = std::unordered_map<StringView, Geometry*>();
+
 	Geometry* GeometryFactory::CreateCubeGeo()
 	{
 Vertex v[24]{
@@ -323,6 +326,15 @@ Vertex v[24]{
 		}
 
 		return new Geometry(vertices.Data(), vertices.Size(), indices.Data(), indices.Size());
+	}
+
+	Geometry* GeometryFactory::GetCustomGeometry(StringView path)
+	{
+		auto it = s_loadedGeometries.find(path);
+		if (it == s_loadedGeometries.end())
+			s_loadedGeometries[path] = LoadGeometry(path);
+
+		return s_loadedGeometries[path];
 	}
 
 	Geometry* GeometryFactory::LoadGeometry(StringView const path)

@@ -20,6 +20,7 @@
 #include "Scripts/WaveManagerBehavior.hpp"
 
 #include "Prefabs/BonusManager.h"
+#include "Prefabs/BulletPool.h"
 
 #include "Utils.h"
 #include "Agent.h"
@@ -85,6 +86,8 @@ void SceneManager::UnInitGamePlay()
 	delete m_pPlayer;
 	m_pPlayer = nullptr;
 
+	BulletPool::DesactivateAllBullets();
+
 	for (gce::GameObject* go : m_Map)
 	{
 		go->SetActive(false);
@@ -119,7 +122,7 @@ void SceneManager::Init()
 	m_pArenaCam->SetParams(XM_PIDIV4, 0.001f, 500.0f, 1000.0f / 800.0f);
 
 	//MAP
-	for (gce::GameObject* go : ImportBlenderScene(L"scene_base.json"))
+	for (gce::GameObject* go : ImportBlenderScene(L"scene_v2.json"))
 	{
 		go->AddTags({ Tag::TMapObject });
 		go->SetActive(false);
@@ -128,6 +131,9 @@ void SceneManager::Init()
 
 	//INVENTORY
 	m_pInventoryManager = new InventoryManager();
+
+	//BulletPool
+	BulletPool::Init();
 
 	//Scene Manager Behavior
 	m_pEmpty = &EntityWrapper::Create();
