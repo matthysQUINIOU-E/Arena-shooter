@@ -18,6 +18,7 @@
 
 #include "Scripts/AgentBehavior.hpp"
 #include "Scripts/WaveManagerBehavior.hpp"
+#include "Scripts/HealSpawnerBehavior.hpp"
 
 #include "Prefabs/BonusManager.h"
 #include "Prefabs/BulletPool.h"
@@ -56,6 +57,14 @@ void SceneManager::InitGamePlay()
 	EntityWrapper& entityWrapper = EntityWrapper::Create();
 	entityWrapper.AddScript<WaveManagerBehavior>();
 	LinkObjectToScene(&entityWrapper, SceneType::GamePlayScene);
+
+	std::vector<Tag> vec;
+	vec.push_back(Tag::THeal);
+	vec.push_back(Tag::TSpawner);
+	for (GameObject* e : GetAllGameObjects(vec))
+	{
+		e->AddScript<HealSpawnerBehavior>();
+	}
 
 	BonusManager::CreateNem({ 5, 2, 0 });
 	BonusManager::CreateRiceBowl({ 5, 2, -1 });

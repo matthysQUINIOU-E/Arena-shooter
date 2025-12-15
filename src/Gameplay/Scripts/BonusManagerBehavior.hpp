@@ -17,6 +17,7 @@ DECLARE_SCRIPT(BonusManagerBehavior, ScriptFlag::Start | ScriptFlag::Update | Sc
 
 float rotationSpeed = 2.f;
 int healValue = 0;
+bool CD = false;
 
 void SetProperties(int _healValue)
 {
@@ -34,10 +35,6 @@ void Update()
 	float val = rotationSpeed * dt;
 
 	m_pOwner->transform.WorldRotate({0, val, 0});
-}
-
-void Destroy()
-{
 }
 
 void CollisionEnter(GameObject* other)
