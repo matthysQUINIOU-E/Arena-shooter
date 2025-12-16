@@ -18,13 +18,13 @@ Agent& Agent::Create()
 
 void Agent::FollowPathToTarget()
 {
+	if (m_isRotating)
+		RotateTowardDirection();
+
 	if (IsTargetInRange() || m_pTarget == nullptr )
 		return;
 	if (NeedCalculatePath())
 		FindPath();
-
-	if (m_isRotating)
-		RotateTowardDirection();
 
 	if (m_isMoving)
 		MoveToTarget();

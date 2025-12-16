@@ -13,7 +13,7 @@ void Enemy::CreateMogwai(Agent& agent)
     agent.transform.WorldTranslate({ 0.f, abs(customGeo->max.y) + abs(customGeo->min.y), 0.f });
     agent.AddScript<HealthBehavior>()->SetMaxHP(100);
 
-    agent.SetSpeed(5.f);
+    agent.SetSpeed(4.f);
     agent.AddScript<MogwaiBehavior>();
 }
 
@@ -24,7 +24,7 @@ void Enemy::CreateJiangshi(Agent& agent)
     agent.transform.WorldTranslate({ 0.f, abs(customGeo->max.y) + abs(customGeo->min.y), 0.f });
     agent.AddScript<HealthBehavior>()->SetMaxHP(150);
 
-    agent.SetSpeed(3.f);
+    agent.SetSpeed(2.f);
     agent.AddScript<JiangshiBehavior>();
 }
 
@@ -35,13 +35,14 @@ void Enemy::CreateGuHuoNiao(Agent& agent)
     agent.AddMeshRenderer(customGeo, "res/Assets/Harpy/harpy_base_color.png"); // will use this geomety instead
     agent.transform.WorldTranslate({ 0.f, abs(customGeo->max.y) + abs(customGeo->min.y), 0.f });
     agent.AddScript<HealthBehavior>()->SetMaxHP(150);
-    agent.SetSpeed(4.f);
-    agent.AddScript<GuHuoNiao>();
+    agent.SetSpeed(3.f);
+    agent.AddScript<GuHuoNiaoBehavior>();
 }
 
 Agent& Enemy::CreateEnemy(gce::GameObject* target, Tag enemyType)
 {
     Agent& agent = Agent::Create();
+    agent.AddTags({ enemyType });
     agent.AddComponent<gce::BoxCollider>();
     agent.AddScript<AgentBehavior>();
     agent.AddScript<EnemyDeathBehavior>();
@@ -49,15 +50,15 @@ Agent& Enemy::CreateEnemy(gce::GameObject* target, Tag enemyType)
 
     switch (enemyType)
     {
-    //case Tag::TMogwai:
-    //    CreateMogwai(agent);
-    //    break;
-    //case Tag::TJiangshi:
-    //    CreateJiangshi(agent);
-    //    break;
-    //case Tag::TGuHuoNiao:
-    //    CreateGuHuoNiao(agent);
-    //    break;
+    case Tag::TMogwai:
+        CreateMogwai(agent);
+        break;
+    case Tag::TJiangshi:
+        CreateJiangshi(agent);
+        break;
+    case Tag::TGuHuoNiao:
+        CreateGuHuoNiao(agent);
+        break;
     default:
         CreateMogwai(agent);
         break;

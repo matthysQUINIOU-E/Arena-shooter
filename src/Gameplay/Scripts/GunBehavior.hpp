@@ -75,6 +75,9 @@ void HandleReloadingAnimation(float dt)
 }
 void HandleRecoilAnimation(float dt)
 {
+	if (isReloading)
+		return;
+
 	if (totalRecoil > 0)
 	{
 		float recoverStep = recoilRecoverFactor * recoilFactor * dt;
@@ -203,13 +206,13 @@ void Shoot()
 	switch (m_pOwner->GetUniqueTag({ Tag::TMusket, Tag::TBlunderBuss, Tag::TStarwheel }))
 	{
 	case Tag::TMusket:
-		SetWeaponProperties(bulletScript, *pCurrent, 100.f, 2.f, { 4.f, 4.f, 4.f }, 15, 0.075f, 3.f);
+		SetWeaponProperties(bulletScript, *pCurrent, 75.f, 2.f, { 4.f, 4.f, 4.f }, 15, 0.075f, 3.f);
 		break;
 	case Tag::TBlunderBuss:
-		SetWeaponProperties(bulletScript, *pCurrent, 75.f, 1.f, { 6.f, 6.f, 3.f }, 40, 0.25f, 1.5f);
+		SetWeaponProperties(bulletScript, *pCurrent, 50.f, 1.f, { 6.f, 6.f, 3.f }, 40, 0.25f, 1.5f);
 		break;
 	case Tag::TStarwheel:
-		SetWeaponProperties(bulletScript, *pCurrent, 100.f, 2.f, { 2.5f, 2.5f, 5.f }, 10, 0.05f, 4.f);
+		SetWeaponProperties(bulletScript, *pCurrent, 62.5f, 2.f, { 2.5f, 2.5f, 5.f }, 10, 0.05f, 4.f);
 		break;
 	}
 

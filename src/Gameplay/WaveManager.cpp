@@ -2,6 +2,7 @@
 #include "Scripts/AgentBehavior.hpp"
 #include <time.h>
 #include <Enemy.h>
+#include "Scripts/HealthBehavior.hpp"
 
 WaveManager* WaveManager::s_instance = nullptr;
 
@@ -85,15 +86,15 @@ void WaveManager::TryNextWave()
 		return;
 
 	if (m_currentEnnemiesAlives == 0 && m_currentEnnemiesToSpawn == 0)
-		m_waveTimer = m_baseWaveTimer;
+		m_waveTimer = 0;
 
-	if (m_waveTimer < m_baseWaveTimer)
+	if (m_waveTimer > 0)
 	{
-		m_waveTimer += gce::GameManager::DeltaTime();
+		m_waveTimer -= gce::GameManager::DeltaTime();
 		return;
 	}
 
-	m_waveTimer = 0.f;
+	m_waveTimer = m_baseWaveTimer;
 	m_curentWave++;
 	m_currentEnnemiesToSpawn += GetEnnemiesNumberForWave(m_curentWave);
 	m_baseSpawnTimer = (m_baseWaveTimer * 0.25) / m_currentEnnemiesToSpawn;
@@ -121,6 +122,12 @@ void WaveManager::TrySpawn()
 
 	m_ennemiesFreePool[tag].pop_back();
 	ennemy->SetActive(true);
+	ennemy->GetScript<HealthBehavior>()->FillHP();
+
+	if (ennemy->HasComponent<BoxCollider>() == false)
+	{
+		ennemy->AddComponent<BoxCollider>()->SetActive(true);
+	}
 
 	int spawnPosIndex = m_spawnerPositionDistribution[tag](m_rng);
 	gce::Vector3f32 spawnPos = m_spawnerPosition[tag][spawnPosIndex];

@@ -97,10 +97,10 @@ void EnemyScriptHelper::InitGuhuoniao()
     m_distanceAttackCooldown = 1.5f;
     m_projectileSpeed = 10.f;
 
-    m_rangeLaunchMelee = 0.f;
-    m_rangeHitMelee = 0.f;
-    m_meleeAttackCooldown = 0.f;
-    m_meleeAttackHitFrame = 0.f;
+    m_rangeLaunchMelee = 3.f;
+    m_rangeHitMelee = 3.5f;
+    m_meleeAttackCooldown = 1.1f;
+    m_meleeAttackHitFrame = 0.6f;
     m_inAttack = false;
     m_meleeDamage = 10;
 
@@ -113,6 +113,7 @@ void EnemyScriptHelper::InitGuhuoniao()
         EnemyProjectileBehavior* epb = ew.AddScript<EnemyProjectileBehavior>();
         epb->m_baseLifeTime = m_projectileLifeTime;
         epb->m_speed = m_projectileSpeed;
+        epb->m_ySpawnOffset = 1.f;
         epb->m_damage = m_projectileSpeed;
 
         m_projectiles.push_back(&ew);
@@ -133,6 +134,7 @@ void EnemyScriptHelper::Reset()
 {
     m_stateMachine.SetState(State::MOVE);
     m_currentProjectiles = m_maxProjectiles;
+    m_pAgent->transform.SetWorldPosition({ 0.f, -100.f, 0.f });
 }
 
 void EnemyScriptHelper::InitStateMachine()

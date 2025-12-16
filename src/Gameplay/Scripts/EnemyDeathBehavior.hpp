@@ -8,35 +8,47 @@
 #include "HealthBehavior.hpp"
 #include "WaveManager.h"
 
+#include "Scripts/MogwaiBehavior.hpp"
+#include "Scripts/GuhuoniaoBehavior.hpp"
+#include "Scripts/JiangshiBehavior.hpp"
+
 using namespace gce;
 
 DECLARE_SCRIPT(EnemyDeathBehavior, ScriptFlag::Start | ScriptFlag::Update)
 
 bool animTrigger = false;
-float animDuration = 0.75f;
+float animDuration = 0.5f;
 float animProgress = 0.f;
 
 void HandleAnimation()
 {
 	float dt = GameManager::DeltaTime();
 
-	Quaternion rot = {};
-
 	float value = (gce::PI / 2) * (GameManager::DeltaTime() / animDuration);
-
-	//rot.SetRotationEuler({value * dt, 0.f, 0.f});
 
 	m_pOwner->transform.WorldRotate({ value, 0.f, 0.f });
 }
 
 void HandleDeath()
 {
-	if (Agent* pAgent = dynamic_cast<Agent*>(m_pOwner))
-	{
-		pAgent->GetComponent<BoxCollider>()->SetActive(false);
-		pAgent->SetActive(false);
-		WaveManager::GetInstance()->EnnemyKilled(pAgent);
-	}
+	m_pOwner->RemoveComponent<BoxCollider>();
+
+	if (auto mogwaiScript = m_pOwner->GetScript<MogwaiBehavior>())
+		mogwaiScript->Reset();
+
+	else if (auto guHuoNiaoScript = m_pOwner->GetScript<GuHuoNiaoBehavior>())
+		guHuoNiaoScript->Reset();
+
+	else if (auto jiangshi = m_pOwner->GetScript<JiangshiBehavior>())
+		jiangshi->Reset();
+
+	m_pOwner->transform.SetWorldRotation({ 0, 0, 0 });
+	m_pOwner->SetActive(false);
+
+	WaveManager::GetInstance()->EnnemyKilled(dynamic_cast<Agent*>(m_pOwner));
+
+	animProgress = 0.f;
+	animTrigger = false;
 }
 
 void Start()

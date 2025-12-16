@@ -9,7 +9,7 @@
 
 using namespace gce;
 
-DECLARE_SCRIPT(GuHuoNiao, ScriptFlag::Update)
+DECLARE_SCRIPT(GuHuoNiaoBehavior, ScriptFlag::Update)
 
 void Init()
 {
