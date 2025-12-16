@@ -11,28 +11,34 @@ using namespace gce;
 
 DECLARE_SCRIPT(HealSpawnerBehavior, ScriptFlag::Start | ScriptFlag::Update)
 
-GameObject* Noodle = nullptr;
-GameObject* Nem = nullptr;
-GameObject* RiceBowl = nullptr;
+GameObject* pNoodle = nullptr;
+GameObject* pNem = nullptr;
+GameObject* pRiceBowl = nullptr;
 float CDTime = 0.f;
+
+void DesactiveAll()
+{
+	pNoodle->SetActive(false);
+	pNem->SetActive(false);
+	pRiceBowl->SetActive(false);
+}
 
 void GenerateHeal()
 {
-	Noodle->SetActive(false);
-	Nem->SetActive(false);
-	RiceBowl->SetActive(false);
+	DesactiveAll();
+
 	int random = rand() & 11;
 	if (random == 10)
 	{
-		Noodle->SetActive(true);
+		pNoodle->SetActive(true);
 	}
 	else if (random >= 7)
 	{
-		Nem->SetActive(true);
+		pNem->SetActive(true);
 	}
 	else
 	{
-		RiceBowl->SetActive(true);
+		pRiceBowl->SetActive(true);
 	}
 	CDTime = 60.f;
 }
@@ -40,14 +46,14 @@ void Start()
 {
 	gce::Vector3f32 pos = m_pOwner->transform.GetWorldPosition();
 	pos.y += 1;
-	Noodle = BonusManager::CreateNoodles(pos);
-	Nem = BonusManager::CreateNem(pos);
-	RiceBowl = BonusManager::CreateRiceBowl(pos);
+	pNoodle = BonusManager::CreateNoodles(pos);
+	pNem = BonusManager::CreateNem(pos);
+	pRiceBowl = BonusManager::CreateRiceBowl(pos);
 	GenerateHeal();
 }
 void Update()
 {
-	if (!Noodle->IsActive() && !Nem->IsActive() && !RiceBowl->IsActive())
+	if (!pNoodle->IsActive() && !pNem->IsActive() && !pRiceBowl->IsActive())
 		CDTime -= GameManager::DeltaTime();
 
 	if (CDTime <= 0)

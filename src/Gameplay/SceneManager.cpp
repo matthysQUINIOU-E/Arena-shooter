@@ -16,6 +16,7 @@
 
 #include "Scripts/AgentBehavior.hpp"
 #include "Scripts/WaveManagerBehavior.hpp"
+#include "Scripts/HealSpawnerBehavior.hpp"
 
 #include "Prefabs/BonusManager.h"
 #include "Prefabs/BulletPool.h"
@@ -91,6 +92,9 @@ void SceneManager::UnInitGamePlay()
 
 	for (gce::GameObject* go : m_Map)
 	{
+		if (go->HasTags({ Tag::TSpawner, Tag::THeal }))
+			go->GetScript<HealSpawnerBehavior>()->DesactiveAll();
+
 		go->SetActive(false);
 	}
 
