@@ -7,6 +7,7 @@
 #include "../Prefabs/InventoryManager.h"
 #include "../Prefabs/BulletPool.h"
 #include <limits>
+#include "Scripts/DestructibleBehavior.hpp"
 
 using namespace gce;
 
@@ -27,18 +28,72 @@ gce::Vector3f32 dir = {};
 
 gce::GameObject* CheckCollision()
 {
+	auto& transform1 = m_pOwner->transform;
+
+	gce::Vector3f32 pos1 = transform1.GetWorldPosition();
+	gce::Vector3f32 scale1 = transform1.GetWorldScale();
+
+	MeshRenderer* pMesh1 = m_pOwner->GetComponent<MeshRenderer>();
+	if (!pMesh1)
+		return nullptr;
+
+	auto& geo1 = pMesh1->pGeometry;
+	gce::Vector3f32 min1 = pos1 + geo1->min * scale1;
+	gce::Vector3f32 max1 = pos1 + geo1->max * scale1;
+
 	for (gce::GameObject* go : GameManager::GetSceneManager().GetAllGameObjects({ Tag::TEnemy }))
 	{
-		gce::Vector3f32 pos1 = m_pOwner->transform.GetWorldPosition();
-		gce::Vector3f32 scale1 = m_pOwner->transform.GetWorldScale();
+		if (!go || !go->IsActive())
+			continue;
 
-		gce::Vector3f32 pos2 = go->transform.GetWorldPosition();
-		gce::Vector3f32 scale2 = go->transform.GetWorldScale();
+		auto& transform2 = go->transform;
 
+		gce::Vector3f32 pos2 = transform2.GetWorldPosition();
+		gce::Vector3f32 scale2 = transform2.GetWorldScale();
+
+		MeshRenderer* pMesh2 = go->GetComponent<MeshRenderer>();
+		if (!pMesh2)
+			continue;
+
+		auto& geo2 = pMesh2->pGeometry;
+
+		gce::Vector3f32 min2 = pos2 + geo2->min * scale2;
+		gce::Vector3f32 max2 = pos2 + geo2->max * scale2;
+
+		// Test AABB
 		bool collision =
-			std::abs(pos1.x - pos2.x) <= (scale1.x * 0.5f + scale2.x * 0.5f) &&
-			std::abs(pos1.y - pos2.y) <= (scale1.y * 0.5f + scale2.y * 0.5f) &&
-			std::abs(pos1.z - pos2.z) <= (scale1.z * 0.5f + scale2.z * 0.5f);
+			(min1.x <= max2.x && max1.x >= min2.x) &&
+			(min1.y <= max2.y && max1.y >= min2.y) &&
+			(min1.z <= max2.z && max1.z >= min2.z);
+
+		if (collision)
+			return go;
+	}
+
+	for (gce::GameObject* go : GameManager::GetSceneManager().GetAllGameObjects({ Tag::TDestructible }))
+	{
+		if (!go || !go->IsActive())
+			continue;
+
+		auto& transform2 = go->transform;
+
+		gce::Vector3f32 pos2 = transform2.GetWorldPosition();
+		gce::Vector3f32 scale2 = transform2.GetWorldScale();
+
+		MeshRenderer* pMesh2 = go->GetComponent<MeshRenderer>();
+		if (!pMesh2)
+			continue;
+
+		auto& geo2 = pMesh2->pGeometry;
+
+		gce::Vector3f32 min2 = pos2 + geo2->min * scale2;
+		gce::Vector3f32 max2 = pos2 + geo2->max * scale2;
+
+		// Test AABB
+		bool collision =
+			(min1.x <= max2.x && max1.x >= min2.x) &&
+			(min1.y <= max2.y && max1.y >= min2.y) &&
+			(min1.z <= max2.z && max1.z >= min2.z);
 
 		if (collision)
 			return go;
@@ -74,12 +129,12 @@ gce::GameObject* GetNearestEnemy()
 	float minSqrDistance = std::numeric_limits<float>::infinity();
 
 	gce::GameObject* pNearestEnemy = nullptr;
+	gce::Vector3f32 bulletPos = m_pOwner->transform.GetWorldPosition();
 
 	float maxDistanceDetection = 5.f;
 
 	for (gce::GameObject* pCurrent : enemies)
 	{
-		gce::Vector3f32 bulletPos = m_pOwner->transform.GetWorldPosition();
 		gce::Vector3f32 enemyPos = pCurrent->transform.GetWorldPosition();
 
 		float sqrDist = (enemyPos.x - bulletPos.x) * (enemyPos.x - bulletPos.x) + (enemyPos.y - bulletPos.y) * (enemyPos.y - bulletPos.y) + (enemyPos.z - bulletPos.z) * (enemyPos.z - bulletPos.z);
@@ -145,6 +200,11 @@ void Update()
 	if (gce::GameObject* pCollided = CheckCollision())
 	{
 		Reset();
+		if (pCollided->HasTags({ Tag::TDestructible }))
+		{
+			DestructibleBehavior* db = pCollided->GetScript<DestructibleBehavior>();
+			db->GetHit();
+		}
 	}
 }
 

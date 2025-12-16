@@ -3,10 +3,11 @@
 #include <Components.h>
 #include "GameManager.h"
 #include "Utils.h"
+#include <queue>
 
 NavMesh* NavMesh::s_pInstance = nullptr;
 
-void NavMesh::Create(gce::Vector<gce::Vertex> vertices, gce::Vector<uint32> indices, std::vector<gce::GameObject*> obstacles)
+void NavMesh::Create(gce::Vector<gce::Vertex> vertices, gce::Vector<uint32> indices, std::unordered_set<gce::GameObject*> obstacles)
 {
 	if (s_pInstance != nullptr)
 	{
@@ -52,9 +53,8 @@ Node<NavTile, Agent>* NavMesh::GetNearestNodeFromPosition(gce::Vector3f32 positi
 
 bool NavMesh::DoesSegmentGoThroughObstacles(const gce::Vector3f32& A, const gce::Vector3f32& B, const float& radius)
 {
-	for (size_t i = 0; i < m_obstacles.size(); i++)
+	for (gce::GameObject* obstacle : m_obstacles)
 	{
-		gce::GameObject* obstacle = m_obstacles[i];
 		gce::Vector3f32 obstaclePos = obstacle->transform.GetWorldPosition();
 		gce::MeshRenderer* mr = obstacle->GetComponent<gce::MeshRenderer>();
 		gce::Geometry* geoObstacle = mr->pGeometry;
@@ -78,7 +78,105 @@ uint32 NavMesh::GetCurrentVisitedVersion()
 	return m_currentVersion;
 }
 
-NavMesh::NavMesh(gce::Vector<gce::Vertex> vertices, gce::Vector<uint32> indices, std::vector<gce::GameObject*> obstacles)
+void NavMesh::UpdateNodesObstacle(float radius, Node<NavTile,Agent>* node)
+{
+	std::unordered_set<Node<NavTile, Agent>*> nodesToUpdate;
+	ResetVisited();
+	std::queue<Node<NavTile, Agent>*> queue;
+	node->visitedVersion = m_currentVersion;
+	queue.push(node);
+
+	while (!queue.empty())
+	{
+		Node<NavTile, Agent>* fNode = queue.front();
+		queue.pop();
+		if (fNode->CalculateEuclidieanDistance(node) < radius)
+			nodesToUpdate.insert(fNode);
+		for (Node<NavTile, Agent>* nNode : fNode->neighbors)
+		{
+			if (nNode->visitedVersion != m_currentVersion)
+			{
+				nNode->visitedVersion = m_currentVersion;
+				queue.push(nNode);
+			}
+		}
+	}
+	std::unordered_map<std::string, std::vector<Node<NavTile, Agent>*>> mapEdgesUpdateNodes;
+
+	for (Node<NavTile, Agent>* uNode : nodesToUpdate)
+	{
+		uNode->data->CheckObstacles(m_obstacles);
+		std::erase_if(uNode->neighbors, [&nodesToUpdate] (Node<NavTile, Agent>* testNode) { return nodesToUpdate.contains(testNode); });
+		for (std::string edge : uNode->data->m_edges)
+			mapEdgesUpdateNodes[edge].push_back(uNode);
+	}
+
+	for (auto& [edge, nodes] : mapEdgesUpdateNodes)
+	{
+		if (nodes.size() == 2)
+		{
+			Node<NavTile, Agent>* a = nodes[0];
+			Node<NavTile, Agent>* b = nodes[1];
+
+			if (a->IsWalkable() && b->IsWalkable())
+			{
+				a->neighbors.insert(b);
+				b->neighbors.insert(a);
+			}
+		}
+	}
+}
+
+void NavMesh::ResetObstacles()
+{
+	for (gce::GameObject* obstacle : m_disabledObstacles)
+	{
+		m_obstacles.insert(obstacle);
+		obstacle->SetActive(true);
+	}
+	m_disabledObstacles.clear();
+
+	std::unordered_map<std::string, std::vector<Node<NavTile, Agent>*>> mapEdgesUpdateNodes;
+
+	for (Node<NavTile, Agent>* uNode : m_nodes)
+	{
+		uNode->data->CheckObstacles(m_obstacles);
+		uNode->neighbors.clear();
+		for (std::string edge : uNode->data->m_edges)
+			mapEdgesUpdateNodes[edge].push_back(uNode);
+	}
+
+	for (auto& [edge, nodes] : mapEdgesUpdateNodes)
+	{
+		if (nodes.size() == 2)
+		{
+			Node<NavTile, Agent>* a = nodes[0];
+			Node<NavTile, Agent>* b = nodes[1];
+
+			if (a->IsWalkable() && b->IsWalkable())
+			{
+				a->neighbors.insert(b);
+				b->neighbors.insert(a);
+			}
+		}
+	}
+}
+
+void NavMesh::DisableObstacle(gce::GameObject* obstacle)
+{
+	if (m_obstacles.contains(obstacle))
+	{
+		m_obstacles.erase(obstacle);
+		m_disabledObstacles.insert(obstacle);
+		gce::MeshRenderer* mr = obstacle->GetComponent<gce::MeshRenderer>();
+		if (mr == nullptr)
+			return;
+		obstacle->SetActive(false);
+		UpdateNodesObstacle(max(mr->pGeometry->max.x,max(mr->pGeometry->max.y, mr->pGeometry->max.z)), GetNearestNodeFromPosition(obstacle->transform.GetWorldPosition()));
+	}
+}
+
+NavMesh::NavMesh(gce::Vector<gce::Vertex> vertices, gce::Vector<uint32> indices, std::unordered_set<gce::GameObject*> obstacles)
 {
 	m_obstacles = obstacles;
 	size_t triangleNumber = indices.Size() / 3;
@@ -102,6 +200,7 @@ NavMesh::NavMesh(gce::Vector<gce::Vertex> vertices, gce::Vector<uint32> indices,
 		std::string edge1 = std::to_string(min(indice1, indice2)) + std::to_string(max(indice1, indice2));
 		std::string edge2 = std::to_string(min(indice2, indice3)) + std::to_string(max(indice2, indice3));
 		std::string edge3 = std::to_string(min(indice1, indice3)) + std::to_string(max(indice1, indice3));
+		navTile->m_edges = { edge1, edge2, edge3 };
 
 		auto it1 = mapIndicesNodes.find(edge1);
 		if (it1 != mapIndicesNodes.end())

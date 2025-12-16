@@ -77,7 +77,8 @@ void SceneManager::UnInitGamePlay()
 	{
 		if (go->HasTags({ Tag::TMapObject }) == false)
 			go->Destroy();
-	}
+	}	
+
 	// sigma
 	m_SceneObjectsList[SceneType::GamePlayScene].clear();
 
@@ -85,11 +86,14 @@ void SceneManager::UnInitGamePlay()
 	m_pPlayer = nullptr;
 
 	BulletPool::DesactivateAllBullets();
+	WaveManager::GetInstance()->Reset();
+	NavMesh::Instance()->ResetObstacles();
 
 	for (gce::GameObject* go : m_Map)
 	{
 		go->SetActive(false);
 	}
+
 }
 
 void SceneManager::Init()

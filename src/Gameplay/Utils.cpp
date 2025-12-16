@@ -5,6 +5,7 @@
 #include "json.h"
 #include "Utils.h"
 #include "NavMesh.h"
+#include "Scripts/DestructibleBehavior.hpp"
 
 std::vector<gce::GameObject*> ImportBlenderScene(std::wstring jsonFile)
 {
@@ -35,7 +36,7 @@ std::vector<gce::GameObject*> ImportBlenderScene(std::wstring jsonFile)
 
     gce::Vector<gce::Vertex> navmeshVertices;
     gce::Vector<uint32> navmeshIndices;
-    std::vector<gce::GameObject*> obstaclesGameObject;
+    std::unordered_set<gce::GameObject*> obstaclesGameObject;
 
     std::vector<gce::GameObject*> allCreatedObj;
 
@@ -112,7 +113,10 @@ std::vector<gce::GameObject*> ImportBlenderScene(std::wstring jsonFile)
                 gameObject.AddTags({Tag::TMogwai});
         }
         if (isDestructible)
+        {
             gameObject.AddTags({ Tag::TDestructible });
+
+        }
 
         // gameObject.SetName("importedScene"); // maybe change later just taging everything with the same name
         gameObject.transform.SetWorldPosition(position);
@@ -147,7 +151,8 @@ std::vector<gce::GameObject*> ImportBlenderScene(std::wstring jsonFile)
         }
         else if (hasCollider)
         {
-            obstaclesGameObject.push_back(&gameObject);
+            obstaclesGameObject.insert(&gameObject);
+            gameObject.AddScript<DestructibleBehavior>();
         }
         
         if (!baseColorTex.empty())
