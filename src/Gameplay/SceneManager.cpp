@@ -27,7 +27,7 @@
 
 void SceneManager::InitGamePlay()
 {
-	if (m_IsGamePlayInit == true) // bonobo
+	if (m_IsGamePlayInit == true)
 		return;
 	
 	m_IsGamePlayInit = true;
@@ -56,14 +56,6 @@ void SceneManager::InitGamePlay()
 	entityWrapper.AddScript<WaveManagerBehavior>();
 	LinkObjectToScene(&entityWrapper, SceneType::GamePlayScene);
 
-
-
-
-	BonusManager::CreateNem({ 5, 2, 0 });
-	BonusManager::CreateRiceBowl({ 5, 2, -1 });
-	BonusManager::CreateNoodles({ 5, 2, 1 });
-
-
 	EntityWrapper& dragon = EntityWrapper::Create();
 	dragon.SetProperties("Dragon", { Tag::TEnemy }, { 0, 15, 0 }, { 0, 0, 0 }, { 2, 2, 2 });
 	dragon.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/dragon/dragon.obj"), "res/Assets/dragon/dragon_base_color.png");
@@ -90,7 +82,6 @@ void SceneManager::UnInitGamePlay()
 			go->Destroy();
 	}	
 
-	// sigma
 	m_SceneObjectsList[SceneType::GamePlayScene].clear();
 
 	delete m_pPlayer;
@@ -137,7 +128,7 @@ void SceneManager::Init()
 	m_pArenaCam->SetParams(XM_PIDIV4, 0.001f, 500.0f, 1000.0f / 800.0f);
 
 	//MAP
-	for (gce::GameObject* go : ImportBlenderScene(L"scene_base.json"))
+	for (gce::GameObject* go : ImportBlenderScene(L"scene_v2.json"))
 	{
 		go->AddTags({ Tag::TMapObject });
 		go->SetActive(false);

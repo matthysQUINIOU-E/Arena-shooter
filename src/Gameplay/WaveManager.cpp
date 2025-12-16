@@ -45,9 +45,10 @@ void WaveManager::EnnemyKilled(Agent* ennemy)
 
 void WaveManager::Reset()
 {
-	for (Agent* enemy : m_ennemiesSpawnedPool)
+	std::unordered_set<Agent*> swapEnemies = m_ennemiesSpawnedPool;
+	for (Agent* enemy : swapEnemies)
 		EnnemyKilled(enemy);
-
+	
 	m_currentEnnemiesToSpawn = 0;
 	m_currentEnnemiesAlives = 0;
 	m_spawnTimer = 0.f;
