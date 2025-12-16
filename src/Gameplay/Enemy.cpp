@@ -59,7 +59,7 @@ Agent& Enemy::CreateEnemy(gce::GameObject* target, Tag enemyType)
     //    CreateGuHuoNiao(agent);
     //    break;
     default:
-        CreateGuHuoNiao(agent);
+        CreateMogwai(agent);
         break;
     }
 

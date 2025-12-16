@@ -35,6 +35,9 @@ gce::GameObject* CheckCollision()
 {
 	for (gce::GameObject* go : GameManager::GetSceneManager().GetAllGameObjects({ Tag::TEnemy }))
 	{
+		if (go->IsActive() == false)
+			continue;
+
 		gce::Vector3f32 pos1 = m_pOwner->transform.GetWorldPosition();
 		gce::Vector3f32 scale1 = m_pOwner->transform.GetWorldScale();
 

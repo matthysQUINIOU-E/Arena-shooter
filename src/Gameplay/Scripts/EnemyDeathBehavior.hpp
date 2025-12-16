@@ -33,6 +33,7 @@ void HandleDeath()
 {
 	if (Agent* pAgent = dynamic_cast<Agent*>(m_pOwner))
 	{
+		pAgent->GetComponent<BoxCollider>()->SetActive(false);
 		pAgent->SetActive(false);
 		WaveManager::GetInstance()->EnnemyKilled(pAgent);
 	}

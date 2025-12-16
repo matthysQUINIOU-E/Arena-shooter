@@ -23,7 +23,7 @@ private:
 private:
 	static WaveManager* s_instance;
 
-	int m_maxSimultanateEnnemies = 20;
+	int m_maxSimultanateEnnemies = 10;
 	int m_currentEnnemiesToSpawn = 0;
 	int m_currentEnnemiesAlives = 0;
 	
