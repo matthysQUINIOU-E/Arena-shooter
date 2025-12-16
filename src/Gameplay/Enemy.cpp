@@ -25,9 +25,9 @@ void Enemy::CreateJiangshi(Agent& agent)
 
 void Enemy::CreateGuHuoNiao(Agent& agent)
 {
-    //agent.AddMeshRenderer(gce::GeometryFactory::LoadGeometry("res/Assets/guhuoniao/guhuoniao.obj"), "res/Assets/guhuoniao/guhuoniao_base_color.png"); not usable 
+
     Geometry* customGeo = gce::GeometryFactory::GetCustomGeometry("res/Assets/Harpy/harpy.obj");
-    agent.AddMeshRenderer(customGeo, "res/Assets/Harpy/harpy_base_color.png"); // will use this geomety instead
+    agent.AddMeshRenderer(customGeo, "res/Assets/Harpy/harpy_base_color.png");
     agent.transform.WorldTranslate({ 0.f, abs(customGeo->max.y) + abs(customGeo->min.y), 0.f });
     agent.SetSpeed(4.f);
     agent.AddScript<GuhuoniaBehavior>();

@@ -16,7 +16,7 @@ float m_baseLifeTime = 3.f;
 float m_lifeTime = 0.f;
 float m_speed = 75.f;
 int m_damage = 1;
-float m_ySpawnOffset = 0.f;
+float m_ySpawnOffset = 2.f;
 std::function<void(float, gce::Vector3f32)> m_animation = [](float deltaTime, gce::Vector3f32 dir){};
 
 gce::Vector3f32 m_dir = { 0, 0, 0 };

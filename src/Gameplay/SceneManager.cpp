@@ -55,6 +55,9 @@ void SceneManager::InitGamePlay()
 	entityWrapper.AddScript<WaveManagerBehavior>();
 	LinkObjectToScene(&entityWrapper, SceneType::GamePlayScene);
 
+
+
+
 	BonusManager::CreateNem({ 5, 2, 0 });
 	BonusManager::CreateRiceBowl({ 5, 2, -1 });
 	BonusManager::CreateNoodles({ 5, 2, 1 });
@@ -90,6 +93,7 @@ void SceneManager::UnInitGamePlay()
 	{
 		go->SetActive(false);
 	}
+
 }
 
 void SceneManager::Init()
@@ -140,7 +144,7 @@ void SceneManager::Init()
 	//UI
 	m_pUIManager = new UIManager();
 	m_pUIManager->Init();
-
+	
 	ChangeScene(SceneType::GamePlayScene);
 }
 

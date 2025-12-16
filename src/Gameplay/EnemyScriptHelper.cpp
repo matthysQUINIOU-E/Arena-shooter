@@ -108,7 +108,7 @@ void EnemyScriptHelper::InitGuhuoniao()
     for (size_t i = 0; i < static_cast<int>(m_distanceAttackCooldown * m_projectileLifeTime) + 1; i++)
     {
         EntityWrapper& ew = EntityWrapper::Create();
-        ew.AddMeshRenderer(gce::SHAPES.CUBE, ""); // TODO :: projectile guhuoniao
+        ew.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/Harpy/Attack/harpie_attack.obj"),"res/Assets/Harpy/Attack/harpie_attack_base_color.png"); // TODO :: projectile guhuoniao
         EnemyProjectileBehavior* epb = ew.AddScript<EnemyProjectileBehavior>();
         epb->m_baseLifeTime = m_projectileLifeTime;
         epb->m_speed = m_projectileSpeed;

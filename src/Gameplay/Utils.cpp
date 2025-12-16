@@ -5,6 +5,7 @@
 #include "json.h"
 #include "Utils.h"
 #include "NavMesh.h"
+#include "Scripts/HealSpawnerBehavior.hpp"
 
 std::vector<gce::GameObject*> ImportBlenderScene(std::wstring jsonFile)
 {
@@ -103,7 +104,10 @@ std::vector<gce::GameObject*> ImportBlenderScene(std::wstring jsonFile)
         if (isSpawnerHeal || isSpawnerGuHuoNiao || isSpawnerJiangshi || isSpawnerMogwai) {
             gameObject.AddTags({ Tag::TSpawner });
             if (isSpawnerHeal)
+            {
                 gameObject.AddTags({ Tag::THeal });
+                gameObject.AddScript<HealSpawnerBehavior>();
+            }
             if (isSpawnerGuHuoNiao)
                 gameObject.AddTags({ Tag::TGuHuoNiao });
             if (isSpawnerJiangshi)
@@ -132,7 +136,6 @@ std::vector<gce::GameObject*> ImportBlenderScene(std::wstring jsonFile)
             if (mesh.contains("i"))
                 indices = mesh["i"].get<std::vector<uint32_t>>();
         }
-
         gce::MeshRenderer* pMeshRenderer = gameObject.AddComponent<gce::MeshRenderer>();
         gce::Vector<gce::Vertex> gceVertices;
         gce::Vector<uint32> gceIndices;
