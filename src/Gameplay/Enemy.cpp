@@ -4,7 +4,7 @@
 #include "Scripts/JiangshiBehavior.hpp"
 #include "Scripts/MogwaiBehavior.hpp"
 #include "Scripts/HealthBehavior.hpp"
-#include "Scripts/EnemyDeathBehavior.hpp"
+#include "Scripts/EnemyHpBehavior.hpp"
 
 void Enemy::CreateMogwai(Agent& agent)
 {
@@ -45,7 +45,7 @@ Agent& Enemy::CreateEnemy(gce::GameObject* target, Tag enemyType)
     agent.AddTags({ enemyType });
     agent.AddComponent<gce::BoxCollider>();
     agent.AddScript<AgentBehavior>();
-    agent.AddScript<EnemyDeathBehavior>();
+    agent.AddScript<EnemyHpBehavior>();
     agent.SetTarget(target);
 
     switch (enemyType)

@@ -42,10 +42,6 @@ void Update()
 	{
 		pSceneManager->ChangeScene(SceneType::MenuScene);
 	}
-	if (GetKeyDown(Keyboard::J)) // DESTROY ALLL JFHOIDHFOIDHFOIDFHOIUFHO
-	{
-		pSceneManager->ChangeScene(SceneType::GamePlayScene);
-	}
 }
 
 END_SCRIPT

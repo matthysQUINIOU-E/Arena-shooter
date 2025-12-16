@@ -7,6 +7,7 @@
 #include "../Prefabs/InventoryManager.h"
 #include "../Prefabs/BulletPool.h"
 #include "../Scripts/HealthBehavior.hpp"
+#include "../Scripts/EnemyHpBehavior.hpp"
 
 #include <limits>
 
@@ -211,6 +212,11 @@ void Update()
 	{
 		if (pCollided->HasTags({ Tag::TEnemy }))
 		{
+			if (auto animation = pCollided->GetScript<EnemyHpBehavior>())
+			{
+				animation->TriggerHitAnim();
+			}
+
 			if (auto health = pCollided->GetScript<HealthBehavior>())
 			{
 				health->TakeDamage(damage);
