@@ -10,6 +10,7 @@
 #include "../Scripts/EnemyHpBehavior.hpp"
 
 #include <limits>
+#include "Scripts/DestructibleBehavior.hpp"
 
 using namespace gce;
 
@@ -76,6 +77,35 @@ gce::GameObject* CheckCollision()
 			return go;
 	}
 
+	for (gce::GameObject* go : GameManager::GetSceneManager().GetAllGameObjects({ Tag::TDestructible }))
+	{
+		if (!go || !go->IsActive())
+			continue;
+
+		auto& transform2 = go->transform;
+
+		gce::Vector3f32 pos2 = transform2.GetWorldPosition();
+		gce::Vector3f32 scale2 = transform2.GetWorldScale();
+
+		MeshRenderer* pMesh2 = go->GetComponent<MeshRenderer>();
+		if (!pMesh2)
+			continue;
+
+		auto& geo2 = pMesh2->pGeometry;
+
+		gce::Vector3f32 min2 = pos2 + geo2->min * scale2;
+		gce::Vector3f32 max2 = pos2 + geo2->max * scale2;
+
+		// Test AABB
+		bool collision =
+			(min1.x <= max2.x && max1.x >= min2.x) &&
+			(min1.y <= max2.y && max1.y >= min2.y) &&
+			(min1.z <= max2.z && max1.z >= min2.z);
+
+		if (collision)
+			return go;
+	}
+
 	return nullptr;
 }
 
@@ -110,12 +140,12 @@ gce::GameObject* GetNearestEnemy()
 	float minSqrDistance = std::numeric_limits<float>::infinity();
 
 	gce::GameObject* pNearestEnemy = nullptr;
+	gce::Vector3f32 bulletPos = m_pOwner->transform.GetWorldPosition();
 
 	float maxDistanceDetection = 5.f;
 
 	for (gce::GameObject* pCurrent : enemies)
 	{
-		gce::Vector3f32 bulletPos = m_pOwner->transform.GetWorldPosition();
 		gce::Vector3f32 enemyPos = pCurrent->transform.GetWorldPosition();
 
 		float sqrDist = (enemyPos.x - bulletPos.x) * (enemyPos.x - bulletPos.x) + (enemyPos.y - bulletPos.y) * (enemyPos.y - bulletPos.y) + (enemyPos.z - bulletPos.z) * (enemyPos.z - bulletPos.z);
@@ -223,7 +253,15 @@ void Update()
 			}
 		}
 
+		if (pCollided->HasTags({ Tag::TDestructible }))
+		{
+			DestructibleBehavior* db = pCollided->GetScript<DestructibleBehavior>();
+			db->GetHit();
+		}
+
 		triggerAnim = true;
+		Reset();
+
 	}
 }
 

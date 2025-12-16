@@ -22,11 +22,11 @@ NavTile::NavTile(gce::Vertex& vertex1, gce::Vertex& vertex2, gce::Vertex& vertex
 	};
 }
 
-void NavTile::CheckObstacles(std::vector<gce::GameObject*> obstacles)
+void NavTile::CheckObstacles(std::unordered_set<gce::GameObject*> obstacles)
 {
-	for (size_t i = 0; i < obstacles.size(); i++)
+	m_isWalkable = true;
+	for (gce::GameObject* obstacle : obstacles)
 	{
-		gce::GameObject* obstacle = obstacles[i];
 		gce::Vector3f32 pos = obstacle->transform.GetWorldPosition();
 		gce::Geometry* obstacleGeo = obstacle->GetComponent<gce::MeshRenderer>()->pGeometry;
 		const float32& maxX = obstacleGeo->max.x + pos.x;

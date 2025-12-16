@@ -11,8 +11,9 @@ public:
 	static void Destroy();
 	void Update();
 	void EnnemyKilled(Agent* ennemy);
-
+	void Reset();
 private:
+	void SetEnemyTarget();
 	WaveManager();
 	void TryNextWave();
 	void TrySpawn();
@@ -25,6 +26,8 @@ private:
 
 public:
 	int m_maxSimultanateEnnemies = 5;
+	bool m_isTargetSet = false;
+
 	int m_currentEnnemiesToSpawn = 0;
 	int m_currentEnnemiesAlives = 0;
 	
@@ -38,6 +41,7 @@ public:
 	int m_curentWave = 0;
 
 	std::unordered_map<Tag,std::vector<Agent*>> m_ennemiesFreePool;
+	std::unordered_set<Agent*> m_ennemiesSpawnedPool;
 	std::unordered_map<Tag,std::vector<gce::Vector3f32>> m_spawnerPosition;
 	std::vector<Tag> m_ennemyTag;
 
