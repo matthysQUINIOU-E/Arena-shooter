@@ -14,7 +14,7 @@ GameObject* m_Target = nullptr;;
 void Start()
 {
 	float pi = std::numbers::pi_v<float>;
-	m_Target = GameManager::GetSceneManager().GetPlayer();
+	//m_Target = GameManager::GetSceneManager().GetPlayer();
 	m_Target->transform.LocalRotate({ 0,-7,0});
 
 }

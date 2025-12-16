@@ -18,6 +18,7 @@
 
 #include "Scripts/AgentBehavior.hpp"
 #include "Scripts/WaveManagerBehavior.hpp"
+#include "Scripts/DragonBehavior.hpp"
 
 #include "Prefabs/BonusManager.h"
 #include "Prefabs/BulletPool.h"
@@ -58,11 +59,14 @@ void SceneManager::InitGamePlay()
 	LinkObjectToScene(&entityWrapper, SceneType::GamePlayScene);
 
 
+	EntityWrapper& dragon = EntityWrapper::Create();
+	dragon.SetProperties("Dragon", { Tag::TEnemy }, { 0, 15, 0 }, { 0, 0, 0 }, { 2, 2, 2 });
+	dragon.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/dragon/dragon.obj"), "res/Assets/dragon/dragon_base_color.png");
+	dragon.AddComponent<gce::BoxCollider>();
+	dragon.AddScript<DragonBehavior>();
+	LinkObjectToScene(&dragon, SceneType::GamePlayScene);
 
 
-	BonusManager::CreateNem({ 5, 2, 0 });
-	BonusManager::CreateRiceBowl({ 5, 2, -1 });
-	BonusManager::CreateNoodles({ 5, 2, 1 });
 }
 
 void SceneManager::UnInitGamePlay()

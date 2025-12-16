@@ -9,7 +9,10 @@ enum class State
 {
 	MELEE_ATTACK,
 	DISTANCE_ATTACK,
-	MOVE
+	MOVE,
+	BOSS_MOVE,
+	BOSS_ATTACK,
+	BOSS_ATTACK2,
 };
 
 class StateMachinee
