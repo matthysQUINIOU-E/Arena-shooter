@@ -4,12 +4,15 @@
 #include "Scripts/JiangshiBehavior.hpp"
 #include "Scripts/MogwaiBehavior.hpp"
 #include "Scripts/HealthBehavior.hpp"
+#include "Scripts/EnemyDeathBehavior.hpp"
 
 void Enemy::CreateMogwai(Agent& agent)
 {
     Geometry* customGeo = gce::GeometryFactory::GetCustomGeometry("res/Assets/mogwai_lowcost/mogwai_lowcost.obj");
     agent.AddMeshRenderer(customGeo, "res/Assets/mogwai_lowcost/mogwai_lowcost_base_color.png");
     agent.transform.WorldTranslate({ 0.f, abs(customGeo->max.y) + abs(customGeo->min.y), 0.f });
+    agent.AddScript<HealthBehavior>()->SetMaxHP(100);
+
     agent.SetSpeed(5.f);
     agent.AddScript<MogwaiBehavior>();
 }
@@ -19,6 +22,8 @@ void Enemy::CreateJiangshi(Agent& agent)
     Geometry* customGeo = gce::GeometryFactory::GetCustomGeometry("res/Assets/jiangshi/jiangshi.obj");
     agent.AddMeshRenderer(customGeo, "res/Assets/jiangshi/jiangshi_base_color.png");
     agent.transform.WorldTranslate({ 0.f, abs(customGeo->max.y) + abs(customGeo->min.y), 0.f });
+    agent.AddScript<HealthBehavior>()->SetMaxHP(150);
+
     agent.SetSpeed(3.f);
     agent.AddScript<JiangshiBehavior>();
 }
@@ -29,31 +34,32 @@ void Enemy::CreateGuHuoNiao(Agent& agent)
     Geometry* customGeo = gce::GeometryFactory::GetCustomGeometry("res/Assets/Harpy/harpy.obj");
     agent.AddMeshRenderer(customGeo, "res/Assets/Harpy/harpy_base_color.png"); // will use this geomety instead
     agent.transform.WorldTranslate({ 0.f, abs(customGeo->max.y) + abs(customGeo->min.y), 0.f });
+    agent.AddScript<HealthBehavior>()->SetMaxHP(150);
     agent.SetSpeed(4.f);
-    agent.AddScript<GuhuoniaBehavior>();
+    agent.AddScript<GuHuoNiao>();
 }
 
 Agent& Enemy::CreateEnemy(gce::GameObject* target, Tag enemyType)
 {
     Agent& agent = Agent::Create();
     agent.AddComponent<gce::BoxCollider>();
-    agent.AddScript<HealthBehavior>();
     agent.AddScript<AgentBehavior>();
+    agent.AddScript<EnemyDeathBehavior>();
     agent.SetTarget(target);
 
     switch (enemyType)
     {
-    case Tag::TMogwai:
-        CreateMogwai(agent);
-        break;
-    case Tag::TJiangshi:
-        CreateJiangshi(agent);
-        break;
-    case Tag::TGuHuoNiao:
-        CreateGuHuoNiao(agent);
-        break;
+    //case Tag::TMogwai:
+    //    CreateMogwai(agent);
+    //    break;
+    //case Tag::TJiangshi:
+    //    CreateJiangshi(agent);
+    //    break;
+    //case Tag::TGuHuoNiao:
+    //    CreateGuHuoNiao(agent);
+    //    break;
     default:
-        CreateMogwai(agent);
+        CreateGuHuoNiao(agent);
         break;
     }
 

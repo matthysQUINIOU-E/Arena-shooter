@@ -6,6 +6,8 @@
 #include "Components.h"
 #include "../Prefabs/InventoryManager.h"
 #include "../Prefabs/BulletPool.h"
+#include "../Scripts/HealthBehavior.hpp"
+
 #include <limits>
 
 using namespace gce;
@@ -173,13 +175,21 @@ void Update()
 		Quaternion flip = {};
 		flip.SetRotationEuler({ 0, gce::PI, 0 });
 
-		m_pOwner->transform.SetWorldRotation(rot * flip);
+		m_pOwner->transform.SetWorldRotation(flip * rot);
 
 		m_pOwner->transform.WorldTranslate(dir * speed * dt);
 	}
 
 	if (gce::GameObject* pCollided = CheckCollision())
 	{
+		if (pCollided->HasTags({ Tag::TEnemy }))
+		{
+			if (auto health = pCollided->GetScript<HealthBehavior>())
+			{
+				health->TakeDamage(damage);
+			}
+		}
+
 		triggerAnim = true;
 	}
 }

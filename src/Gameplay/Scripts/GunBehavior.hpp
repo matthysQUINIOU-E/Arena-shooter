@@ -77,16 +77,13 @@ void HandleRecoilAnimation(float dt)
 {
 	if (totalRecoil > 0)
 	{
-		// Calcule combien redescendre cette frame
 		float recoverStep = recoilRecoverFactor * recoilFactor * dt;
 
 		if (recoverStep > totalRecoil)
-			recoverStep = totalRecoil; // clamp pour pas dépasser
+			recoverStep = totalRecoil;
 
-		// Descendre la rotation progressivement
 		m_pOwner->transform.LocalRotate({ -recoverStep, 0, 0 });
 
-		// Mettre à jour le totalRecoil
 		totalRecoil -= recoverStep;
 	}
 	else
@@ -206,13 +203,13 @@ void Shoot()
 	switch (m_pOwner->GetUniqueTag({ Tag::TMusket, Tag::TBlunderBuss, Tag::TStarwheel }))
 	{
 	case Tag::TMusket:
-		SetWeaponProperties(bulletScript, *pCurrent, 100.f, 2.f, 4.f, 1, 0.075f, 3.f);
+		SetWeaponProperties(bulletScript, *pCurrent, 100.f, 2.f, 4.f, 15, 0.075f, 3.f);
 		break;
 	case Tag::TBlunderBuss:
-		SetWeaponProperties(bulletScript, *pCurrent, 75.f, 1.f, 6.f, 1, 0.25f, 1.5f);
+		SetWeaponProperties(bulletScript, *pCurrent, 75.f, 1.f, 6.f, 40, 0.25f, 1.5f);
 		break;
 	case Tag::TStarwheel:
-		SetWeaponProperties(bulletScript, *pCurrent, 100.f, 2.f, 2.5f, 1, 0.05f, 4.f);
+		SetWeaponProperties(bulletScript, *pCurrent, 100.f, 2.f, 2.5f, 10, 0.05f, 4.f);
 		break;
 	}
 

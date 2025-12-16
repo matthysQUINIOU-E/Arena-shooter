@@ -58,6 +58,13 @@ void SceneManager::InitGamePlay()
 	BonusManager::CreateNem({ 5, 2, 0 });
 	BonusManager::CreateRiceBowl({ 5, 2, -1 });
 	BonusManager::CreateNoodles({ 5, 2, 1 });
+
+
+	EntityWrapper& dragon = EntityWrapper::Create();
+	dragon.SetProperties("Dragon", { Tag::TEnemy }, { 0, 15, 0 }, { 0, 0, 0 }, { 2, 2, 2 });
+	dragon.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/dragon/dragon.obj"), "res/Assets/dragon/dragon_base_color.png");
+
+	LinkObjectToScene(&dragon, SceneType::GamePlayScene);
 }
 
 void SceneManager::UnInitGamePlay()
@@ -110,7 +117,7 @@ void SceneManager::Init()
 	
 	// LIGHT
 	gce::LightManager::SetLightsProperties(8.0f, 100.0f, 2.0f, 32.0f, 1.f);
-	gce::LightData directionalLight = gce::LightManager::CreateDirectionalLight(gce::Vector3f32(0.0f, -1.f, 0.f), gce::Vector4(1.0f, 1.0f, 1.0f, 1.0f), 3.0f, 3.0f);
+	gce::LightData directionalLight = gce::LightManager::CreateDirectionalLight(gce::Vector3f32(0.0f, -1.f, 0.f), gce::Vector4(1.0f, 1.0f, 1.0f, 1.0f), 3.f, 3.f);
 	gce::LightManager::AddLight(directionalLight);
 
 	//CAM
