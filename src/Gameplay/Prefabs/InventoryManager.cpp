@@ -28,15 +28,15 @@ gce::GameObject* InventoryManager::CreateMusket()
 	musket.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/musket/musket.obj"), "res/Assets/musket/musket_base_color.png");
 	EntityWrapper& hole = EntityWrapper::Create();
 	gce::Vector3f32 holePos = {};
-	holePos.z -= 0.5;
-	holePos.y += 0.03;
+	holePos.z -= 0.4;
+	holePos.y += 0.02;
 
 	hole.SetChildProperties(musket, "Musket Hole", { Tag::TMiscellaneous }, { 0, 0, 0 }, { 0, 0, 0 }, { 0.05, 0.05, 0.05 });
 	hole.transform.LocalTranslate(holePos);
 
 	auto ammoManagerScript = musket.AddScript<WeaponMagazineBehavior>();
 	ammoManagerScript->SetAmmoType(Tag::TNormalAmmo);
-	ammoManagerScript->SetMaxCapacity(30);
+	ammoManagerScript->SetMaxCapacity(20);
 
 	auto gunBehavior = musket.AddScript<GunBehavior>();
 	gunBehavior->SetUnloadSpeed(0.25);
@@ -61,15 +61,15 @@ gce::GameObject* InventoryManager::CreateBlunderBuss()
 
 	EntityWrapper& hole = EntityWrapper::Create();
 	gce::Vector3f32 holePos = {};
-	holePos.z -= 0.9;
-	holePos.y += 0;
+	holePos.z -= 0.8;
+	holePos.y += 0.f;
 
 	hole.SetChildProperties(blunderbuss, "Blunderbuss Hole", { Tag::TMiscellaneous }, { 0, 0, 0 }, { 0, 0, 0 }, { 0.1, 0.1, 0.1 });
 	hole.transform.LocalTranslate(holePos);
 
 	auto ammoManagerScript = blunderbuss.AddScript<WeaponMagazineBehavior>();
 	ammoManagerScript->SetAmmoType(Tag::THeavyAmmo);
-	ammoManagerScript->SetMaxCapacity(8);
+	ammoManagerScript->SetMaxCapacity(10);
 
 	auto gunBehavior = blunderbuss.AddScript<GunBehavior>();
 	gunBehavior->SetUnloadSpeed(0.5);
@@ -92,15 +92,15 @@ gce::GameObject* InventoryManager::CreateStarwheel()
 	starwheel.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/starwheel/starwheel.obj"), "res/Assets/starwheel/starwheel_base_color.png");
 	EntityWrapper& hole = EntityWrapper::Create();
 	gce::Vector3f32 holePos = {};
-	holePos.z -= 0.2f;
-	holePos.y += 0.025;
+	holePos.z -= 0.1f;
+	holePos.y += 0.02;
 
 	hole.SetChildProperties(starwheel, "Starwheel Hole", { Tag::TMiscellaneous }, { 0, 0, 0 }, { 0, 0, 0 }, { 0.02, 0.02, 0.02 });
 	hole.transform.LocalTranslate(holePos);
 
 	auto ammoManagerScript = starwheel.AddScript<WeaponMagazineBehavior>();
 	ammoManagerScript->SetAmmoType(Tag::TLightAmmo);
-	ammoManagerScript->SetMaxCapacity(15);
+	ammoManagerScript->SetMaxCapacity(30);
 
 	auto gunBehavior = starwheel.AddScript<GunBehavior>();
 	gunBehavior->SetUnloadSpeed(0.15);

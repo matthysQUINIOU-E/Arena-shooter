@@ -75,18 +75,18 @@ void HandleReloadingAnimation(float dt)
 }
 void HandleRecoilAnimation(float dt)
 {
+	if (isReloading)
+		return;
+
 	if (totalRecoil > 0)
 	{
-		// Calcule combien redescendre cette frame
 		float recoverStep = recoilRecoverFactor * recoilFactor * dt;
 
 		if (recoverStep > totalRecoil)
-			recoverStep = totalRecoil; // clamp pour pas dépasser
+			recoverStep = totalRecoil;
 
-		// Descendre la rotation progressivement
 		m_pOwner->transform.LocalRotate({ -recoverStep, 0, 0 });
 
-		// Mettre à jour le totalRecoil
 		totalRecoil -= recoverStep;
 	}
 	else
@@ -108,11 +108,12 @@ void HandleEmptyAnimation(MeshRenderer* pMesh)
 }
 ///////////////////////////////////////////////
 
-void SetWeaponProperties(BulletBehavior* script, EntityWrapper& bullet, float bulletSpeed, float bulletLifeTime, float bulletSize, float _recoilFactor, float _recoilRecoverFactor)
+void SetWeaponProperties(BulletBehavior* script, EntityWrapper& bullet, float bulletSpeed, float bulletLifeTime, gce::Vector3f32 bulletScale, int bulletDamage, float _recoilFactor, float _recoilRecoverFactor)
 {
 	script->speed = bulletSpeed;
 	script->lifeTime = bulletLifeTime;
-	bullet.transform.WorldScale({ bulletSize, bulletSize, bulletSize });
+	script->damage = bulletDamage;
+	bullet.transform.WorldScale(bulletScale);
 	recoilFactor = _recoilFactor;
 	recoilRecoverFactor = _recoilRecoverFactor;
 }
@@ -130,14 +131,14 @@ void SetReloadTime(float newTime)
 
 void TriggerReload()
 {
-	if (unloadProgress < unloadSpeed || totalRecoil > 0)  // Can't reload while the gun isn't stable
-		return;
-
 	if (pMagazineBehavior == nullptr)
 		return;
 
 	if (isReloading == false && pMagazineBehavior->CanReload())
 	{
+		m_pOwner->transform.SetLocalRotation(defaultRotation);
+
+		totalRecoil = 0.f;
 		isReloading = true;
 		reloadProgressTime = 0.f;
 	}
@@ -205,13 +206,13 @@ void Shoot()
 	switch (m_pOwner->GetUniqueTag({ Tag::TMusket, Tag::TBlunderBuss, Tag::TStarwheel }))
 	{
 	case Tag::TMusket:
-		SetWeaponProperties(bulletScript, *pCurrent, 100.f, 2.f, 2.f, 0.075f, 2.f);
+		SetWeaponProperties(bulletScript, *pCurrent, 75.f, 2.f, { 4.f, 4.f, 4.f }, 15, 0.075f, 3.f);
 		break;
 	case Tag::TBlunderBuss:
-		SetWeaponProperties(bulletScript, *pCurrent, 75.f, 1.f, 3.f, 0.25f, 1.5f);
+		SetWeaponProperties(bulletScript, *pCurrent, 50.f, 1.f, { 6.f, 6.f, 3.f }, 40, 0.25f, 1.5f);
 		break;
 	case Tag::TStarwheel:
-		SetWeaponProperties(bulletScript, *pCurrent, 150.f, 3.f, 1.f, 0.05f, 3.f);
+		SetWeaponProperties(bulletScript, *pCurrent, 62.5f, 2.f, { 2.5f, 2.5f, 5.f }, 10, 0.05f, 4.f);
 		break;
 	}
 

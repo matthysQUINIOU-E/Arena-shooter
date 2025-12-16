@@ -17,6 +17,7 @@
 #include "../Prefabs/UIManager.h"
 #include "../Prefabs/UiBar.h"
 #include "../Prefabs/CrosshairManager.h"
+#include "../WaveManager.h"
 
 using namespace gce;
 
@@ -47,6 +48,11 @@ int oldPlayerHp = -1;
 bool takeDamageTriggerVisual = false;
 float takeDamageDuration = 1.f;
 float takeDamageProgressDuration;
+
+
+//TMP
+EntityWrapper* pDebugUI = nullptr;
+std::wstring debugTxt = L"";
 
 //Functions
 void UpdateTakeDamageUI()
@@ -229,6 +235,8 @@ void Start()
 	pTakeDamageUI->AddUIButton(takeDamagePos, { 0, 0 }, { WINDOW_WIDTH, WINDOW_HEIGHT }, "res/2D_Assets/takedamage_screen.png");
 	pTakeDamageUI->SetActive(false);
 
+	pDebugUI = &EntityWrapper::Create();
+	pDebugUI->AddDynamicTextRenderer(debugTxt, {0, 100, 500, 0}, gce::Color::Red);
 	crosshair.Init();
 
 	hpBar.InitFilledBar1("res/2D_Assets/hpBar.png", {405, 53}, { 190, 69}, { 0.5, 0.5 });
@@ -259,6 +267,14 @@ void Update()
 		UpdateHpUI();
 		UpdateDashUI();
 		UpdateTakeDamageUI();
+
+		auto wave = WaveManager::GetInstance();
+
+		debugTxt = L"Time : " + std::to_wstring((int)wave->m_waveTimer) + L"\n"
+			+ L"Wave : " + std::to_wstring(wave->m_curentWave) + L"/" + std::to_wstring(wave->m_maxWave) + L"\n"
+			+ L"Enemies To Kill : " + std::to_wstring(wave->m_currentEnnemiesToSpawn);
+
+		pDebugUI->GetComponent<TextRenderer>()->text = debugTxt;
 	}
 	else
 	{

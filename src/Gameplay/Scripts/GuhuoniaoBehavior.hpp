@@ -9,11 +9,12 @@
 
 using namespace gce;
 
-DECLARE_SCRIPT(GuhuoniaBehavior, ScriptFlag::Update)
+DECLARE_SCRIPT(GuHuoNiaoBehavior, ScriptFlag::Update)
 
 void Init()
 {
-	Agent* pAgent = dynamic_cast<Agent*>(m_pOwner);
+	Agent* pAgent = dynamic_cast<Agent*>(m_pOwner); 
+
 	m_initTried = true;
 	if (pAgent == nullptr)
 		return;
@@ -33,6 +34,7 @@ void Update()
 {
 	if (!m_initTried)
 		Init();
+
 	m_esh.Update();
 }
 

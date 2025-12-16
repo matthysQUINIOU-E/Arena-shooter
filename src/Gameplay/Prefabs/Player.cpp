@@ -16,5 +16,5 @@ void Player::Create()
 	m_pGameObject->AddScript<PlayerBehavior>();
 
 	auto health = m_pGameObject->AddScript<HealthBehavior>();
-	health->SetMaxHP(100);
+	health->SetMaxHP(10000);
 }

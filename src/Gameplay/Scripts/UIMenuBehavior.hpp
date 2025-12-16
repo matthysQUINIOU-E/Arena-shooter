@@ -55,8 +55,6 @@ void Update()
 {
 	bool display = pUIManager->IsSceneType(SceneType::MenuScene);
 
-	std::cout << "MENU : " << display << std::endl;
-
 	pTitle->SetActive(display);
 
 	pButtonPlay->SetActive(display);

@@ -50,11 +50,13 @@ gce::MeshRenderer* EntityWrapper::AddMeshRenderer(gce::Geometry* pGeo, const cha
 	{
 		gce::Texture* pAlbedo = new gce::Texture(albedoPath);
 		component->pMaterial->albedoTextureID = pAlbedo->GetTextureID();
-
+		m_pDefaultTexture = pAlbedo;
 	}
 	else
 	{
-		component->pMaterial->albedoTextureID = gce::GameManager::s_pInstance->m_pWhiteTexture->GetTextureID();
+		gce::Texture* pWhite = gce::GameManager::s_pInstance->m_pWhiteTexture;
+		component->pMaterial->albedoTextureID = pWhite->GetTextureID();
+		m_pDefaultTexture = pWhite;
 	}
 
 	component->pMaterial->useTextureAlbedo = 1;
@@ -95,10 +97,13 @@ gce::MeshRenderer* EntityWrapper::AddMeshRenderer(gce::Geometry* pGeo, gce::Text
 	if (pAlbedo)
 	{
 		component->pMaterial->albedoTextureID = pAlbedo->GetTextureID();
+		m_pDefaultTexture = pAlbedo;
 	}
 	else
 	{
-		component->pMaterial->albedoTextureID = gce::GameManager::s_pInstance->m_pWhiteTexture->GetTextureID();
+		gce::Texture* pWhite = gce::GameManager::s_pInstance->m_pWhiteTexture;
+		component->pMaterial->albedoTextureID = pWhite->GetTextureID();
+		m_pDefaultTexture = pWhite;
 	}
 
 	component->pMaterial->useTextureAlbedo = 1;

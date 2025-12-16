@@ -6,7 +6,6 @@ std::queue<EntityWrapper*> BulletPool::m_bulletsFreePool = {};
 
 void BulletPool::SetActive(gce::GameObject* e, bool state)
 {
-	e->GetComponent<BoxCollider>()->SetActive(state);
 	e->SetActive(state);
 }
 
@@ -16,8 +15,7 @@ void BulletPool::Init()
 	{
 		EntityWrapper& bullet = EntityWrapper::Create();
 		bullet.SetProperties("Bullet", { Tag::TProjectile, Tag::TBullet }, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 });
-		bullet.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/ammo/ammo.obj"), "res/Assets/ammo/ammo_base_color.png");
-		bullet.AddComponent<gce::BoxCollider>();
+		bullet.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/ammo/ammo.obj"), "res/Assets/ammo/ammo_base_color.png")->SetActive(false);
 		bullet.AddScript<BulletBehavior>();
 
 		SetActive(&bullet, false);
@@ -40,6 +38,7 @@ EntityWrapper* BulletPool::Generate()
 	m_bulletsFreePool.push(pCurrent);
 
 	SetActive(pCurrent, true);
+
 	return pCurrent;
 }
 

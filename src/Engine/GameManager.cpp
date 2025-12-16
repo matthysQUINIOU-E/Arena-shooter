@@ -35,6 +35,7 @@ namespace gce {
         SHAPES.Init();
         SHADERS.Init();
         m_pWhiteTexture = new gce::Texture("res/Assets/white.png");
+        m_pRedTexture = new gce::Texture("res/2D_Assets/red.png");
     }
 
     GameManager::~GameManager()

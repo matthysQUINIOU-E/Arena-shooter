@@ -72,6 +72,8 @@ public:
 
     UnorderedMap<Component::TypeEnum, uint16>& GetAllComponents() { return m_components; }
     UnorderedMap<uint16, uint16>&  GetAllScripts() { return m_scripts; }
+
+    gce::Texture* GetDefaultTexture() { return m_pDefaultTexture; }
 protected:
     explicit GameObject( cstr name = "GameObject" );
     // GameObject( GameObject const& ) = default;
@@ -99,6 +101,8 @@ protected:
 
     Vector<GameObject*> m_children;
     GameObject* m_pParent = nullptr;
+
+    gce::Texture* m_pDefaultTexture = nullptr;
 
     friend struct GameTransform;
     friend struct Script;

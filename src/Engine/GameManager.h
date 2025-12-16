@@ -64,6 +64,7 @@ public: // Temporary (should be named and used as private)
     void HandleFPS();
 
     gce::Texture* m_pWhiteTexture;
+    gce::Texture* m_pRedTexture;
 
     Window* m_pWindow;
     WindowParam m_windowParam;
