@@ -61,12 +61,6 @@ void HandleHealth()
 {
 	if (HealthBehavior* pScript = m_pOwner->GetScript<HealthBehavior>())
 	{
-		if (GetKeyDown(Keyboard::K))
-		{
-			pScript->TakeDamage(10);
-
-		}
-
 		isDead = !pScript->IsAlive();
 	}
 
