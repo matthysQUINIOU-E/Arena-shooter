@@ -21,6 +21,8 @@ void WaveManager::Destroy()
 
 void WaveManager::Update()
 {
+	if (!m_isTargetSet)
+		SetEnemyTarget();
 	TryNextWave();
 	TrySpawn();
 }
@@ -30,11 +32,39 @@ void WaveManager::EnnemyKilled(Agent* ennemy)
 	if (ennemy == nullptr)
 		return;
 
-	auto it = m_ennemiesFreePool.find(ennemy->GetUniqueTag({Tag::TMogwai, Tag::TGuHuoNiao, Tag::TJiangshi}));
+	Tag tag = ennemy->GetUniqueTag({ Tag::TMogwai, Tag::TGuHuoNiao, Tag::TJiangshi });
+	ennemy->SetActive(false);
+	auto it = m_ennemiesFreePool.find(tag);
 	if (it != m_ennemiesFreePool.end())
 	{
+		m_ennemiesSpawnedPool.erase(ennemy);
 		it->second.push_back(ennemy);
 		m_currentEnnemiesAlives--;
+	}
+}
+
+void WaveManager::Reset()
+{
+	for (Agent* enemy : m_ennemiesSpawnedPool)
+		EnnemyKilled(enemy);
+
+	m_currentEnnemiesToSpawn = 0;
+	m_currentEnnemiesAlives = 0;
+	m_spawnTimer = 0.f;
+	m_waveTimer = 0.f;
+	m_curentWave = 0;
+	m_isTargetSet = false;
+}
+
+void WaveManager::SetEnemyTarget()
+{
+	m_isTargetSet = true;
+	gce::GameObject* player = gce::GameManager::GetSceneManager().GetFirstGameObject({ Tag::TPlayer });
+
+	for (auto& [tag, enemies] : m_ennemiesFreePool)
+	{
+		for (Agent* enemy : enemies)
+			enemy->SetTarget(player);
 	}
 }
 
@@ -120,6 +150,7 @@ void WaveManager::TrySpawn()
 	Tag tag = m_ennemyTag[tagIndex];
 	Agent* ennemy = m_ennemiesFreePool[tag].back();
 
+	m_ennemiesSpawnedPool.insert(ennemy);
 	m_ennemiesFreePool[tag].pop_back();
 	ennemy->SetActive(true);
 	ennemy->GetScript<HealthBehavior>()->FillHP();
@@ -147,5 +178,4 @@ void WaveManager::CreateEnnemy(Tag tag, gce::GameObject* player)
 	enemy.AddTags({ Tag::TEnemy });
 	enemy.SetActive(false);
 	m_ennemiesFreePool[tag].push_back(&enemy);
-	GameManager::GetSceneManager().LinkObjectToScene(&enemy, SceneType::GamePlayScene);
 }
