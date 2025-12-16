@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include "Tags.h"
 #include "KeyBinds.h"
+#include <Audio.h>
 
 class Player;
 class ArenaCamera;
@@ -58,6 +59,7 @@ public:
 	bool m_IsGamePlayInit = false;
 
 	void ChangeScene(SceneType newType);
+	void LoadSounds();
 	void LinkObjectToScene(gce::GameObject* obj, SceneType scene);
 
 	gce::GameObject* GetFirstGameObject(std::vector<Tag> tags); // return the first GameObject with the all the tags

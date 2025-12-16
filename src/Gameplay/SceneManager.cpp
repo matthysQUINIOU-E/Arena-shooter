@@ -106,6 +106,9 @@ void SceneManager::Init()
 	//Keys
 	KeyBinds::InitDefaultKeyBinds();
 
+	//sounds
+	LoadSounds();
+
 	//PSO
 	m_pPso = new gce::D12PipelineObject(
 		gce::SHADERS.VERTEX,
@@ -128,7 +131,7 @@ void SceneManager::Init()
 	m_pArenaCam->SetParams(XM_PIDIV4, 0.001f, 500.0f, 1000.0f / 800.0f);
 
 	//MAP
-	for (gce::GameObject* go : ImportBlenderScene(L"scene_v2.json"))
+	for (gce::GameObject* go : ImportBlenderScene(L"scene_base.json"))
 	{
 		go->AddTags({ Tag::TMapObject });
 		go->SetActive(false);
@@ -184,6 +187,16 @@ void SceneManager::ChangeScene(SceneType newType)
 	}
 
 	m_currentSceneType = newType;
+}
+
+void SceneManager::LoadSounds()
+{
+	AudioUse::SetMasterVolume(50); // Volume général : maximum 2^24
+
+	std::wstring soundPath = WRES_PATH L"res/Audio/vineboom.mp3"; 
+	AudioUse::LoadSound("Vine Boom", soundPath.c_str());
+
+	AudioUse::SetAudioCategory("Vine Boom", gce::Category::SFX);
 }
 
 void SceneManager::LinkObjectToScene(gce::GameObject* obj, SceneType scene)

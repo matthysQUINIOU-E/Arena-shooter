@@ -42,6 +42,8 @@ void HandleDeathAnimation()
 
 void HandleDeath()
 {
+	AudioUse::Play("Vine Boom");
+
 	m_pOwner->RemoveComponent<BoxCollider>();
 
 	if (auto mogwaiScript = m_pOwner->GetScript<MogwaiBehavior>())
