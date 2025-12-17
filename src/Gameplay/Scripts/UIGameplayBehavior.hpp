@@ -239,19 +239,19 @@ void Start()
 
 	pTakeDamageUI = &EntityWrapper::Create();
 	gce::Vector2f32 takeDamagePos = { WINDOW_WIDTH / 2.f, WINDOW_HEIGHT / 2.f };
-	pTakeDamageUI->AddUIButton(takeDamagePos, { 0, 0 }, { WINDOW_WIDTH, WINDOW_HEIGHT }, "res/2D_Assets/takedamage_screen.png");
+	pTakeDamageUI->AddUIButton(takeDamagePos, { 0, 0 }, { WINDOW_WIDTH, WINDOW_HEIGHT }, "res/2D_Assets/Gameplay/takedamage_screen.png");
 	pTakeDamageUI->SetActive(false);
 
 	pDebugUI = &EntityWrapper::Create();
 	pDebugUI->AddDynamicTextRenderer(debugTxt, {0, 200, 500, 0}, gce::Color::Red);
 	crosshair.Init();
 
-	hpBar.InitFilledBar1("res/2D_Assets/hpBar.png", {405, 53}, { 190, 69}, { 0.5, 0.5 });
-	hpBar.InitFrame("res/2D_Assets/hpBar_frame.png", { 569, 204 }, { 160, 60 }, { 0.5, 0.5 });
+	hpBar.InitFilledBar1("res/2D_Assets/Gameplay/hpBar.png", {405, 53}, { 190, 69}, { 0.5, 0.5 });
+	hpBar.InitFrame("res/2D_Assets/Gameplay/hpBar_frame.png", { 569, 204 }, { 160, 60 }, { 0.5, 0.5 });
 
-	dashBar.InitFilledBar1("res/2D_Assets/dashBar.png", { 416, 63 }, { 218, 170 }, { 0.4, 0.4 });
-	dashBar.InitFilledBar2("res/2D_Assets/dashBar_full.png", { 416, 63 }, { 218, 170 }, { 0.4, 0.4 });
-	dashBar.InitFrame("res/2D_Assets/dashBar_frame.png", { 704, 186 }, { 160, 160 }, { 0.4, 0.4 });
+	dashBar.InitFilledBar1("res/2D_Assets/Gameplay/dashBar.png", { 416, 63 }, { 218, 170 }, { 0.4, 0.4 });
+	dashBar.InitFilledBar2("res/2D_Assets/Gameplay/dashBar_full.png", { 416, 63 }, { 218, 170 }, { 0.4, 0.4 });
+	dashBar.InitFrame("res/2D_Assets/Gameplay/dashBar_frame.png", { 704, 186 }, { 160, 160 }, { 0.4, 0.4 });
 }
 
 void Update()

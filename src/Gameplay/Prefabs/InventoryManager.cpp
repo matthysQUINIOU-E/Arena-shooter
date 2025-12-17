@@ -140,7 +140,7 @@ gce::GameObject* InventoryManager::CreateMeleeWeapon()
 	xQ.SetRotationEuler({ -gce::PI / 8, 0, 0 });
 
 	melee.transform.SetLocalRotation(xQ * yQ);
-	melee.transform.SetLocalPosition({ 0.1f, -0.2f, 0.5f });
+	melee.transform.SetLocalPosition({ 0.025f, -0.2f, 0.5f });
 	melee.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/spear/spear.obj"), "res/Assets/spear/spear_base_color.png")->SetActive(true);
 	auto meleeBehavior = melee.AddScript<MeleeWeaponBehavior>();
 	meleeBehavior->SetMeleeWeaponProperties(35, 0.5f);

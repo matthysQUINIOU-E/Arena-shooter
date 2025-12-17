@@ -23,13 +23,20 @@ UIManager* pUIManager = nullptr;
 
 //Members
 EntityWrapper* pTitle = nullptr;
+EntityWrapper* pParchemin = nullptr;
 
 EntityWrapper* pButtonPlay = nullptr;
-EntityWrapper* pPlay = nullptr;
+EntityWrapper* pButtonSettings = nullptr;
+EntityWrapper* pButtonExit = nullptr;
 
 std::wstring NOTHING = L"";
 
 //Functions
+
+static void OnTriggerButtonExit()
+{
+	GameManager::s_pInstance->m_running = false;
+}
 
 static void OnTriggerButtonPlay()
 {
@@ -38,27 +45,28 @@ static void OnTriggerButtonPlay()
 
 void Start()
 {
+	gce::Vector2f32 middle = { WINDOW_WIDTH / 2.f, WINDOW_HEIGHT / 2.f };
+
 	pUIManager = GameManager::GetSceneManager().GetUIManager();
+
+	pParchemin = &EntityWrapper::Create();
+	pParchemin->AddUIButton({ middle.x, middle.y }, { 0, 0 }, { 581, 1026 }, "res/2D_Assets/Menu/parchemin.png");
 
 	pTitle = &EntityWrapper::Create();
 	pTitle->AddStaticTextRenderer(L"Legend of Zhu Min : God Legacy", {1000, 250, -450, 0}, gce::Color::Magenta);
 
 	//PLAY
 	pButtonPlay = &EntityWrapper::Create();
-	pButtonPlay->AddUIButton({ 960, 540 }, { 0, 0 }, { 300, 150 }, "res/Texture/jaune.jpg")->AddListener(OnTriggerButtonPlay);
-
-	pPlay = &EntityWrapper::Create();
-	pPlay->AddStaticTextRenderer(L"PLAY", {900, 500,0, 0}, gce::Color::Black);
+	pButtonPlay->AddUIButton({ middle.x, middle.y }, { 0, 0 }, { 312, 99 }, "res/2D_Assets/Menu/play.png", "res/2D_Assets/Menu/play_survol.png")->AddListener(OnTriggerButtonPlay);
 }
 
 void Update()
 {
 	bool display = pUIManager->IsSceneType(SceneType::MenuScene);
 
+	pParchemin->SetActive(display);
 	pTitle->SetActive(display);
-
 	pButtonPlay->SetActive(display);
-	pPlay->SetActive(display);
 }
 
 END_SCRIPT
