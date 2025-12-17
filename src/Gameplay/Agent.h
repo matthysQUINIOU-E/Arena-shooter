@@ -20,6 +20,7 @@ public:
 	float GetStopRange();
 	float GetDistanceFromTarget();
 	gce::GameObject* GetTarget();
+	bool IsTargetBehindObstacle();
 
 private:
 	void CalculateNextLine();

@@ -20,7 +20,7 @@ CanDistanceAttack::CanDistanceAttack(Agent* agent, int* ammo, float distanceRang
 
 bool CanDistanceAttack::Get()
 {
-	return m_distanceRange == m_agent->GetStopRange() && (*m_ammo) > 0 && m_agent->IsTargetInRange();
+	return m_distanceRange == m_agent->GetStopRange() && (*m_ammo) > 0 && m_agent->IsTargetInRange() && !m_agent->IsTargetBehindObstacle();
 }
 
 CantAttack::CantAttack(Agent* agent, int* ammo, bool* attacking, float distanceRange)

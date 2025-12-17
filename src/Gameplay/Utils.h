@@ -23,3 +23,13 @@ gce::Geometry* MakeCustomGeometry(
 gce::Vector3f32 ClosestPointOnLine(const gce::Vector3f32& A, const gce::Vector3f32& B, const gce::Vector3f32& P);
 bool IsPointNearLine(const gce::Vector3f32& A, const gce::Vector3f32& B, const gce::Vector3f32& P, float radius);
 
+bool SegmentIntersectsRectXZ(
+    const gce::Vector3f32& A, const gce::Vector3f32& B,
+    float minX, float maxX,
+    float minZ, float maxZ,
+    float radius);
+
+bool SegmentsIntersectXZ(const gce::Vector3f32& A,
+    const gce::Vector3f32& B,
+    const gce::Vector3f32& C,
+    const gce::Vector3f32& D);
