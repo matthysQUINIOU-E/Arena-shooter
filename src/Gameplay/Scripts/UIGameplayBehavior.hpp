@@ -46,7 +46,7 @@ std::wstring NOTHING = L"";
 EntityWrapper* pTakeDamageUI = nullptr;
 int oldPlayerHp = -1;
 bool takeDamageTriggerVisual = false;
-float takeDamageDuration = 1.f;
+float takeDamageDuration = 0.75f;
 float takeDamageProgressDuration;
 
 
@@ -78,15 +78,22 @@ void UpdateTakeDamageUI()
 	{
 		if (oldPlayerHp == -1)
 		{
-			oldPlayerHp = pScript->health;
+			if(pScript->health > 0)
+				oldPlayerHp = pScript->health;
+
 			return;
 		}
 
-		if (pScript->health < oldPlayerHp || pScript->health <= 0)
+		if (pScript->health < oldPlayerHp)
 		{
 			oldPlayerHp = pScript->health;
 			takeDamageProgressDuration = 0.f;
 			takeDamageTriggerVisual = true;
+
+			if (pScript->health <= 0)
+			{
+				oldPlayerHp = -1;
+			}
 		}
 	}
 }
@@ -257,6 +264,8 @@ void Update()
 	crosshair.SetActive(display);
 	hpBar.SetActive(display);
 	dashBar.SetActive(display);
+
+	pDebugUI->SetActive(display);
 
 	if (display == true)
 	{

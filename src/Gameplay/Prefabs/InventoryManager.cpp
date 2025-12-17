@@ -41,10 +41,11 @@ gce::GameObject* InventoryManager::CreateMusket()
 
 	auto gunBehavior = musket.AddScript<GunBehavior>();
 	gunBehavior->SetUnloadSpeed(0.25);
-	gunBehavior->SetReloadTime(1.4f);
+	gunBehavior->SetReloadTime(1.2f);
 	gunBehavior->SetAmmoManagerScript(ammoManagerScript);
 
 	m_pSceneManager->LinkObjectToScene(&musket, SceneType::GamePlayScene);
+	m_pSceneManager->LinkObjectToScene(&hole, SceneType::GamePlayScene);
 
 	return &musket;
 }
@@ -74,10 +75,11 @@ gce::GameObject* InventoryManager::CreateBlunderBuss()
 
 	auto gunBehavior = blunderbuss.AddScript<GunBehavior>();
 	gunBehavior->SetUnloadSpeed(0.5);
-	gunBehavior->SetReloadTime(2);
+	gunBehavior->SetReloadTime(1.5f);
 	gunBehavior->SetAmmoManagerScript(ammoManagerScript);
 
 	m_pSceneManager->LinkObjectToScene(&blunderbuss, SceneType::GamePlayScene);
+	m_pSceneManager->LinkObjectToScene(&hole, SceneType::GamePlayScene);
 
 	return &blunderbuss;
 }
@@ -109,6 +111,7 @@ gce::GameObject* InventoryManager::CreateStarwheel()
 	gunBehavior->SetAmmoManagerScript(ammoManagerScript);
 
 	m_pSceneManager->LinkObjectToScene(&starwheel, SceneType::GamePlayScene);
+	m_pSceneManager->LinkObjectToScene(&hole, SceneType::GamePlayScene);
 
 	return &starwheel;
 }
@@ -120,6 +123,16 @@ gce::GameObject* InventoryManager::CreateMeleeWeapon()
 	melee.SetProperties("Spear", { Tag::TMeleeWeapon, Tag::TSpear }, { 0, 0, 0 }, { 0, 0, 0 }, { 1.f, 1.f, 1.f });
 	m_pSceneManager->GetCameraObject()->AddChild(melee);
 
+	EntityWrapper& hitbox = EntityWrapper::Create();
+	gce::Vector3f32 holePos = {};
+	holePos.x += 2.f;
+	holePos.y += 0.3f;
+	holePos.z += 1.f;
+
+	hitbox.SetChildProperties(melee, "Melee Hitbox", { Tag::TMiscellaneous }, { 0, 0, 0 }, { 0, 0, 0 }, { 1.5, 1.5, 1.5 });
+	hitbox.transform.LocalTranslate(holePos);
+	hitbox.AddMeshRenderer(SHAPES.SPHERE, "")->SetActive(false);
+
 	Quaternion yQ = {};
 	yQ.SetRotationEuler({ 0, -gce::PI / 3, 0 });
 
@@ -127,13 +140,14 @@ gce::GameObject* InventoryManager::CreateMeleeWeapon()
 	xQ.SetRotationEuler({ -gce::PI / 8, 0, 0 });
 
 	melee.transform.SetLocalRotation(xQ * yQ);
-	melee.transform.SetLocalPosition({ 0.15f, -0.2f, 0.5f });
-	melee.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/spear/spear.obj"), "res/Assets/spear/spear_base_color.png");
+	melee.transform.SetLocalPosition({ 0.1f, -0.2f, 0.5f });
+	melee.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/spear/spear.obj"), "res/Assets/spear/spear_base_color.png")->SetActive(true);
 	auto meleeBehavior = melee.AddScript<MeleeWeaponBehavior>();
 	meleeBehavior->SetMeleeWeaponProperties(35, 0.5f);
 	meleeBehavior->SetDefaultRotation(xQ * yQ);
 
 	m_pSceneManager->LinkObjectToScene(&melee, SceneType::GamePlayScene);
+	m_pSceneManager->LinkObjectToScene(&hitbox, SceneType::GamePlayScene);
 
 	return &melee;
 }
@@ -310,6 +324,9 @@ void InventoryManager::SetEquipedObjectByIndex(int index)
 	{
 		if (current->HasTags({ Tag::TWeapon }))
 			current->GetScript<GunBehavior>()->OnLeaveWeapon(); // The old weapon
+
+		if (current->HasTags({ Tag::TMeleeWeapon }))
+			current->GetScript<MeleeWeaponBehavior>()->OnLeaveWeapon();
 	}
 
 	m_inventoryIndex = index;
@@ -326,9 +343,10 @@ void InventoryManager::SetEquipedObjectByIndex(int index)
 			m_pEquipedObject = pObject;
 
 			if (pObject->HasTags({ Tag::TWeapon }))
-			{
 				pObject->GetScript<GunBehavior>()->OnReceiveWeapon();
-			}
+
+			if (pObject->HasTags({ Tag::TMeleeWeapon }))
+				pObject->GetScript<MeleeWeaponBehavior>()->OnReceiveWeapon();
 		}
 		else
 		{

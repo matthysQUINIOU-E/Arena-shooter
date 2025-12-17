@@ -27,7 +27,7 @@ gce::Vector3f32 finalDir = {};
 //Jump
 bool isJumping = false;
 int jumpsAmount = 0;
-int maxJumpsAmount = 2;
+int maxJumpsAmount = 1;
 
 //Dash
 bool isDashing = false;
@@ -50,6 +50,17 @@ float dyingAnimationDuration = 1.5f;
 float dyingAnimationProgressDuration = 0.f;
 
 Quaternion currentRotation = {};
+
+void ResetScript()
+{
+	isDashing = false;
+	dashProgressReloadTime = 0.f;
+	dashProgressDuration = 0.f;
+	totalPitchRotation = 0.f;
+	dyingAnimationProgressDuration = 0.f;
+	isDead = false;
+	isDashing = false;
+}
 
 void SetLookingAround(bool state)
 {
@@ -89,6 +100,8 @@ void DeathAnimation()
 	}
 	else
 	{
+		isDead = false;
+		dyingAnimationProgressDuration = 0.f;
 		GameManager::GetSceneManager().ChangeScene(SceneType::GameOverScene);
 	}
 }
@@ -171,7 +184,7 @@ void BasicControls() // Move + Jump
 			gce::Force f;
 
 			f.direction = { 0, 1, 0 };
-			f.norm = 15000;
+			f.norm = 5000;
 			f.useApplicationPoint = true;
 			f.relativeApplicationPoint = { 0, 0, 0 };
 
@@ -296,6 +309,9 @@ void Start()
 
 void Update()
 {
+	if (GetKeyDown(Keyboard::K))
+		isDead = true;
+
 	if (isDead)
 	{
 		DeathAnimation();

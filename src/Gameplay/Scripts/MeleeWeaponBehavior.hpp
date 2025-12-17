@@ -21,7 +21,67 @@ float gettingWeaponProgressTime = 0.f;
 Quaternion defaultRotation;
 int damage = 0;
 
+bool hasCollided = false;
+
 void SetDefaultRotation(Quaternion rot) { defaultRotation = rot; }
+
+gce::GameObject* CheckCollision()
+{
+	if (hasCollided == true)
+		return nullptr;
+
+	auto hitbox = m_pOwner->GetChildren()[0];
+
+	if (hitbox == nullptr)
+		return nullptr;
+
+	auto& transform1 = hitbox->transform;
+
+	gce::Vector3f32 pos1 = transform1.GetWorldPosition();
+	gce::Vector3f32 scale1 = transform1.GetWorldScale();
+
+	MeshRenderer* pMesh1 = hitbox->GetComponent<MeshRenderer>();
+	if (!pMesh1)
+		return nullptr;
+
+	auto& geo1 = pMesh1->pGeometry;
+	gce::Vector3f32 min1 = pos1 + geo1->min * scale1;
+	gce::Vector3f32 max1 = pos1 + geo1->max * scale1;
+
+	for (gce::GameObject* go : GameManager::GetSceneManager().GetAllGameObjects({ Tag::TEnemy}))
+	{
+		if (!go || !go->IsActive())
+			continue;
+
+		auto& transform2 = go->transform;
+
+		gce::Vector3f32 pos2 = transform2.GetWorldPosition();
+		gce::Vector3f32 scale2 = transform2.GetWorldScale();
+
+		MeshRenderer* pMesh2 = go->GetComponent<MeshRenderer>();
+		if (!pMesh2)
+			continue;
+
+		auto& geo2 = pMesh2->pGeometry;
+
+		gce::Vector3f32 min2 = pos2 + geo2->min * scale2;
+		gce::Vector3f32 max2 = pos2 + geo2->max * scale2;
+
+		// Test AABB
+		bool collision =
+			(min1.x <= max2.x && max1.x >= min2.x) &&
+			(min1.y <= max2.y && max1.y >= min2.y) &&
+			(min1.z <= max2.z && max1.z >= min2.z);
+
+		if (collision)
+		{
+			hasCollided = true;
+			return go;
+		}
+	}
+
+	return nullptr;
+}
 
 const bool& IsReadyToUse() const
 {
@@ -60,10 +120,10 @@ void HandleHitAnimation(float dt)
 	Quaternion rotation = {};
 
 	float ratio = unloadProgress / unloadSpeed;
+	float swingRatio = std::sin(ratio * gce::PI);
+	swingRatio *= swingRatio;
 
-	ratio = cos(ratio);
-
-	rotation.SetRotationAxis(dir, -gce::PI / 3 * ratio);
+	rotation.SetRotationAxis(dir, -gce::PI / 2 * swingRatio);
 
 	m_pOwner->transform.SetLocalRotation(rotation * defaultRotation);
 }
@@ -117,10 +177,24 @@ void Update()
 		{
 			unloadProgress += dt;
 			HandleHitAnimation(dt);
+			
+			if (gce::GameObject* pCollided = CheckCollision())
+			{
+				if (auto animation = pCollided->GetScript<EnemyHpBehavior>())
+				{
+					animation->TriggerHitAnim();
+				}
+
+				if (auto health = pCollided->GetScript<HealthBehavior>())
+				{
+					health->TakeDamage(damage);
+				}
+			}
 			return;
 		}
 		else
 		{
+			hasCollided = false;
 			isHitting = false;
 		}
 	}

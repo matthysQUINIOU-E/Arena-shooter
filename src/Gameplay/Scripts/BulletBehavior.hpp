@@ -23,15 +23,8 @@ float speed = 0.f;
 int damage = 1;
 bool headseeker = false;
 
-float easingTime = 0.1f; // The more the value is, the less the headseeker will be efficient
-float easingProgressTime = 0.f;
-
 gce::Vector3f32 defaultDir = {};
 gce::Vector3f32 dir = {};
-
-bool triggerAnim = false;
-float animDuration = 0.25f;
-float animProgressDuration = 0.f;
 
 gce::GameObject* CheckCollision()
 {
@@ -127,9 +120,6 @@ void Reset()
 	dir = {};
 	headseeker = false;
 
-	triggerAnim = false;
-	animProgressDuration = 0.f;
-
 	m_pOwner->GetComponent<MeshRenderer>()->SetActive(false);
 	BulletPool::Desactive(m_pOwner);
 }
@@ -142,11 +132,26 @@ gce::GameObject* GetNearestEnemy()
 	gce::GameObject* pNearestEnemy = nullptr;
 	gce::Vector3f32 bulletPos = m_pOwner->transform.GetWorldPosition();
 
-	float maxDistanceDetection = 5.f;
+	float maxDistanceDetection = 10.f;
+
+	gce::GameObject* pPlayer = GameManager::GetSceneManager().GetFirstGameObject({ Tag::TPlayer });
+
+	if (pPlayer->IsActive() == false)
+		return nullptr;
+
+	gce::Vector3f32 playerPos = pPlayer->transform.GetWorldPosition();
+	gce::Vector3f32 playerForward = pPlayer->transform.GetWorldForward();
 
 	for (gce::GameObject* pCurrent : enemies)
 	{
 		gce::Vector3f32 enemyPos = pCurrent->transform.GetWorldPosition();
+
+		gce::Vector3f32 toEnemy = enemyPos - playerPos;
+		toEnemy.SelfNormalize();
+		float dot = playerForward.DotProduct(toEnemy);
+
+		if (dot <= 0.0f)
+			continue; // Enemy behind
 
 		float sqrDist = (enemyPos.x - bulletPos.x) * (enemyPos.x - bulletPos.x) + (enemyPos.y - bulletPos.y) * (enemyPos.y - bulletPos.y) + (enemyPos.z - bulletPos.z) * (enemyPos.z - bulletPos.z);
 
@@ -168,54 +173,34 @@ void SeekEnemy(gce::GameObject* pEnemy) // Change the direction
 		return;
 	}
 
-	if (easingProgressTime < easingProgressTime)
-	{
-		easingProgressTime += GameManager::DeltaTime();
+	gce::Vector3f32 bulletPos = m_pOwner->transform.GetWorldPosition();
+	gce::Vector3f32 enemyPos = pEnemy->transform.GetWorldPosition();
+
+	MeshRenderer* pMesh = pEnemy->GetComponent<MeshRenderer>();
+
+	if (pMesh == nullptr)
 		return;
-	}
-	else
-	{
-		easingProgressTime = 0.f;
 
-		gce::Vector3f32 bulletPos = m_pOwner->transform.GetWorldPosition();
-		gce::Vector3f32 enemyPos = pEnemy->transform.GetWorldPosition();
+	enemyPos.y += (pMesh->pGeometry->min.y + pMesh->pGeometry->max.y) * 0.5f;
 
-		dir = enemyPos - bulletPos;
-		dir.SelfNormalize();
-	}
+	dir = enemyPos - bulletPos;
+	dir.SelfNormalize();
 }
 
 void Update()
 {
 	float dt = GameManager::DeltaTime();
 
-	if (triggerAnim)
-	{
-		if (animProgressDuration < animDuration)
-		{
-			animProgressDuration += dt;
-
-			float val = 2 * dt;
-
-			m_pOwner->transform.WorldScale({ 1 + val, 1 + val, 1 + val });
-		}
-		else
-		{
-			Reset();
-		}
-
-		return;
-	}
-
 	if (lifeTime < 0)
 	{
-		triggerAnim = true;
+		Reset();
 	}
 	else
 	{
 		if (headseeker == true)
 		{
 			SeekEnemy(GetNearestEnemy());
+			headseeker = false;
 		}
 
 		lifeTime -= dt;
@@ -256,9 +241,7 @@ void Update()
 			db->GetHit();
 		}
 
-		triggerAnim = true;
 		Reset();
-
 	}
 }
 

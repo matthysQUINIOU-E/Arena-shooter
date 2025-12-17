@@ -37,14 +37,15 @@ void SceneManager::InitGamePlay()
 		go->SetActive(true);
 	}
 
-	m_pPlayer = new Player();
-	m_pPlayer->Create();
-
-	gce::GameObject* pGameObject = m_pPlayer->GetGameObject();
-	
-	pGameObject->AddChild(*GetCameraObject());
-
-	LinkObjectToScene(pGameObject, SceneType::GamePlayScene);
+	if (m_pPlayer == nullptr)
+	{
+		m_pPlayer = new Player();
+		m_pPlayer->Create();
+	}
+	else
+	{
+		m_pPlayer->Reset();
+	}
 
 	float camOffsetY = m_pPlayer->GetGameObject()->transform.GetWorldScale().y * 0.5f;
 	GetCameraObject()->transform.SetLocalPosition({ 0, camOffsetY, 0 });
@@ -84,8 +85,9 @@ void SceneManager::UnInitGamePlay()
 
 	m_SceneObjectsList[SceneType::GamePlayScene].clear();
 
-	delete m_pPlayer;
-	m_pPlayer = nullptr;
+	m_pPlayer->GetGameObject()->RemoveChild(*m_pArenaCam->GetGameObject());
+
+	m_pPlayer->GetGameObject()->SetActive(false);
 
 	BulletPool::DesactivateAllBullets();
 	WaveManager::GetInstance()->Reset();
