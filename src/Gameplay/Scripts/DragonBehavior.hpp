@@ -10,19 +10,24 @@ using namespace gce;
 
 DECLARE_SCRIPT(DragonBehavior, ScriptFlag::Start | ScriptFlag::Update | ScriptFlag::CollisionEnter)
 
-float m_Angle;
-float m_DetectionRadius = 10.f;
-bool m_IsRotating = true;
+bool m_isRotationFinished;
+bool m_isAttackLoaded;
+bool m_isAttckFinished;
+
+gce::GameObject* m_player;
+
+float m_speed;
+
+float m_idleRange = 10.f;
+
 int m_MaxFireBall;
-int m_Step = 0 ;
-float m_rangeDistanceAttack;
 int m_FireBallDamage;
-int m_LaserDamage;
-float m_projectileLifeTime;
-float m_distanceAttackCooldown;
-float m_projectileSpeed;
-bool m_inAttack;
-bool m_EnnemiOnRange = false ;
+float m_fireBallLifeTime;
+float m_fireBallSpeed;
+
+int m_laserDamage;
+float m_damageTickFrequency;
+float m_laserRotationSpeed;
 
 std::vector<gce::GameObject*> m_FireBalls;
 std::unordered_set<gce::GameObject*> m_launchedFireBalls;
@@ -181,7 +186,7 @@ void Start()
 	m_projectileSpeed = 45.f;
 	m_inAttack = false;
 	EntityWrapper& ew = EntityWrapper::Create();
-	ew.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/FireBall/fireball.obj"), "res/Assets/FireBall/fireball_base_color.png"); // TODO :: projectile guhuoniao
+	ew.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/FireBall/fireball.obj"), "res/Assets/FireBall/fireball_base_color.png"); 
 	EnemyProjectileBehavior* epb = ew.AddScript<EnemyProjectileBehavior>();
 	epb->m_baseLifeTime = m_projectileLifeTime;
 	epb->m_speed = m_projectileSpeed;
@@ -205,10 +210,5 @@ void Update()
 		Move();
 		SetRotateToPlayer();
 	}
-}
-
-void CollisionEnter()
-{
-
 }
 END_SCRIPT
