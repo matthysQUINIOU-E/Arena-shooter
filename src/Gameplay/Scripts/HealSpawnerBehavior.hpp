@@ -16,6 +16,8 @@ GameObject* pNem = nullptr;
 GameObject* pRiceBowl = nullptr;
 float CDTime = 0.f;
 
+bool init = false;
+
 void DesactiveAll()
 {
 	pNoodle->SetActive(false);
@@ -44,20 +46,27 @@ void GenerateHeal()
 }
 void Start()
 {
-	gce::Vector3f32 pos = m_pOwner->transform.GetWorldPosition();
-	pos.y += 1;
-	pNoodle = BonusManager::CreateNoodles(pos);
-	pNem = BonusManager::CreateNem(pos);
-	pRiceBowl = BonusManager::CreateRiceBowl(pos);
-	GenerateHeal();
+
 }
 void Update()
 {
+	if (init == false)
+	{
+		gce::Vector3f32 pos = m_pOwner->transform.GetWorldPosition();
+		pos.y += 1;
+		pNoodle = BonusManager::CreateNoodles(pos);
+		pNem = BonusManager::CreateNem(pos);
+		pRiceBowl = BonusManager::CreateRiceBowl(pos);
+		GenerateHeal();
+
+		init = true;
+		return;
+	}
+
 	if (!pNoodle->IsActive() && !pNem->IsActive() && !pRiceBowl->IsActive())
 		CDTime -= GameManager::DeltaTime();
 
 	if (CDTime <= 0)
 		GenerateHeal();
-	
 }
 END_SCRIPT

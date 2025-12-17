@@ -155,7 +155,7 @@ void SceneManager::Init()
 	m_pUIManager = new UIManager();
 	m_pUIManager->Init();
 	
-	ChangeScene(SceneType::MenuScene);
+	ChangeScene(SceneType::GamePlayScene);
 }
 
 void SceneManager::ChangeScene(SceneType newType)

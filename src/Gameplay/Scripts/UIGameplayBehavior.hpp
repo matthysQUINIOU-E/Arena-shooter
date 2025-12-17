@@ -17,6 +17,7 @@
 #include "../Prefabs/UIManager.h"
 #include "../Prefabs/UiBar.h"
 #include "../Prefabs/CrosshairManager.h"
+#include "../Prefabs/UIWeaponManager.h"
 #include "../WaveManager.h"
 
 using namespace gce;
@@ -36,6 +37,7 @@ std::wstring ammoTxt;
 EntityWrapper* pTotalAmmoUI = nullptr;
 std::wstring totalAmmoTxt;
 
+UIWeaponManager uiWeapon;
 CrosshairManager crosshair;
 
 UiBar hpBar;
@@ -125,7 +127,7 @@ void UpdateAmmosUI()
 
 		if (pScript)
 		{
-			ammoTxt = L"Ammos : " + std::to_wstring(pScript->ammosLeft) + L"/" + std::to_wstring(pScript->maxCapacity);
+			ammoTxt = std::to_wstring(pScript->ammosLeft) + L"/" + std::to_wstring(pScript->maxCapacity);
 		}
 		else
 		{
@@ -158,7 +160,7 @@ void UpdateTotalAmmoUI()
 
 			if (pAmmoToDisplay)
 			{
-				totalAmmoTxt = L"Stock : " + std::to_wstring(pAmmoToDisplay->GetAmount());
+				totalAmmoTxt = std::to_wstring(pAmmoToDisplay->GetAmount());
 			}
 			else
 			{
@@ -227,15 +229,15 @@ void Start()
 	pUIManager = GameManager::GetSceneManager().GetUIManager();
 
 	pFpsUI = &EntityWrapper::Create();
-	pFpsUI->AddDynamicTextRenderer(fpsTxt, { 1350, 10, 300, 300 }, gce::Color::Black);
+	pFpsUI->AddDynamicTextRenderer(fpsTxt, { 1350, 10, 300, 300 }, gce::Color::Black, {1, 1});
 
 	pAmmoUI = &EntityWrapper::Create();
-	gce::Vector3f32 ammoPos = { 1480, 900, 0.f };
-	pAmmoUI->AddDynamicTextRenderer(ammoTxt, { ammoPos.x, ammoPos.y, 0, 0 }, gce::Color::Red);
+	gce::Vector3f32 ammoPos = { WINDOW_WIDTH - 575, WINDOW_HEIGHT - 120, 0.f };
+	pAmmoUI->AddDynamicTextRenderer(ammoTxt, { ammoPos.x, ammoPos.y, 0, 0 }, gce::Color::White, { 0.6f, 0.6f });
 
 	pTotalAmmoUI = &EntityWrapper::Create();
-	gce::Vector3f32 totalAmmmoPos = { 1480, 850, 0.f };
-	pTotalAmmoUI->AddDynamicTextRenderer(totalAmmoTxt, { totalAmmmoPos.x, totalAmmmoPos.y, 0, 0 }, gce::Color::Red);
+	gce::Vector3f32 totalAmmmoPos = { WINDOW_WIDTH - 425, WINDOW_HEIGHT - 120, 0.f };
+	pTotalAmmoUI->AddDynamicTextRenderer(totalAmmoTxt, { totalAmmmoPos.x, totalAmmmoPos.y, 0, 0 }, gce::Color::White, {0.6f, 0.6f});
 
 	pTakeDamageUI = &EntityWrapper::Create();
 	gce::Vector2f32 takeDamagePos = { WINDOW_WIDTH / 2.f, WINDOW_HEIGHT / 2.f };
@@ -243,7 +245,7 @@ void Start()
 	pTakeDamageUI->SetActive(false);
 
 	pDebugUI = &EntityWrapper::Create();
-	pDebugUI->AddDynamicTextRenderer(debugTxt, {0, 200, 500, 0}, gce::Color::Red);
+	pDebugUI->AddDynamicTextRenderer(debugTxt, {20, 200, 750, 0}, gce::Color::Red, { 0.5f, 0.5f });
 	crosshair.Init();
 
 	hpBar.InitFilledBar1("res/2D_Assets/Gameplay/hpBar.png", {405, 53}, { 190, 69}, { 0.5, 0.5 });
@@ -252,6 +254,8 @@ void Start()
 	dashBar.InitFilledBar1("res/2D_Assets/Gameplay/dashBar.png", { 416, 63 }, { 218, 170 }, { 0.4, 0.4 });
 	dashBar.InitFilledBar2("res/2D_Assets/Gameplay/dashBar_full.png", { 416, 63 }, { 218, 170 }, { 0.4, 0.4 });
 	dashBar.InitFrame("res/2D_Assets/Gameplay/dashBar_frame.png", { 704, 186 }, { 160, 160 }, { 0.4, 0.4 });
+
+	uiWeapon.Init();
 }
 
 void Update()
@@ -266,6 +270,7 @@ void Update()
 	dashBar.SetActive(display);
 
 	pDebugUI->SetActive(display);
+	uiWeapon.SetActive(display);
 
 	if (display == true)
 	{
@@ -276,6 +281,7 @@ void Update()
 		UpdateHpUI();
 		UpdateDashUI();
 		UpdateTakeDamageUI();
+		uiWeapon.Update();
 
 		auto wave = WaveManager::GetInstance();
 

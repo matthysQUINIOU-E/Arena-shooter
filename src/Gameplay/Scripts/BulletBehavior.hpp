@@ -144,6 +144,9 @@ gce::GameObject* GetNearestEnemy()
 
 	for (gce::GameObject* pCurrent : enemies)
 	{
+		if (pCurrent->IsActive() == false)
+			continue;
+
 		gce::Vector3f32 enemyPos = pCurrent->transform.GetWorldPosition();
 
 		gce::Vector3f32 toEnemy = enemyPos - playerPos;

@@ -211,7 +211,6 @@ void Shoot()
 		break;
 	case Tag::TBlunderBuss:
 		SetWeaponProperties(bulletScript, *pCurrent, 35.f, 1.f, { 7.f, 7.f, 3.5f }, 50, 0.25f, 1.5f);
-		bulletScript->ActiveHeadSeeker();
 		AudioUse::Play("shotgun");
 		break;
 	case Tag::TStarwheel:
@@ -220,8 +219,19 @@ void Shoot()
 		break;
 	}
 
-	bulletScript->dir = -m_pOwner->transform.GetWorldForward();
-	bulletScript->defaultDir = bulletScript->dir;
+	gce::GameObject* pCam = GameManager::GetSceneManager().GetCameraObject();
+
+	gce::Vector3f32 camPos = pCam->transform.GetWorldPosition();
+	gce::Vector3f32 camForward = pCam->transform.GetWorldForward();
+
+	gce::Vector3f32 targetPoint = camPos + camForward * 1000.0f;
+	gce::Vector3f32 holePos = m_pOwner->GetChildren()[0]->transform.GetWorldPosition();
+	gce::Vector3f32 bulletDir = (targetPoint - holePos).SelfNormalize();
+
+	bulletDir.y += totalRecoil;
+
+	bulletScript->dir = bulletDir;
+	bulletScript->defaultDir = bulletDir;
 
 	if (totalRecoil < gce::PI / 8)
 	{

@@ -33,14 +33,19 @@ std::wstring NOTHING = L"";
 
 //Functions
 
-static void OnTriggerButtonExit()
-{
-	GameManager::s_pInstance->m_running = false;
-}
-
 static void OnTriggerButtonPlay()
 {
 	GameManager::GetSceneManager().ChangeScene(SceneType::GamePlayScene);
+}
+
+static void OnTriggerButtonSettings()
+{
+
+}
+
+static void OnTriggerButtonExit()
+{
+	GameManager::s_pInstance->m_running = false;
 }
 
 void Start()
@@ -57,7 +62,15 @@ void Start()
 
 	//PLAY
 	pButtonPlay = &EntityWrapper::Create();
-	pButtonPlay->AddUIButton({ middle.x, middle.y }, { 0, 0 }, { 312, 99 }, "res/2D_Assets/Menu/play.png", "res/2D_Assets/Menu/play_survol.png")->AddListener(OnTriggerButtonPlay);
+	pButtonPlay->AddUIButton({ middle.x, middle.y - 100}, { 0, 0 }, { 312, 99 }, "res/2D_Assets/Menu/play.png", "res/2D_Assets/Menu/play_survol.png")->AddListener(OnTriggerButtonPlay);
+
+	//SETTINGS
+	pButtonSettings = &EntityWrapper::Create();
+	pButtonSettings->AddUIButton({ middle.x, middle.y + 50 }, { 0, 0 }, { 312, 99 }, "res/2D_Assets/Menu/settings.png", "res/2D_Assets/Menu/settings_survol.png")->AddListener(OnTriggerButtonSettings);
+
+	//EXIT
+	pButtonExit = &EntityWrapper::Create();
+	pButtonExit->AddUIButton({ middle.x, middle.y + 200 }, { 0, 0 }, { 312, 99 }, "res/2D_Assets/Menu/exit.png", "res/2D_Assets/Menu/exit_survol.png")->AddListener(OnTriggerButtonExit);
 }
 
 void Update()
@@ -67,6 +80,8 @@ void Update()
 	pParchemin->SetActive(display);
 	pTitle->SetActive(display);
 	pButtonPlay->SetActive(display);
+	pButtonSettings->SetActive(display);
+	pButtonExit->SetActive(display);
 }
 
 END_SCRIPT
