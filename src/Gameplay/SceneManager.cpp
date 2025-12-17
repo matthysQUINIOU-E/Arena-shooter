@@ -128,7 +128,7 @@ void SceneManager::Init()
 	//CAM
 	m_pArenaCam = new ArenaCamera();
 	m_pArenaCam->Create();
-	m_pArenaCam->SetParams(XM_PIDIV4, 0.001f, 500.0f, 1000.0f / 800.0f);
+	m_pArenaCam->SetParams(XM_PIDIV4, 0.1f, 100.0f, 1000.0f / 800.0f);
 
 	//Scene Manager Behavior
 	m_pEmpty = &EntityWrapper::Create();

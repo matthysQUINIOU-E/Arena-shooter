@@ -112,27 +112,30 @@ gce::GameObject* InventoryManager::CreateStarwheel()
 	return &starwheel;
 }
 
-//Collectibles Content
-gce::GameObject* InventoryManager::CreateBomb()
+gce::GameObject* InventoryManager::CreateMeleeWeapon()
 {
-	EntityWrapper& bomb = EntityWrapper::Create();
-	m_pSceneManager->GetCameraObject()->AddChild(bomb);
+	EntityWrapper& melee = EntityWrapper::Create();
 
-	bomb.SetProperties("Bomb", { Tag::TThrowableWeapon, Tag::TBomb }, { 0, 0, 0 }, { 0, 0, 0 }, { 2, 2, 2 });
-	bomb.transform.SetLocalPosition({ 0.25, -0.1f, 0.5f });
+	melee.SetProperties("Spear", { Tag::TWeapon, Tag::TMelee }, { 0, 0, 0 }, { 0, 0, 0 }, { 1.f, 1.f, 1.f });
+	m_pSceneManager->GetCameraObject()->AddChild(melee);
 
-	bomb.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/bomb/bomb.obj"), "res/Assets/bomb/bomb_base_color.png");
-
+	melee.transform.SetLocalPosition({ 0.3f, -0.15f, 0.5f });
+	melee.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/spear/spear.obj"), "res/Assets/spear/spear_base_color.png");
 	EntityWrapper& hole = EntityWrapper::Create();
-	gce::Vector3f32 holePos = bomb.transform.GetWorldPosition();
+	gce::Vector3f32 holePos = {};
+	holePos.z -= 0.1f;
+	holePos.y += 0.02;
 
-	hole.SetChildProperties(bomb, "Bomb Hole", { Tag::TMiscellaneous }, { 0, 0, 0 }, { 0, 0, 0 }, { 0.05, 0.05, 0.05 });
-	hole.transform.SetWorldPosition(holePos);
+	hole.SetChildProperties(melee, "Spear Hole", { Tag::TMiscellaneous }, { 0, 0, 0 }, { 0, 0, 0 }, { 0.02, 0.02, 0.02 });
+	hole.transform.LocalTranslate(holePos);
+	hole.AddMeshRenderer(gce::SHAPES.SPHERE, "");
 
-	m_pSceneManager->LinkObjectToScene(&bomb, SceneType::GamePlayScene);
+	m_pSceneManager->LinkObjectToScene(&melee, SceneType::GamePlayScene);
 
-	return &bomb;
+	return &melee;
 }
+
+
 
 void InventoryManager::InitAll()
 {
@@ -141,12 +144,12 @@ void InventoryManager::InitAll()
 	m_allWeapons.push_back(CreateMusket());
 	m_allWeapons.push_back(CreateBlunderBuss());
 	m_allWeapons.push_back(CreateStarwheel());
-
-	//m_tmpCollectibles.push_back(CreateBomb());
+	//m_allWeapons.push_back(CreateMeleeWeapon());
 
 	m_currentInventory.push_back(GetWeapon(Tag::TStarwheel));
 	m_currentInventory.push_back(GetWeapon(Tag::TBlunderBuss));
 	m_currentInventory.push_back(GetWeapon(Tag::TMusket));
+	//m_currentInventory.push_back(GetWeapon(Tag::TMelee));
 
 	// AMMMOS
 	m_ammoStock.push_back(new Ammos(Tag::THeavyAmmo, 30));
