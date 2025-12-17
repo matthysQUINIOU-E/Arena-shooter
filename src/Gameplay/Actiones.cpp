@@ -138,6 +138,7 @@ void DistanceAttack::Update(float deltaTime)
 		switch (m_agent->GetUniqueTag({ Tag::TMogwai, Tag::TJiangshi, Tag::TGuHuoNiao }))
 		{
 		case Tag::TMogwai:
+			AudioUse::Play("woosh");
 			break;
 		case Tag::TJiangshi:
 			break;

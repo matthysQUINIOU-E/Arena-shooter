@@ -166,6 +166,7 @@ void WaveManager::TrySpawn()
 	ennemy->transform.SetWorldPosition(spawnPos);
 	ennemy->SetCurrentNode(NavMesh::Instance()->GetNearestNodeFromPosition(spawnPos));
 	m_currentEnnemiesAlives++;
+	m_currentEnnemiesToSpawn--;
 }
 
 int WaveManager::GetEnnemiesNumberForWave(int wave)

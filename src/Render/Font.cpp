@@ -4,6 +4,17 @@
 
 namespace gce
 {
+	std::unordered_map <std::wstring_view, Font*> Font::s_loadedFonts = {};
+
+	Font* Font::GetFont(std::wstring_view path)
+	{
+		auto it = s_loadedFonts.find(path);
+
+		if (it == s_loadedFonts.end())
+			s_loadedFonts[path] = new Font(path);
+
+		return s_loadedFonts[path];
+	}
 
 	Font::Font(std::wstring_view name)
 	{

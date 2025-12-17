@@ -104,7 +104,7 @@ gce::TextRenderer* EntityWrapper::AddStaticTextRenderer(std::wstring txt, gce::R
 {
 	gce::TextRenderer* component = AddComponent<gce::TextRenderer>();
 
-	component->pFont = new gce::Font(fontName);
+	component->pFont = gce::Font::GetFont(fontName);
 	component->pBrush = new gce::ColorBrush(txtColor);
 
 	std::wstring* pTxt = new std::wstring(txt);
@@ -118,7 +118,7 @@ gce::TextRenderer* EntityWrapper::AddDynamicTextRenderer(std::wstring& txt, gce:
 {
 	gce::TextRenderer* component = AddComponent<gce::TextRenderer>();
 
-	component->pFont = new gce::Font(fontName);
+	component->pFont = gce::Font::GetFont(fontName);
 	component->pBrush = new gce::ColorBrush(txtColor);
 	component->text = txt;
 	component->rectPosF = new gce::RectanglePosF(dimensions);

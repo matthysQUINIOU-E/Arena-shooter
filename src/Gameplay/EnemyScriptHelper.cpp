@@ -14,13 +14,13 @@ void EnemyScriptHelper::InitMogwai()
     m_baseProjectileReload = 5.f;
     m_maxProjectiles = 3;
     m_currentProjectiles = 3;
-    m_rangeDistanceAttack = 7.f;
+    m_rangeDistanceAttack = 8.f;
     m_projectileDamage = 3;
     m_projectileLifeTime = 3.f;
-    m_distanceAttackCooldown = 0.7f;
-    m_projectileSpeed = 10.f;
+    m_distanceAttackCooldown = 1.f;
+    m_projectileSpeed = 8.f;
 
-    m_rangeLaunchMelee = 2.f;
+    m_rangeLaunchMelee = 3.f;
     m_rangeHitMelee = 3.f;
     m_meleeAttackCooldown = 0.7f;
     m_meleeAttackHitFrame = 0.4f;
@@ -92,7 +92,7 @@ void EnemyScriptHelper::InitGuhuoniao()
     m_maxProjectiles = 5;
     m_currentProjectiles = 5;
     m_rangeDistanceAttack = 15.f;
-    m_projectileDamage = 5;
+    m_projectileDamage = 6;
     m_projectileLifeTime = 3.f;
     m_distanceAttackCooldown = 1.5f;
     m_projectileSpeed = 10.f;

@@ -206,10 +206,10 @@ void SceneManager::LoadSounds()
 	AddSound("riffle", L"res/Audio/riffle.wav", gce::Category::SFX, 15);
 	AddSound("shotgun", L"res/Audio/shotgun.wav", gce::Category::SFX, 200);
 
-	AddSound("dash", L"res/Audio/dash.wav", gce::Category::SFX, 50);
+	AddSound("dash", L"res/Audio/dash.wav", gce::Category::SFX, 300);
 
 	AddSound("harpy_attack", L"res/Audio/harpy_attack.wav", gce::Category::SFX, 20);
-	AddSound("woosh", L"res/Audio/woosh.mp3", gce::Category::SFX, 300);
+	AddSound("woosh", L"res/Audio/woosh.mp3", gce::Category::SFX, 20);
 }
 
 void SceneManager::LinkObjectToScene(gce::GameObject* obj, SceneType scene)

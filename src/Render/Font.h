@@ -7,6 +7,7 @@ namespace gce
 
 	class Font
 	{
+		static std::unordered_map <std::wstring_view, Font*> s_loadedFonts;
 	public:
 		Font() = default;
 		Font(WStringView name);
@@ -17,6 +18,8 @@ namespace gce
 		Font& operator=(Font&&) = delete;
 
 		~Font();
+
+		static Font* GetFont(std::wstring_view font);
 
 		void Load(WStringView const& name);
 

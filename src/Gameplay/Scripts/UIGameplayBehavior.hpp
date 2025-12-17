@@ -236,7 +236,7 @@ void Start()
 	pTakeDamageUI->SetActive(false);
 
 	pDebugUI = &EntityWrapper::Create();
-	pDebugUI->AddDynamicTextRenderer(debugTxt, {0, 100, 500, 0}, gce::Color::Red);
+	pDebugUI->AddDynamicTextRenderer(debugTxt, {0, 200, 500, 0}, gce::Color::Red);
 	crosshair.Init();
 
 	hpBar.InitFilledBar1("res/2D_Assets/hpBar.png", {405, 53}, { 190, 69}, { 0.5, 0.5 });
@@ -272,7 +272,7 @@ void Update()
 
 		debugTxt = L"Time : " + std::to_wstring((int)wave->m_waveTimer) + L"\n"
 			+ L"Wave : " + std::to_wstring(wave->m_curentWave) + L"/" + std::to_wstring(wave->m_maxWave) + L"\n"
-			+ L"Enemies To Kill : " + std::to_wstring(wave->m_currentEnnemiesToSpawn);
+			+ L"Enemies Alive/To Spawn :\n" + std::to_wstring(wave->m_currentEnnemiesAlives) + L" / " + std::to_wstring(wave->m_currentEnnemiesToSpawn);
 
 		pDebugUI->GetComponent<TextRenderer>()->text = debugTxt;
 	}
