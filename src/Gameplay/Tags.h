@@ -5,6 +5,7 @@ enum class Tag // Game Objects Tags
     None,
     TPlayer,
     TWeapon,
+    TMeleeWeapon,
     TThrowableWeapon,
     TCollectible,
     TAmmo,
@@ -19,7 +20,7 @@ enum class Tag // Game Objects Tags
     THeal,
 
     //Weapon
-    TMelee,
+    TSpear,
     TBlunderBuss,
     TMusket,
     TStarwheel,

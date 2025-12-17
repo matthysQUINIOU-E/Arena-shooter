@@ -221,10 +221,7 @@ void Update()
 		lifeTime -= dt;
 
 		float yaw = atan2(dir.x, dir.z);
-		float pitch = atan2(
-			-dir.y,
-			sqrt(dir.x * dir.x + dir.z * dir.z)
-		);
+		float pitch = atan2(-dir.y, sqrt(dir.x * dir.x + dir.z * dir.z));
 
 		gce::Quaternion rot = {};
 		rot.SetRotationEuler(pitch, yaw, 0.0f);

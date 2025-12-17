@@ -127,7 +127,7 @@ void UpdateAmmosUI()
 	}
 	else
 	{
-		ammoTxt = L"To Do";
+		ammoTxt = NOTHING;
 	}
 
 	pAmmoUI->UpdateDynamicText(ammoTxt);
@@ -165,7 +165,7 @@ void UpdateTotalAmmoUI()
 	}
 	else
 	{
-		totalAmmoTxt = L"To Do";
+		totalAmmoTxt = NOTHING;
 	}
 
 	pTotalAmmoUI->UpdateDynamicText(totalAmmoTxt);

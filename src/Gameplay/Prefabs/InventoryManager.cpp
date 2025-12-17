@@ -3,6 +3,7 @@
 #include "EntityWrapper.h"
 
 #include "Scripts/GunBehavior.hpp"
+#include "Scripts/MeleeWeaponBehavior.hpp"
 #include "Ammos.h"
 
 InventoryManager::~InventoryManager()
@@ -116,19 +117,21 @@ gce::GameObject* InventoryManager::CreateMeleeWeapon()
 {
 	EntityWrapper& melee = EntityWrapper::Create();
 
-	melee.SetProperties("Spear", { Tag::TWeapon, Tag::TMelee }, { 0, 0, 0 }, { 0, 0, 0 }, { 1.f, 1.f, 1.f });
+	melee.SetProperties("Spear", { Tag::TMeleeWeapon, Tag::TSpear }, { 0, 0, 0 }, { 0, 0, 0 }, { 1.f, 1.f, 1.f });
 	m_pSceneManager->GetCameraObject()->AddChild(melee);
 
-	melee.transform.SetLocalPosition({ 0.3f, -0.15f, 0.5f });
-	melee.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/spear/spear.obj"), "res/Assets/spear/spear_base_color.png");
-	EntityWrapper& hole = EntityWrapper::Create();
-	gce::Vector3f32 holePos = {};
-	holePos.z -= 0.1f;
-	holePos.y += 0.02;
+	Quaternion yQ = {};
+	yQ.SetRotationEuler({ 0, -gce::PI / 3, 0 });
 
-	hole.SetChildProperties(melee, "Spear Hole", { Tag::TMiscellaneous }, { 0, 0, 0 }, { 0, 0, 0 }, { 0.02, 0.02, 0.02 });
-	hole.transform.LocalTranslate(holePos);
-	hole.AddMeshRenderer(gce::SHAPES.SPHERE, "");
+	Quaternion xQ = {};
+	xQ.SetRotationEuler({ -gce::PI / 8, 0, 0 });
+
+	melee.transform.SetLocalRotation(xQ * yQ);
+	melee.transform.SetLocalPosition({ 0.15f, -0.2f, 0.5f });
+	melee.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/spear/spear.obj"), "res/Assets/spear/spear_base_color.png");
+	auto meleeBehavior = melee.AddScript<MeleeWeaponBehavior>();
+	meleeBehavior->SetMeleeWeaponProperties(35, 0.5f);
+	meleeBehavior->SetDefaultRotation(xQ * yQ);
 
 	m_pSceneManager->LinkObjectToScene(&melee, SceneType::GamePlayScene);
 
@@ -141,15 +144,15 @@ void InventoryManager::InitAll()
 {
 	m_pSceneManager = &GameManager::GetSceneManager();
 
+	m_allWeapons.push_back(CreateMeleeWeapon());
 	m_allWeapons.push_back(CreateMusket());
 	m_allWeapons.push_back(CreateBlunderBuss());
 	m_allWeapons.push_back(CreateStarwheel());
-	//m_allWeapons.push_back(CreateMeleeWeapon());
 
-	m_currentInventory.push_back(GetWeapon(Tag::TStarwheel));
-	m_currentInventory.push_back(GetWeapon(Tag::TBlunderBuss));
+	m_currentInventory.push_back(GetWeapon(Tag::TSpear));
 	m_currentInventory.push_back(GetWeapon(Tag::TMusket));
-	//m_currentInventory.push_back(GetWeapon(Tag::TMelee));
+	m_currentInventory.push_back(GetWeapon(Tag::TBlunderBuss));
+	m_currentInventory.push_back(GetWeapon(Tag::TStarwheel));
 
 	// AMMMOS
 	m_ammoStock.push_back(new Ammos(Tag::THeavyAmmo, 30));
@@ -261,6 +264,9 @@ void InventoryManager::SwapEquipedObject(bool forward)
 	{
 		if (current->HasTags({ Tag::TWeapon }))
 			current->GetScript<GunBehavior>()->OnLeaveWeapon(); // The old weapon
+
+		if (current->HasTags({ Tag::TMeleeWeapon }))
+			current->GetScript<MeleeWeaponBehavior>()->OnLeaveWeapon(); // The old weapon
 	}
 
 	m_inventoryIndex += sens;
@@ -277,9 +283,10 @@ void InventoryManager::SwapEquipedObject(bool forward)
 			m_pEquipedObject = pObject;
 
 			if (pObject->HasTags({ Tag::TWeapon }))
-			{
 				pObject->GetScript<GunBehavior>()->OnReceiveWeapon();
-			}
+
+			if (pObject->HasTags({ Tag::TMeleeWeapon }))
+				pObject->GetScript<MeleeWeaponBehavior>()->OnReceiveWeapon();
 		}
 		else
 		{

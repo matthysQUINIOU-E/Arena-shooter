@@ -126,6 +126,9 @@ void DistanceAttack::Update(float deltaTime)
 			}
 		}
 
+		if (m_projectiles->empty())
+			return;
+
 		gce::GameObject* proj = m_projectiles->back();
 		EnemyProjectileBehavior* epb = proj->GetScript<EnemyProjectileBehavior>();
 		epb->Shoot(m_agent->transform.GetWorldPosition(), m_agent->GetTarget()->transform.GetWorldPosition());

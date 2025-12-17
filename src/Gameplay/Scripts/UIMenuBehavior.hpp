@@ -41,7 +41,7 @@ void Start()
 	pUIManager = GameManager::GetSceneManager().GetUIManager();
 
 	pTitle = &EntityWrapper::Create();
-	pTitle->AddStaticTextRenderer(L"The Legend of Zhu Min : God Legacy", {1000, 250, -450, 0}, gce::Color::Magenta);
+	pTitle->AddStaticTextRenderer(L"Legend of Zhu Min : God Legacy", {1000, 250, -450, 0}, gce::Color::Magenta);
 
 	//PLAY
 	pButtonPlay = &EntityWrapper::Create();

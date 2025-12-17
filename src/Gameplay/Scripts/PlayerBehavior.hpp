@@ -4,11 +4,14 @@
 #include <Script.h>
 #include "Prefabs/ArenaCamera.h"
 #include "Components.h"
-#include "GunBehavior.hpp"
 #include "../SceneManager.h"
 #include "../Prefabs/InventoryManager.h"
-#include "HealthBehavior.hpp"
 #include "KeyBinds.h"
+
+#include "GunBehavior.hpp"
+#include "MeleeWeaponBehavior.hpp"
+#include "HealthBehavior.hpp"
+
 
 using namespace gce;
 
@@ -230,15 +233,25 @@ void HandleWeapon()
 {
 	if (pWeapon != nullptr)
 	{
-		GunBehavior* gunScript = pWeapon->GetScript<GunBehavior>();
-
-		if (gunScript->IsReadyToUse())
+		if (auto gunScript = pWeapon->GetScript<GunBehavior>())
 		{
-			if (GetButton(Mouse::LEFT))
-				gunScript->Shoot();
+			if (gunScript->IsReadyToUse())
+			{
+				if (GetButton(Mouse::LEFT))
+					gunScript->Shoot();
 
-			if (GetKeyDown(KeyBinds::GetKeyBind(KeyAction::Reload)))
-				gunScript->TriggerReload();
+				if (GetKeyDown(KeyBinds::GetKeyBind(KeyAction::Reload)))
+					gunScript->TriggerReload();
+			}
+		}
+
+		if (auto meleeScript = pWeapon->GetScript<MeleeWeaponBehavior>())
+		{
+			if (meleeScript->IsReadyToUse())
+			{
+				if (GetButton(Mouse::LEFT))
+					meleeScript->Hit();
+			}
 		}
 	}
 
