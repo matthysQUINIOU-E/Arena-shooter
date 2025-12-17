@@ -1,4 +1,9 @@
 #pragma once
+#include <Render.h>
+#include <Engine.h>
+#include <Script.h>
+#include <algorithm>
+#include "Components.h"
 #include <vector>
 
 namespace gce
