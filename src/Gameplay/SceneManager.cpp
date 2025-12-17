@@ -128,7 +128,7 @@ void SceneManager::Init()
 	//CAM
 	m_pArenaCam = new ArenaCamera();
 	m_pArenaCam->Create();
-	m_pArenaCam->SetParams(XM_PIDIV4, 0.1f, 100.0f, 1000.0f / 800.0f);
+	m_pArenaCam->SetParams(XM_PIDIV4, 0.1f, 100.f, 1000.0f / 800.0f);
 
 	//Scene Manager Behavior
 	m_pEmpty = &EntityWrapper::Create();
@@ -136,7 +136,7 @@ void SceneManager::Init()
 	m_pEmpty->AddScript<SceneManagerBehavior>();
 
 	//MAP
-	for (gce::GameObject* go : ImportBlenderScene(L"scene_base.json"))
+	for (gce::GameObject* go : ImportBlenderScene(L"scene_v2.json"))
 	{
 		go->AddTags({ Tag::TMapObject });
 		go->SetActive(false);
