@@ -54,7 +54,7 @@ void EnemyScriptHelper::InitJiangshi()
     m_baseProjectileReload = 10.f;
     m_maxProjectiles = 0;
     m_currentProjectiles = 0;
-    m_rangeDistanceAttack = 3.f;
+    m_rangeDistanceAttack = 4.f;
     m_projectileDamage = 7;
     m_projectileLifeTime = 1.f;
     m_distanceAttackCooldown = 0.0f;

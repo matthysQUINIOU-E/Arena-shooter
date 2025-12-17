@@ -111,7 +111,7 @@ void Shoot(gce::Vector3f32 from, gce::Vector3f32 toward)
 	Quaternion flip = {};
 	flip.SetRotationEuler({0,  -gce::PI / 2, 0 });
 
-	m_pOwner->transform.SetWorldRotation(rot * flip);
+	m_pOwner->transform.SetWorldRotation(rot);
 
 	m_lifeTime = m_baseLifeTime;
 	m_pOwner->SetActive(true);
