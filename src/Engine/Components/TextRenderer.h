@@ -14,7 +14,7 @@ DECLARE_COMPONENT( TextRenderer, UiBase )
 	Font* pFont;
 	UiBrush* pBrush;
 	RectanglePosF* rectPosF;
-
+	gce::Vector2f32 scale = { 1, 1 };
 protected:
 	void Init() override;
 

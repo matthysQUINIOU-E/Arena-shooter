@@ -206,7 +206,7 @@ void Shoot()
 	switch (m_pOwner->GetUniqueTag({ Tag::TMusket, Tag::TBlunderBuss, Tag::TStarwheel }))
 	{
 	case Tag::TMusket:
-		SetWeaponProperties(bulletScript, *pCurrent, 50.f, 2.f, { 5.f, 5.f, 5.f }, 20, 0.075f, 3.f);
+		SetWeaponProperties(bulletScript, *pCurrent, 35.f, 2.f, { 5.f, 5.f, 5.f }, 20, 0.075f, 3.f);
 		AudioUse::Play("riffle");
 		break;
 	case Tag::TBlunderBuss:
@@ -214,13 +214,24 @@ void Shoot()
 		AudioUse::Play("shotgun");
 		break;
 	case Tag::TStarwheel:
-		SetWeaponProperties(bulletScript, *pCurrent, 40.f, 2.f, { 3.f, 3.f, 6.f }, 15, 0.05f, 4.f);
+		SetWeaponProperties(bulletScript, *pCurrent, 35.f, 2.f, { 3.f, 3.f, 6.f }, 10, 0.05f, 4.f);
 		AudioUse::Play("gun");
 		break;
 	}
 
-	bulletScript->dir = -m_pOwner->transform.GetWorldForward();
-	bulletScript->defaultDir = bulletScript->dir;
+	gce::GameObject* pCam = GameManager::GetSceneManager().GetCameraObject();
+
+	gce::Vector3f32 camPos = pCam->transform.GetWorldPosition();
+	gce::Vector3f32 camForward = pCam->transform.GetWorldForward();
+
+	gce::Vector3f32 targetPoint = camPos + camForward * 1000.0f;
+	gce::Vector3f32 holePos = m_pOwner->GetChildren()[0]->transform.GetWorldPosition();
+	gce::Vector3f32 bulletDir = (targetPoint - holePos).SelfNormalize();
+
+	bulletDir.y += totalRecoil;
+
+	bulletScript->dir = bulletDir;
+	bulletScript->defaultDir = bulletDir;
 
 	if (totalRecoil < gce::PI / 8)
 	{

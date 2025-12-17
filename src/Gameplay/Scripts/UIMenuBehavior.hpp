@@ -23,9 +23,11 @@ UIManager* pUIManager = nullptr;
 
 //Members
 EntityWrapper* pTitle = nullptr;
+EntityWrapper* pParchemin = nullptr;
 
 EntityWrapper* pButtonPlay = nullptr;
-EntityWrapper* pPlay = nullptr;
+EntityWrapper* pButtonSettings = nullptr;
+EntityWrapper* pButtonExit = nullptr;
 
 std::wstring NOTHING = L"";
 
@@ -36,29 +38,50 @@ static void OnTriggerButtonPlay()
 	GameManager::GetSceneManager().ChangeScene(SceneType::GamePlayScene);
 }
 
+static void OnTriggerButtonSettings()
+{
+
+}
+
+static void OnTriggerButtonExit()
+{
+	GameManager::s_pInstance->m_running = false;
+}
+
 void Start()
 {
+	gce::Vector2f32 middle = { WINDOW_WIDTH / 2.f, WINDOW_HEIGHT / 2.f };
+
 	pUIManager = GameManager::GetSceneManager().GetUIManager();
 
+	pParchemin = &EntityWrapper::Create();
+	pParchemin->AddUIButton({ middle.x, middle.y }, { 0, 0 }, { 581, 1026 }, "res/2D_Assets/Menu/parchemin.png");
+
 	pTitle = &EntityWrapper::Create();
-	pTitle->AddStaticTextRenderer(L"The Legend of Zhu Min : God Legacy", {1000, 250, -450, 0}, gce::Color::Magenta);
+	pTitle->AddStaticTextRenderer(L"Legend of Zhu Min : God Legacy", {1000, 250, -450, 0}, gce::Color::Magenta);
 
 	//PLAY
 	pButtonPlay = &EntityWrapper::Create();
-	pButtonPlay->AddUIButton({ 960, 540 }, { 0, 0 }, { 300, 150 }, "res/Texture/jaune.jpg")->AddListener(OnTriggerButtonPlay);
+	pButtonPlay->AddUIButton({ middle.x, middle.y - 100}, { 0, 0 }, { 312, 99 }, "res/2D_Assets/Menu/play.png", "res/2D_Assets/Menu/play_survol.png")->AddListener(OnTriggerButtonPlay);
 
-	pPlay = &EntityWrapper::Create();
-	pPlay->AddStaticTextRenderer(L"PLAY", {900, 500,0, 0}, gce::Color::Black);
+	//SETTINGS
+	pButtonSettings = &EntityWrapper::Create();
+	pButtonSettings->AddUIButton({ middle.x, middle.y + 50 }, { 0, 0 }, { 312, 99 }, "res/2D_Assets/Menu/settings.png", "res/2D_Assets/Menu/settings_survol.png")->AddListener(OnTriggerButtonSettings);
+
+	//EXIT
+	pButtonExit = &EntityWrapper::Create();
+	pButtonExit->AddUIButton({ middle.x, middle.y + 200 }, { 0, 0 }, { 312, 99 }, "res/2D_Assets/Menu/exit.png", "res/2D_Assets/Menu/exit_survol.png")->AddListener(OnTriggerButtonExit);
 }
 
 void Update()
 {
 	bool display = pUIManager->IsSceneType(SceneType::MenuScene);
 
+	pParchemin->SetActive(display);
 	pTitle->SetActive(display);
-
 	pButtonPlay->SetActive(display);
-	pPlay->SetActive(display);
+	pButtonSettings->SetActive(display);
+	pButtonExit->SetActive(display);
 }
 
 END_SCRIPT

@@ -17,6 +17,7 @@
 #include "../Prefabs/UIManager.h"
 #include "../Prefabs/UiBar.h"
 #include "../Prefabs/CrosshairManager.h"
+#include "../Prefabs/UIWeaponManager.h"
 #include "../WaveManager.h"
 
 using namespace gce;
@@ -36,6 +37,7 @@ std::wstring ammoTxt;
 EntityWrapper* pTotalAmmoUI = nullptr;
 std::wstring totalAmmoTxt;
 
+UIWeaponManager uiWeapon;
 CrosshairManager crosshair;
 
 UiBar hpBar;
@@ -46,7 +48,7 @@ std::wstring NOTHING = L"";
 EntityWrapper* pTakeDamageUI = nullptr;
 int oldPlayerHp = -1;
 bool takeDamageTriggerVisual = false;
-float takeDamageDuration = 1.f;
+float takeDamageDuration = 0.75f;
 float takeDamageProgressDuration;
 
 
@@ -78,15 +80,22 @@ void UpdateTakeDamageUI()
 	{
 		if (oldPlayerHp == -1)
 		{
-			oldPlayerHp = pScript->health;
+			if(pScript->health > 0)
+				oldPlayerHp = pScript->health;
+
 			return;
 		}
 
-		if (pScript->health < oldPlayerHp || pScript->health <= 0)
+		if (pScript->health < oldPlayerHp)
 		{
 			oldPlayerHp = pScript->health;
 			takeDamageProgressDuration = 0.f;
 			takeDamageTriggerVisual = true;
+
+			if (pScript->health <= 0)
+			{
+				oldPlayerHp = -1;
+			}
 		}
 	}
 }
@@ -118,7 +127,7 @@ void UpdateAmmosUI()
 
 		if (pScript)
 		{
-			ammoTxt = L"Ammos : " + std::to_wstring(pScript->ammosLeft) + L"/" + std::to_wstring(pScript->maxCapacity);
+			ammoTxt = std::to_wstring(pScript->ammosLeft) + L"/" + std::to_wstring(pScript->maxCapacity);
 		}
 		else
 		{
@@ -127,7 +136,7 @@ void UpdateAmmosUI()
 	}
 	else
 	{
-		ammoTxt = L"To Do";
+		ammoTxt = NOTHING;
 	}
 
 	pAmmoUI->UpdateDynamicText(ammoTxt);
@@ -151,7 +160,7 @@ void UpdateTotalAmmoUI()
 
 			if (pAmmoToDisplay)
 			{
-				totalAmmoTxt = L"Stock : " + std::to_wstring(pAmmoToDisplay->GetAmount());
+				totalAmmoTxt = std::to_wstring(pAmmoToDisplay->GetAmount());
 			}
 			else
 			{
@@ -165,7 +174,7 @@ void UpdateTotalAmmoUI()
 	}
 	else
 	{
-		totalAmmoTxt = L"To Do";
+		totalAmmoTxt = NOTHING;
 	}
 
 	pTotalAmmoUI->UpdateDynamicText(totalAmmoTxt);
@@ -220,31 +229,33 @@ void Start()
 	pUIManager = GameManager::GetSceneManager().GetUIManager();
 
 	pFpsUI = &EntityWrapper::Create();
-	pFpsUI->AddDynamicTextRenderer(fpsTxt, { 1350, 10, 300, 300 }, gce::Color::Black);
+	pFpsUI->AddDynamicTextRenderer(fpsTxt, { 1350, 10, 300, 300 }, gce::Color::Black, {1, 1});
 
 	pAmmoUI = &EntityWrapper::Create();
-	gce::Vector3f32 ammoPos = { 1480, 900, 0.f };
-	pAmmoUI->AddDynamicTextRenderer(ammoTxt, { ammoPos.x, ammoPos.y, 0, 0 }, gce::Color::Red);
+	gce::Vector3f32 ammoPos = { WINDOW_WIDTH - 575, WINDOW_HEIGHT - 120, 0.f };
+	pAmmoUI->AddDynamicTextRenderer(ammoTxt, { ammoPos.x, ammoPos.y, 0, 0 }, gce::Color::White, { 0.6f, 0.6f });
 
 	pTotalAmmoUI = &EntityWrapper::Create();
-	gce::Vector3f32 totalAmmmoPos = { 1480, 850, 0.f };
-	pTotalAmmoUI->AddDynamicTextRenderer(totalAmmoTxt, { totalAmmmoPos.x, totalAmmmoPos.y, 0, 0 }, gce::Color::Red);
+	gce::Vector3f32 totalAmmmoPos = { WINDOW_WIDTH - 425, WINDOW_HEIGHT - 120, 0.f };
+	pTotalAmmoUI->AddDynamicTextRenderer(totalAmmoTxt, { totalAmmmoPos.x, totalAmmmoPos.y, 0, 0 }, gce::Color::White, {0.6f, 0.6f});
 
 	pTakeDamageUI = &EntityWrapper::Create();
 	gce::Vector2f32 takeDamagePos = { WINDOW_WIDTH / 2.f, WINDOW_HEIGHT / 2.f };
-	pTakeDamageUI->AddUIButton(takeDamagePos, { 0, 0 }, { WINDOW_WIDTH, WINDOW_HEIGHT }, "res/2D_Assets/takedamage_screen.png");
+	pTakeDamageUI->AddUIButton(takeDamagePos, { 0, 0 }, { WINDOW_WIDTH, WINDOW_HEIGHT }, "res/2D_Assets/Gameplay/takedamage_screen.png");
 	pTakeDamageUI->SetActive(false);
 
 	pDebugUI = &EntityWrapper::Create();
-	pDebugUI->AddDynamicTextRenderer(debugTxt, {0, 200, 500, 0}, gce::Color::Red);
+	pDebugUI->AddDynamicTextRenderer(debugTxt, {20, 200, 750, 0}, gce::Color::Red, { 0.5f, 0.5f });
 	crosshair.Init();
 
-	hpBar.InitFilledBar1("res/2D_Assets/hpBar.png", {405, 53}, { 190, 69}, { 0.5, 0.5 });
-	hpBar.InitFrame("res/2D_Assets/hpBar_frame.png", { 569, 204 }, { 160, 60 }, { 0.5, 0.5 });
+	hpBar.InitFilledBar1("res/2D_Assets/Gameplay/hpBar.png", {405, 53}, { 190, 69}, { 0.5, 0.5 });
+	hpBar.InitFrame("res/2D_Assets/Gameplay/hpBar_frame.png", { 569, 204 }, { 160, 60 }, { 0.5, 0.5 });
 
-	dashBar.InitFilledBar1("res/2D_Assets/dashBar.png", { 416, 63 }, { 218, 170 }, { 0.4, 0.4 });
-	dashBar.InitFilledBar2("res/2D_Assets/dashBar_full.png", { 416, 63 }, { 218, 170 }, { 0.4, 0.4 });
-	dashBar.InitFrame("res/2D_Assets/dashBar_frame.png", { 704, 186 }, { 160, 160 }, { 0.4, 0.4 });
+	dashBar.InitFilledBar1("res/2D_Assets/Gameplay/dashBar.png", { 416, 63 }, { 218, 170 }, { 0.4, 0.4 });
+	dashBar.InitFilledBar2("res/2D_Assets/Gameplay/dashBar_full.png", { 416, 63 }, { 218, 170 }, { 0.4, 0.4 });
+	dashBar.InitFrame("res/2D_Assets/Gameplay/dashBar_frame.png", { 704, 186 }, { 160, 160 }, { 0.4, 0.4 });
+
+	uiWeapon.Init();
 }
 
 void Update()
@@ -258,6 +269,9 @@ void Update()
 	hpBar.SetActive(display);
 	dashBar.SetActive(display);
 
+	pDebugUI->SetActive(display);
+	uiWeapon.SetActive(display);
+
 	if (display == true)
 	{
 		UpdateFpsUI();
@@ -267,6 +281,7 @@ void Update()
 		UpdateHpUI();
 		UpdateDashUI();
 		UpdateTakeDamageUI();
+		uiWeapon.Update();
 
 		auto wave = WaveManager::GetInstance();
 

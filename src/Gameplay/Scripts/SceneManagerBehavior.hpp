@@ -37,11 +37,6 @@ void Update()
 	{
 		pSceneManager->ToggleFullScreenMode();
 	}
-
-	if (GetKeyDown(Keyboard::H)) // DESTROY ALLL JFHOIDHFOIDHFOIDFHOIUFHO
-	{
-		pSceneManager->ChangeScene(SceneType::MenuScene);
-	}
 }
 
 END_SCRIPT

@@ -59,6 +59,7 @@ public:
     void GameLoop(WindowParam& param);
 
 public: // Temporary (should be named and used as private)
+    bool m_running = true;
     inline static GameManager* s_pInstance = nullptr;
     
     void HandleFPS();

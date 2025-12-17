@@ -4,11 +4,14 @@
 #include <Script.h>
 #include "Prefabs/ArenaCamera.h"
 #include "Components.h"
-#include "GunBehavior.hpp"
 #include "../SceneManager.h"
 #include "../Prefabs/InventoryManager.h"
-#include "HealthBehavior.hpp"
 #include "KeyBinds.h"
+
+#include "GunBehavior.hpp"
+#include "MeleeWeaponBehavior.hpp"
+#include "HealthBehavior.hpp"
+
 
 using namespace gce;
 
@@ -24,7 +27,7 @@ gce::Vector3f32 finalDir = {};
 //Jump
 bool isJumping = false;
 int jumpsAmount = 0;
-int maxJumpsAmount = 2;
+int maxJumpsAmount = 1;
 
 //Dash
 bool isDashing = false;
@@ -47,6 +50,17 @@ float dyingAnimationDuration = 1.5f;
 float dyingAnimationProgressDuration = 0.f;
 
 Quaternion currentRotation = {};
+
+void ResetScript()
+{
+	isDashing = false;
+	dashProgressReloadTime = 0.f;
+	dashProgressDuration = 0.f;
+	totalPitchRotation = 0.f;
+	dyingAnimationProgressDuration = 0.f;
+	isDead = false;
+	isDashing = false;
+}
 
 void SetLookingAround(bool state)
 {
@@ -86,6 +100,8 @@ void DeathAnimation()
 	}
 	else
 	{
+		isDead = false;
+		dyingAnimationProgressDuration = 0.f;
 		GameManager::GetSceneManager().ChangeScene(SceneType::GameOverScene);
 	}
 }
@@ -168,7 +184,7 @@ void BasicControls() // Move + Jump
 			gce::Force f;
 
 			f.direction = { 0, 1, 0 };
-			f.norm = 15000;
+			f.norm = 5000;
 			f.useApplicationPoint = true;
 			f.relativeApplicationPoint = { 0, 0, 0 };
 
@@ -230,15 +246,25 @@ void HandleWeapon()
 {
 	if (pWeapon != nullptr)
 	{
-		GunBehavior* gunScript = pWeapon->GetScript<GunBehavior>();
-
-		if (gunScript->IsReadyToUse())
+		if (auto gunScript = pWeapon->GetScript<GunBehavior>())
 		{
-			if (GetButton(Mouse::LEFT))
-				gunScript->Shoot();
+			if (gunScript->IsReadyToUse())
+			{
+				if (GetButton(Mouse::LEFT))
+					gunScript->Shoot();
 
-			if (GetKeyDown(KeyBinds::GetKeyBind(KeyAction::Reload)))
-				gunScript->TriggerReload();
+				if (GetKeyDown(KeyBinds::GetKeyBind(KeyAction::Reload)))
+					gunScript->TriggerReload();
+			}
+		}
+
+		if (auto meleeScript = pWeapon->GetScript<MeleeWeaponBehavior>())
+		{
+			if (meleeScript->IsReadyToUse())
+			{
+				if (GetButton(Mouse::LEFT))
+					meleeScript->Hit();
+			}
 		}
 	}
 
@@ -283,6 +309,9 @@ void Start()
 
 void Update()
 {
+	if (GetKeyDown(Keyboard::K))
+		isDead = true;
+
 	if (isDead)
 	{
 		DeathAnimation();
