@@ -50,15 +50,15 @@ Agent& Enemy::CreateEnemy(gce::GameObject* target, Tag enemyType)
 
     switch (enemyType)
     {
-    //case Tag::TMogwai:
-    //    CreateMogwai(agent);
-    //    break;
-    //case Tag::TJiangshi:
-    //    CreateJiangshi(agent);
-    //    break;
-    //case Tag::TGuHuoNiao:
-    //    CreateGuHuoNiao(agent);
-    //    break;
+    case Tag::TMogwai:
+        CreateMogwai(agent);
+        break;
+    case Tag::TJiangshi:
+        CreateJiangshi(agent);
+        break;
+    case Tag::TGuHuoNiao:
+        CreateGuHuoNiao(agent);
+        break;
     default:
         CreateJiangshi(agent);
         break;
