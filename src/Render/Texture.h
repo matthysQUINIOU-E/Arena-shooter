@@ -9,7 +9,10 @@ namespace gce
 
 	class Texture
 	{
+		static std::unordered_map<std::string_view, Texture*> s_loadedTextures;
 	public:
+		static Texture* GetTexture(std::string_view path);
+
 		Texture() = default;
 		Texture(std::string_view path);
 		Texture(Texture const& other) = delete;

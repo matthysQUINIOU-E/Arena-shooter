@@ -48,7 +48,8 @@ gce::MeshRenderer* EntityWrapper::AddMeshRenderer(gce::Geometry* pGeo, const cha
 
 	if (albedoPath != "")
 	{
-		gce::Texture* pAlbedo = new gce::Texture(albedoPath);
+		gce::Texture* pAlbedo = gce::Texture::GetTexture(albedoPath);
+
 		component->pMaterial->albedoTextureID = pAlbedo->GetTextureID();
 		m_pDefaultTexture = pAlbedo;
 	}
@@ -63,65 +64,21 @@ gce::MeshRenderer* EntityWrapper::AddMeshRenderer(gce::Geometry* pGeo, const cha
 
 	if (roughnessPath != "")
 	{
-		gce::Texture* pRoughness = new gce::Texture(roughnessPath);
+		gce::Texture* pRoughness = gce::Texture::GetTexture(roughnessPath);
 		component->pMaterial->roughnessTextureID = pRoughness->GetTextureID();
 		component->pMaterial->useTextureRoughness = 1;
 	}
 
 	if (metalnessPath != "")
 	{
-		gce::Texture* pMetalness = new gce::Texture(metalnessPath);
+		gce::Texture* pMetalness = gce::Texture::GetTexture(metalnessPath);
 		component->pMaterial->metalnessTextureID = pMetalness->GetTextureID();
 		component->pMaterial->useTextureMetalness = 1;
 	}
 
 	if (normalPath != "")
 	{
-		gce::Texture* pNormal = new gce::Texture(normalPath);
-		component->pMaterial->normalTextureID = pNormal->GetTextureID();
-		component->pMaterial->useTextureNormal = 1;
-	}
-
-	component->pMaterial->subsurface = 1;
-	component->pPso = gce::GameManager::GetSceneManager().GetPSO();
-
-	return component;
-}
-
-gce::MeshRenderer* EntityWrapper::AddMeshRenderer(gce::Geometry* pGeo, gce::Texture* pAlbedo, gce::Texture* pRoughness, gce::Texture* pMetalness, gce::Texture* pNormal)
-{
-	gce::MeshRenderer* component = AddComponent<gce::MeshRenderer>();
-
-	component->pGeometry = pGeo;
-
-	if (pAlbedo)
-	{
-		component->pMaterial->albedoTextureID = pAlbedo->GetTextureID();
-		m_pDefaultTexture = pAlbedo;
-	}
-	else
-	{
-		gce::Texture* pWhite = gce::GameManager::s_pInstance->m_pWhiteTexture;
-		component->pMaterial->albedoTextureID = pWhite->GetTextureID();
-		m_pDefaultTexture = pWhite;
-	}
-
-	component->pMaterial->useTextureAlbedo = 1;
-
-	if (pRoughness)
-	{
-		component->pMaterial->roughnessTextureID = pRoughness->GetTextureID();
-		component->pMaterial->useTextureRoughness = 1;
-	}
-
-	if (pMetalness)
-	{
-		component->pMaterial->metalnessTextureID = pMetalness->GetTextureID();
-		component->pMaterial->useTextureMetalness = 1;
-	}
-
-	if (pNormal)
-	{
+		gce::Texture* pNormal = gce::Texture::GetTexture(normalPath);
 		component->pMaterial->normalTextureID = pNormal->GetTextureID();
 		component->pMaterial->useTextureNormal = 1;
 	}

@@ -7,7 +7,19 @@
 
 namespace gce
 {
+	std::unordered_map<std::string_view, Texture*> Texture::s_loadedTextures = {};
+
 	static uint32 globalID = 0;
+
+	Texture* Texture::GetTexture(std::string_view path)
+	{
+		auto it = s_loadedTextures.find(path);
+
+		if (it == s_loadedTextures.end())
+			s_loadedTextures[path] = new Texture(path);
+
+		return s_loadedTextures[path];
+	}
 
 	Texture::Texture(std::string_view const path)
 	{

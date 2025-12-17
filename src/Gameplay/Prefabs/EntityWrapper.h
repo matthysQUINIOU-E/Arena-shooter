@@ -17,10 +17,6 @@ public:
         const char* albedoPath = "", const char* roughnessPath = "",
         const char* metalnessPath = "", const char* normalPath = "");
 
-    gce::MeshRenderer* AddMeshRenderer(gce::Geometry* pGeo,
-        gce::Texture* pAlbedo = nullptr, gce::Texture* pRoughness = nullptr,
-        gce::Texture* pMetalness = nullptr, gce::Texture* pNormal = nullptr);
-
     gce::PhysicComponent* AddPhysics(float32 mass, float32 gravityScale, float32 bounciness);
 
     gce::TextRenderer* AddStaticTextRenderer(std::wstring txt, gce::RectanglePosF dimensions = { 0, 0, 200, 200 }, gce::Color txtColor = gce::Color::Black, std::wstring fontName = L""); // The text won't change
