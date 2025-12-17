@@ -268,16 +268,52 @@ bool IsPointNearLine(const gce::Vector3f32& a, const gce::Vector3f32& b, const g
     gce::Vector3f32 ap = p - a;
 
     float denom = d.DotProduct(d);
-    if (denom == 0.0f)  // a == b
-        return ap.DotProduct(ap) <= radius * radius;
+    float r2 = radius * radius;
+
+    if (denom < 1e-6f)
+        return ap.DotProduct(ap) <= r2;
 
     float t = ap.DotProduct(d) / denom;
+    t = std::clamp(t, 0.0f, 1.0f);
 
-    if (t < 0.0f) t = 0.0f;
-    else if (t > 1.0f) t = 1.0f;
+    gce::Vector3f32 diff = p - (a + d * t);
+    return diff.DotProduct(diff) <= r2;
+}
 
-    gce::Vector3f32 proj = a + d * t;
-    gce::Vector3f32 diff = p - proj;
+bool SegmentIntersectsRectXZ(const gce::Vector3f32& A, const gce::Vector3f32& B, float minX, float maxX, float minZ, float maxZ, float radius)
+{
+    minX -= radius; maxX += radius;
+    minZ -= radius; maxZ += radius;
 
-    return diff.DotProduct(diff) <= radius * radius;
+    gce::Vector3f32 p1{ minX, 0, minZ };
+    gce::Vector3f32 p2{ maxX, 0, minZ };
+    gce::Vector3f32 p3{ maxX, 0, maxZ };
+    gce::Vector3f32 p4{ minX, 0, maxZ };
+
+    return
+        SegmentsIntersectXZ(A, B, p1, p2) ||
+        SegmentsIntersectXZ(A, B, p2, p3) ||
+        SegmentsIntersectXZ(A, B, p3, p4) ||
+        SegmentsIntersectXZ(A, B, p4, p1);
+}
+
+bool SegmentsIntersectXZ(const gce::Vector3f32& A, const gce::Vector3f32& B, const gce::Vector3f32& C, const gce::Vector3f32& D)
+{
+    auto orient = [](float ax, float az,
+        float bx, float bz,
+        float cx, float cz)
+        {
+            return (bx - ax) * (cz - az) - (bz - az) * (cx - ax);
+        };
+
+    float o1 = orient(A.x, A.z, B.x, B.z, C.x, C.z);
+    float o2 = orient(A.x, A.z, B.x, B.z, D.x, D.z);
+    float o3 = orient(C.x, C.z, D.x, D.z, A.x, A.z);
+    float o4 = orient(C.x, C.z, D.x, D.z, B.x, B.z);
+
+    if ((o1 > 0 && o2 < 0 || o1 < 0 && o2 > 0) &&
+        (o3 > 0 && o4 < 0 || o3 < 0 && o4 > 0))
+        return true;
+
+    return false;
 }

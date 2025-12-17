@@ -21,7 +21,7 @@ void Agent::FollowPathToTarget()
 	if (m_isRotating)
 		RotateTowardDirection();
 
-	if (IsTargetInRange() || m_pTarget == nullptr )
+	if ((IsTargetInRange() && !IsTargetBehindObstacle()) || m_pTarget == nullptr )
 		return;
 	if (NeedCalculatePath())
 		FindPath();
@@ -80,6 +80,16 @@ float Agent::GetDistanceFromTarget()
 gce::GameObject* Agent::GetTarget()
 {
 	return m_pTarget;
+}
+
+
+bool Agent::IsTargetBehindObstacle()
+{
+	gce::Vector3f32 myPos = transform.GetWorldPosition();
+	myPos.y = 0.f;
+	gce::Vector3f32 targetPos = m_pTarget->transform.GetWorldPosition();
+	targetPos.y = 0.f;
+	return NavMesh::Instance()->DoesSegmentGoThroughObstacles(myPos, targetPos, 0.4f);
 }
 
 void Agent::CalculateNextLine()

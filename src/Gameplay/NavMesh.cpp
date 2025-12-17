@@ -57,17 +57,13 @@ bool NavMesh::DoesSegmentGoThroughObstacles(const gce::Vector3f32& A, const gce:
 	{
 		gce::Vector3f32 obstaclePos = obstacle->transform.GetWorldPosition();
 		gce::MeshRenderer* mr = obstacle->GetComponent<gce::MeshRenderer>();
-		gce::Geometry* geoObstacle = mr->pGeometry;
-		const float32& maxX = geoObstacle->max.x + obstaclePos.x;
-		const float32& maxZ = geoObstacle->max.z + obstaclePos.z;
-		const float32& minX = geoObstacle->min.x + obstaclePos.x;
-		const float32& minZ = geoObstacle->min.z + obstaclePos.z;
+		gce::Geometry* geo = mr->pGeometry;
+		float minX = geo->min.x + obstaclePos.x;
+		float maxX = geo->max.x + obstaclePos.x;
+		float minZ = geo->min.z + obstaclePos.z;
+		float maxZ = geo->max.z + obstaclePos.z;
 
-		if (IsPointNearLine(A, B, { maxX, 0.f, maxZ }, radius) ||
-			IsPointNearLine(A, B, { minX, 0.f, maxZ }, radius) || 
-			IsPointNearLine(A, B, { maxX, 0.f, minZ }, radius) || 
-			IsPointNearLine(A, B, { minX, 0.f, minZ }, radius))
-			
+		if (SegmentIntersectsRectXZ(A, B, minX, maxX, minZ, maxZ, radius))
 			return true;
 	}
 	return false;
