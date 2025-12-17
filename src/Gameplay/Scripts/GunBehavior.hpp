@@ -207,12 +207,15 @@ void Shoot()
 	{
 	case Tag::TMusket:
 		SetWeaponProperties(bulletScript, *pCurrent, 50.f, 2.f, { 5.f, 5.f, 5.f }, 15, 0.075f, 3.f);
+		AudioUse::Play("riffle");
 		break;
 	case Tag::TBlunderBuss:
 		SetWeaponProperties(bulletScript, *pCurrent, 35.f, 1.f, { 7.f, 7.f, 3.5f }, 40, 0.25f, 1.5f);
+		AudioUse::Play("shotgun");
 		break;
 	case Tag::TStarwheel:
 		SetWeaponProperties(bulletScript, *pCurrent, 40.f, 2.f, { 3.f, 3.f, 6.f }, 10, 0.05f, 4.f);
+		AudioUse::Play("gun");
 		break;
 	}
 

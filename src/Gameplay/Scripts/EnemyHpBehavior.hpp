@@ -42,7 +42,7 @@ void HandleDeathAnimation()
 
 void HandleDeath()
 {
-	AudioUse::Play("Vine Boom");
+	AudioUse::Play("vineboom");
 
 	m_pOwner->RemoveComponent<BoxCollider>();
 

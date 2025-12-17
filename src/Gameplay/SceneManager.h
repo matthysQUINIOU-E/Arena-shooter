@@ -59,6 +59,7 @@ public:
 	bool m_IsGamePlayInit = false;
 
 	void ChangeScene(SceneType newType);
+	void AddSound(const char* name, std::wstring path, gce::Category category, int volume);
 	void LoadSounds();
 	void LinkObjectToScene(gce::GameObject* obj, SceneType scene);
 

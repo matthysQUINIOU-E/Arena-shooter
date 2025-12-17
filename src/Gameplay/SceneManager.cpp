@@ -130,6 +130,11 @@ void SceneManager::Init()
 	m_pArenaCam->Create();
 	m_pArenaCam->SetParams(XM_PIDIV4, 0.001f, 500.0f, 1000.0f / 800.0f);
 
+	//Scene Manager Behavior
+	m_pEmpty = &EntityWrapper::Create();
+	m_pEmpty->SetProperties("SceneManager Object", { Tag::TMiscellaneous });
+	m_pEmpty->AddScript<SceneManagerBehavior>();
+
 	//MAP
 	for (gce::GameObject* go : ImportBlenderScene(L"scene_base.json"))
 	{
@@ -143,11 +148,6 @@ void SceneManager::Init()
 
 	//BulletPool
 	BulletPool::Init();
-
-	//Scene Manager Behavior
-	m_pEmpty = &EntityWrapper::Create();
-	m_pEmpty->SetProperties("SceneManager Object", { Tag::TMiscellaneous });
-	m_pEmpty->AddScript<SceneManagerBehavior>();
 
 	//UI
 	m_pUIManager = new UIManager();
@@ -189,14 +189,27 @@ void SceneManager::ChangeScene(SceneType newType)
 	m_currentSceneType = newType;
 }
 
+void SceneManager::AddSound(const char* name, std::wstring path, gce::Category category, int volume)
+{
+	std::wstring soundPath = WRES_PATH + path;
+	AudioUse::LoadSound(name, soundPath.c_str());
+	AudioUse::SetVolumeOfSound(name, volume);
+	AudioUse::SetAudioCategory(name, category);
+}
+
 void SceneManager::LoadSounds()
 {
-	AudioUse::SetMasterVolume(50); // Volume général : maximum 2^24
+	AudioUse::SetMasterVolume(100); // Volume général : maximum 2^24
 
-	std::wstring soundPath = WRES_PATH L"res/Audio/vineboom.mp3"; 
-	AudioUse::LoadSound("Vine Boom", soundPath.c_str());
+	AddSound("vineboom", L"res/Audio/vineboom.mp3", gce::Category::SFX, 300);
+	AddSound("gun", L"res/Audio/gun.wav", gce::Category::SFX, 15);
+	AddSound("riffle", L"res/Audio/riffle.wav", gce::Category::SFX, 15);
+	AddSound("shotgun", L"res/Audio/shotgun.wav", gce::Category::SFX, 200);
 
-	AudioUse::SetAudioCategory("Vine Boom", gce::Category::SFX);
+	AddSound("dash", L"res/Audio/dash.wav", gce::Category::SFX, 50);
+
+	AddSound("harpy_attack", L"res/Audio/harpy_attack.wav", gce::Category::SFX, 20);
+	AddSound("woosh", L"res/Audio/woosh.mp3", gce::Category::SFX, 300);
 }
 
 void SceneManager::LinkObjectToScene(gce::GameObject* obj, SceneType scene)

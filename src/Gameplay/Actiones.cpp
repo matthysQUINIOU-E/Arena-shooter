@@ -129,10 +129,24 @@ void DistanceAttack::Update(float deltaTime)
 		gce::GameObject* proj = m_projectiles->back();
 		EnemyProjectileBehavior* epb = proj->GetScript<EnemyProjectileBehavior>();
 		epb->Shoot(m_agent->transform.GetWorldPosition(), m_agent->GetTarget()->transform.GetWorldPosition());
+
 		m_projectiles->pop_back();
 		m_lauchedProjectiles.insert(proj);
 
 		(*m_ammo)--;
+
+		switch (m_agent->GetUniqueTag({ Tag::TMogwai, Tag::TJiangshi, Tag::TGuHuoNiao }))
+		{
+		case Tag::TMogwai:
+			break;
+		case Tag::TJiangshi:
+			break;
+		case Tag::TGuHuoNiao:
+			AudioUse::Play("harpy_attack");
+			break;
+		default:
+			break;
+		}
 	}
 
 	if (!m_attackReady)

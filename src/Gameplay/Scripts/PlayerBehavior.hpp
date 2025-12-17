@@ -221,6 +221,8 @@ void HandleDash()
 
 			dashProgressReloadTime -= dashTotalReloadTime / (float)maxDashAmount;
 			isDashing = true;
+
+			AudioUse::Play("dash");
 		}
 	}
 }
