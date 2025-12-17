@@ -30,6 +30,7 @@ enum class Tag // Game Objects Tags
     TNoodles,
     TNem,
     TRice,
+    TCollectibleAmmo,
 
     //Ammos
     THeavyAmmo,

@@ -52,8 +52,8 @@ void EnemyScriptHelper::InitJiangshi()
         return;
 
     m_baseProjectileReload = 10.f;
-    m_maxProjectiles = 1;
-    m_currentProjectiles = 1;
+    m_maxProjectiles = 0;
+    m_currentProjectiles = 0;
     m_rangeDistanceAttack = 3.f;
     m_projectileDamage = 7;
     m_projectileLifeTime = 1.f;
@@ -66,19 +66,6 @@ void EnemyScriptHelper::InitJiangshi()
     m_meleeAttackHitFrame = 0.6f;
     m_inAttack = false;
     m_meleeDamage = 10;
-
-
-    for (size_t i = 0; i < static_cast<int>(m_distanceAttackCooldown * m_projectileLifeTime) + 1; i++)
-    {
-        EntityWrapper& ew = EntityWrapper::Create();
-        ew.AddMeshRenderer(gce::SHAPES.CUBE, "");// TODO :: projectile jiangshi
-        EnemyProjectileBehavior* epb = ew.AddScript<EnemyProjectileBehavior>();
-        epb->m_baseLifeTime = m_projectileLifeTime;
-        epb->m_speed = m_projectileSpeed;
-        epb->m_damage = m_projectileSpeed;
-
-        m_projectiles.push_back(&ew);
-    }
 
     InitStateMachine();
 }

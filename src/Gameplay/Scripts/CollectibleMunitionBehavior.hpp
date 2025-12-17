@@ -1,28 +1,16 @@
 #pragma once
-
 #include <Render.h>
 #include <Engine.h>
 #include <Script.h>
 #include <algorithm>
 #include "Components.h"
-#include "HealthBehavior.hpp"
-#include "../SceneManager.h"
-#include "Prefabs/Player.h"
+#include "Prefabs/InventoryManager.h"
+#include "Prefabs/Ammos.h"
+#include "CollectibleMunitionManager.h"
 
 using namespace gce;
 
-DECLARE_SCRIPT(BonusManagerBehavior, ScriptFlag::Start | ScriptFlag::Update | ScriptFlag::Destroy)
-
-//Members
-
-float rotationSpeed = 2.f;
-int healValue = 0;
-bool CD = false;
-
-void SetProperties(int _healValue)
-{
-	healValue = _healValue;
-}
+DECLARE_SCRIPT(CollectibleMunitionBehavior, ScriptFlag::Update | ScriptFlag::Start | ScriptFlag::CollisionEnter)
 
 void Start()
 {
@@ -32,9 +20,9 @@ void Start()
 void Update()
 {
 	float dt = GameManager::DeltaTime();
-	float val = rotationSpeed * dt;
+	float val = m_rotationSpeed * dt;
 
-	m_pOwner->transform.WorldRotate({0, val, 0});
+	m_pOwner->transform.WorldRotate({ 0, val, 0 });
 	CheckCollision();
 }
 
@@ -81,10 +69,16 @@ void CheckCollision()
 
 		if (collision)
 		{
-			go->GetScript<HealthBehavior>()->Heal(healValue);
-			m_pOwner->SetActive(false);
+			InventoryManager* im = gce::GameManager::s_pInstance->GetSceneManager().GetInventoryManager();
+			Ammos* ammo = im->GetAmmos(m_ammoTag);
+			ammo->EarnAmmos(m_ammoEarn);
+			CollectibleMunitionManager::MunitionTook(m_pOwner);
 		}
 	}
 }
+
+Tag m_ammoTag;
+int m_ammoEarn = 10;
+float m_rotationSpeed = 2.0f;
 
 END_SCRIPT

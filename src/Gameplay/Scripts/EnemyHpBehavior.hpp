@@ -12,6 +12,8 @@
 #include "Scripts/GuhuoniaoBehavior.hpp"
 #include "Scripts/JiangshiBehavior.hpp"
 
+#include <CollectibleMunitionManager.h>
+
 using namespace gce;
 
 DECLARE_SCRIPT(EnemyHpBehavior, ScriptFlag::Start | ScriptFlag::Update)
@@ -43,7 +45,7 @@ void HandleDeathAnimation()
 void HandleDeath()
 {
 	AudioUse::Play("vineboom");
-
+	CollectibleMunitionManager::CreateRandomMunition(m_pOwner->transform.GetWorldPosition() + gce::Vector3f32{0.f,0.5f,0.f});
 	m_pOwner->RemoveComponent<BoxCollider>();
 
 	if (auto mogwaiScript = m_pOwner->GetScript<MogwaiBehavior>())

@@ -8,6 +8,7 @@
 #include "Components.h"
 #include "Scripts/HealthBehavior.hpp"
 #include "NavMesh.h"
+#include "CollectibleMunitionManager.h"
 
 using namespace gce;
 
@@ -22,12 +23,14 @@ void Start()
 void Reset()
 {
 	m_hitPoint = m_baseHitPoint;
+	m_pOwner->AddComponent<BoxCollider>();
 	m_pOwner->SetActive(true);
 }
 
 void DestroyFromMesh()
 {
 	NavMesh::Instance()->DisableObstacle(m_pOwner);
+	m_pOwner->RemoveComponent<BoxCollider>();
 }
 
 void GetHit()
@@ -36,6 +39,7 @@ void GetHit()
 	if (m_hitPoint <= 0) {
 		DestroyFromMesh();
 		m_pOwner->SetActive(false);
+		CollectibleMunitionManager::CreateRandomMunition(m_pOwner->transform.GetWorldPosition());
 	}
 }
 

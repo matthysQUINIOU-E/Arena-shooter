@@ -21,6 +21,7 @@
 #include "Prefabs/BonusManager.h"
 #include "Prefabs/BulletPool.h"
 
+#include "CollectibleMunitionManager.h"
 #include "Utils.h"
 #include "Agent.h"
 #include <ranges>
@@ -98,7 +99,7 @@ void SceneManager::UnInitGamePlay()
 
 		go->SetActive(false);
 	}
-
+	CollectibleMunitionManager::Reset();
 }
 
 void SceneManager::Init()
