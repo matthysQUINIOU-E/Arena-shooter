@@ -106,7 +106,7 @@ void HandleGettingWeaponAnimation(float dt, MeshRenderer* pMesh)
 	float valueRatio = (gce::PI / 4) * (1 - ratio);
 
 	Quaternion rotation = {};
-	rotation.SetRotationAxis(dir * GameManager::GetSceneManager().GetCameraObject()->transform.GetWorldForward(), valueRatio);
+	rotation.SetRotationAxis(dir, valueRatio);
 
 	m_pOwner->transform.SetLocalRotation(rotation * defaultRotation);
 
@@ -166,6 +166,7 @@ void Update()
 	if (IsReadyToUse() == false)
 	{
 		HandleGettingWeaponAnimation(dt, pMesh);
+		pMesh->pMaterial->useTextureAlbedo = 0;
 		return;
 	}
 
