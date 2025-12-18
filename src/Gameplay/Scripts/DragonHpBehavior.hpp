@@ -41,8 +41,6 @@ void HandleDeathAnimation()
 
 void HandleDeath()
 {
-
-
 	//DragonDeath 
 
 	m_pOwner->transform.SetWorldRotation({ 0, 0, 0 });

@@ -137,7 +137,7 @@ void SceneManager::Init()
 	m_pEmpty->AddScript<SceneManagerBehavior>();
 
 	//MAP
-	for (gce::GameObject* go : ImportBlenderScene(L"scene_base.json"))
+	for (gce::GameObject* go : ImportBlenderScene(L"scene_v2.json"))
 	{
 		go->AddTags({ Tag::TMapObject });
 		go->SetActive(false);
@@ -154,7 +154,7 @@ void SceneManager::Init()
 	m_pUIManager = new UIManager();
 	m_pUIManager->Init();
 	
-	ChangeScene(SceneType::WinScene);
+	ChangeScene(SceneType::MenuScene);
 }
 
 void SceneManager::ChangeScene(SceneType newType)

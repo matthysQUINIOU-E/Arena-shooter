@@ -12,6 +12,8 @@
 #include "Scripts/GunBehavior.hpp"
 #include "Scripts/HealthBehavior.hpp"
 #include "Scripts/PlayerBehavior.hpp"
+#include "Scripts/DragonBehavior.hpp"
+#include "Scripts/DragonHpBehavior.hpp"
 
 #include "../Prefabs/InventoryManager.h"
 #include "../Prefabs/UIManager.h"
@@ -43,6 +45,8 @@ CrosshairManager crosshair;
 UiBar hpBar;
 UiBar waveBar;
 UiBar dashBar;
+
+UiBar dragonBar;
 
 std::wstring NOTHING = L"";
 
@@ -225,6 +229,21 @@ void UpdateCrosshair()
 	crosshair.Update();
 }
 
+void UpdateDragonBar()
+{
+	auto dragon = GameManager::GetSceneManager().GetFirstGameObject({ Tag::TEnemy, Tag::TDragon });
+
+	if (dragon == nullptr)
+		return;
+
+	HealthBehavior* health = dragon->GetScript<HealthBehavior>();
+
+	if (health)
+	{
+		dragonBar.SetFilledBar1ByRatio(health->health, health->maxHealth);
+	}
+}
+
 void Start()
 {
 	pUIManager = GameManager::GetSceneManager().GetUIManager();
@@ -263,6 +282,9 @@ void Start()
 	dashBar.InitFrame("res/2D_Assets/Gameplay/dash_frame.png", { 639, 102 }, { middleX, WINDOW_HEIGHT - 100 }, { 1, 1 });
 
 	uiWeapon.Init();
+
+	dragonBar.InitFilledBar1("res/2D_Assets/Gameplay/dragon_bar.png", { 2402, 56 }, { middleX + 3, 190 }, { 0.35f, 0.35f });
+	dragonBar.InitFrame("res/2D_Assets/Gameplay/dragon_frame.png", { 3505, 816 }, { middleX + 3, 110 }, { 0.35f, 0.35f });
 }
 
 void Update()
@@ -275,9 +297,26 @@ void Update()
 	crosshair.SetActive(display);
 	hpBar.SetActive(display);
 	dashBar.SetActive(display);
-	waveBar.SetActive(display);
 
-	pWaveUI->SetActive(display);
+	if (auto dragon = GameManager::GetSceneManager().GetFirstGameObject({ Tag::TEnemy, Tag::TDragon }))
+	{
+		dragonBar.SetActive(true);
+		waveBar.SetActive(false);
+		UpdateDragonBar();
+		pWaveUI->SetActive(false);
+	}
+	else
+	{
+		dragonBar.SetActive(false);
+		waveBar.SetActive(true);
+		pWaveUI->SetActive(true);
+
+		auto wave = WaveManager::GetInstance();
+
+		waveTxt = L"Time : " + std::to_wstring((int)wave->m_waveTimer) + L" | Wave : " + std::to_wstring(wave->m_curentWave) + L"/" + std::to_wstring(wave->m_maxWave) + L"\n";
+		pWaveUI->GetComponent<TextRenderer>()->text = waveTxt;
+	}
+
 	uiWeapon.SetActive(display);
 
 	if (display == true)
@@ -292,14 +331,11 @@ void Update()
 		UpdateTakeDamageUI();
 		uiWeapon.Update();
 
-		auto wave = WaveManager::GetInstance();
-
-		waveTxt = L"Time : " + std::to_wstring((int)wave->m_waveTimer) + L" | Wave : " + std::to_wstring(wave->m_curentWave) + L"/" + std::to_wstring(wave->m_maxWave) + L"\n";
-
-		pWaveUI->GetComponent<TextRenderer>()->text = waveTxt;
 	}
 	else
 	{
+		dragonBar.SetActive(false);
+		pWaveUI->SetActive(false);
 		pTakeDamageUI->SetActive(false);
 		takeDamageTriggerVisual = false;
 	}
