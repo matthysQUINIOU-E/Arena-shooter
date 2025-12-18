@@ -34,6 +34,16 @@ void Agent::FollowPathToTarget()
 		FollowCurrentLine();
 }
 
+void Agent::ReleaseAllNodes()
+{
+	std::unordered_set<Node<NavTile, Agent>*> copyOccupiedNode = m_nodesOccupied;
+	for (Node<NavTile, Agent>* node : copyOccupiedNode)
+	{
+		m_nodesOccupied.erase(node);
+		node->occupiedByAgent = nullptr;
+	}
+}
+
 void Agent::SetTarget(GameObject* target)
 {
 	m_pTarget = target;

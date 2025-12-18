@@ -11,6 +11,7 @@ public:
 	static Agent& Create();
 
 	void FollowPathToTarget();
+	void ReleaseAllNodes();
 	void SetTarget(GameObject* target);
 	void SetSpeed(float speed);
 	void SetStopRange(float stopRange);

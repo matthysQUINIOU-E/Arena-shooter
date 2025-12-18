@@ -60,7 +60,9 @@ void HandleDeath()
 	m_pOwner->transform.SetWorldRotation({ 0, 0, 0 });
 	m_pOwner->SetActive(false);
 
-	WaveManager::GetInstance()->EnnemyKilled(dynamic_cast<Agent*>(m_pOwner));
+	Agent* agent = dynamic_cast<Agent*>(m_pOwner);
+	WaveManager::GetInstance()->EnnemyKilled(agent);
+	agent->ReleaseAllNodes();
 
 	animDeathProgress = 0.f;
 	animDeathTrigger = false;
