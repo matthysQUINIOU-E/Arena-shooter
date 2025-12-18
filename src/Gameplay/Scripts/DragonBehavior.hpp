@@ -21,15 +21,6 @@ float m_idleRange;
 int m_circlePoints;
 float m_timeBetweenPaterns;
 
-int m_MaxFireBall;
-int m_FireBallDamage;
-float m_fireBallLifeTime;
-float m_fireBallSpeed;
-
-int m_laserDamage;
-float m_damageTickFrequency;
-float m_laserRotationSpeed;
-
 std::vector<gce::GameObject*> m_fireBalls;
 std::unordered_set<gce::GameObject*> m_launchedFireBalls;
 std::vector<gce::GameObject*> m_laser;
@@ -60,18 +51,9 @@ void Start()
 	m_speed = 10.f;
 	m_rotationSpeed = 3.f;
 
-	m_idleRange = 10.f;
-	m_circlePoints = 30;
+	m_idleRange = 20.f;
+	m_circlePoints = 360;
 	m_timeBetweenPaterns = 8.f;
-
-	m_MaxFireBall;
-	m_FireBallDamage;
-	m_fireBallLifeTime;
-	m_fireBallSpeed;
-
-	m_laserDamage;
-	m_damageTickFrequency;
-	m_laserRotationSpeed;
 
 	m_isPatternFinishedC = IsPatternFinished(&m_isAttackFinished);
 	m_isRotationFinishedC = IsRotationFinished(&m_isRotationFinished);
@@ -80,7 +62,7 @@ void Start()
 	m_rotateTowardTarget = RotateTowardTarget(m_pOwner, &m_targetPos, &m_isRotationFinished, m_rotationSpeed);
 	m_rotateAround = RotateAround(m_pOwner, m_player, &m_targetPos, &m_isRotationFinished, m_circlePoints, m_speed, m_idleRange);
 	m_bossLoadAttack = BossLoadAttack(&m_isAttackLoaded, m_timeBetweenPaterns, m_player, &m_targetPos);
-	m_bossAttack = BossAttack(m_pOwner, &m_isAttackFinished); //TODO complete
+	m_bossAttack = BossAttack(m_pOwner, m_player, &m_isAttackFinished); 
 
 	m_stateMachine.AddStateAction(State::BOSS_IDLE, m_rotateAround);
 	m_stateMachine.AddStateAction(State::BOSS_IDLE, m_rotateTowardTarget);

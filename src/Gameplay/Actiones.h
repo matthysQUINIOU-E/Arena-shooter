@@ -1,5 +1,6 @@
 #pragma once
 #include "Agent.h"
+#include "BossPattern.h"
 
 class Actione
 {
@@ -127,15 +128,15 @@ private:
 class BossAttack : public Actione
 {
 public:
-	BossAttack() {}
-	BossAttack(gce::GameObject* owner, bool* isAttackFinished);
+	BossAttack() :m_bossPattern(nullptr,nullptr){}
+	BossAttack(gce::GameObject* owner, gce::GameObject* player, bool* isAttackFinished);
 
 	void Update(float deltaTime) override;
 	void Reset() override;
 
 private:
-	gce::GameObject* m_owner;
+	BossPattern m_bossPattern;
+	bool m_patternPlaned;
+	float m_patternDuration;
 	bool* m_isAttackFinished;
-	float m_baseAttackTime;
-	float m_attackTime;
 };
