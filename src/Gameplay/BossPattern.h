@@ -6,7 +6,7 @@
 enum class BossTypeAttack
 {
 	FIREBALL,
-	LASER
+	// LASER
 };
 
 class BossPattern
@@ -19,9 +19,9 @@ public:
 
 private:
 	void LaunchFireball();
-	void LaunchLaser();
+	// void LaunchLaser();
 	void CreateFireBall();
-	void CreateLaser();
+	// void CreateLaser();
 	void CheckAttackEnd();
 	void CheckAttackCollision();
 	void MoveAttacks(float deltaTime);
@@ -41,21 +41,23 @@ private:
 	gce::GameObject* m_player;
 
 	std::vector<gce::GameObject*> m_fireballPool;
-	std::vector<gce::GameObject*> m_laserPool;
+	// std::vector<gce::GameObject*> m_laserPool;
 	std::unordered_set<gce::GameObject*> m_launchedFireball;
 	std::unordered_map<gce::GameObject*, gce::Vector3f32> m_mapFireballDir;
-	std::unordered_set<gce::GameObject*> m_launchedLaser;
+	// std::unordered_set<gce::GameObject*> m_launchedLaser;
+	// std::unordered_map<gce::GameObject*, float32> m_mapLaserTetha;
+	// std::unordered_map<gce::GameObject*, float32> m_mapLaserRotationDone;
 
 	std::mt19937 m_rng;
 	std::uniform_real_distribution<float> m_offSetPositionDistribution;
 	std::uniform_real_distribution<float> m_patternTimeDistribution;
 	std::uniform_int_distribution<int> m_numberOfFireballDistribution;
-	std::uniform_int_distribution<int> m_numberOfLaserDistribution;
+	// std::uniform_int_distribution<int> m_numberOfLaserDistribution;
 
 	int m_fireBallDamage;
 	float m_fireBallSpeed;
 
-	int m_laserDamage;
-	float m_damageTickFrequency;
-	float m_laserRotationSpeed;
+	// int m_laserDamage;
+	// float m_damageTickFrequency;
+	// float m_laserRotationSpeed;
 };
