@@ -77,6 +77,9 @@ void Update()
 {
 	bool display = pUIManager->IsSceneType(SceneType::MenuScene);
 
+	if (display == true)
+		ShowMouseCursor();
+
 	pParchemin->SetActive(display);
 	pTitle->SetActive(display);
 	pButtonPlay->SetActive(display);
