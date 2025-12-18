@@ -137,6 +137,5 @@ public:
 private:
 	BossPattern m_bossPattern;
 	bool m_patternPlaned;
-	float m_patternDuration;
 	bool* m_isAttackFinished;
 };

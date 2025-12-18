@@ -14,7 +14,8 @@ class BossPattern
 public:
 	BossPattern(gce::GameObject* boss, gce::GameObject* player);
 	void Update(float deltaTime);
-	float GeneratePattern();
+	void GeneratePattern();
+	bool IsPatternFinished();
 
 private:
 	void LaunchFireball();
@@ -23,6 +24,7 @@ private:
 	void CreateLaser();
 	void CheckAttackEnd();
 	void CheckAttackCollision();
+	void MoveAttacks(float deltaTime);
 private:
 	struct AttackTimeComparator
 	{
@@ -41,10 +43,11 @@ private:
 	std::vector<gce::GameObject*> m_fireballPool;
 	std::vector<gce::GameObject*> m_laserPool;
 	std::unordered_set<gce::GameObject*> m_launchedFireball;
+	std::unordered_map<gce::GameObject*, gce::Vector3f32> m_mapFireballDir;
 	std::unordered_set<gce::GameObject*> m_launchedLaser;
 
 	std::mt19937 m_rng;
-	std::uniform_real_distribution<float> m_offSetDistribution;
+	std::uniform_real_distribution<float> m_offSetPositionDistribution;
 	std::uniform_real_distribution<float> m_patternTimeDistribution;
 	std::uniform_int_distribution<int> m_numberOfFireballDistribution;
 	std::uniform_int_distribution<int> m_numberOfLaserDistribution;

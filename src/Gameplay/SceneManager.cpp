@@ -59,7 +59,7 @@ void SceneManager::InitGamePlay()
 	LinkObjectToScene(&entityWrapper, SceneType::GamePlayScene);
 
 	EntityWrapper& dragon = EntityWrapper::Create();
-	dragon.SetProperties("Dragon", { Tag::TEnemy }, { 0, 15, 0 }, { 0, 0, 0 }, { 2, 2, 2 });
+	dragon.SetProperties("Dragon", { Tag::TEnemy }, { 0, 15, 0 }, { 0, 0, 0 });
 	dragon.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/dragon/dragon.obj"), "res/Assets/dragon/dragon_base_color.png");
 	dragon.AddComponent<gce::BoxCollider>();
 	dragon.AddScript<DragonBehavior>();

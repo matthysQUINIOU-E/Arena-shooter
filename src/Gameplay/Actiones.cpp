@@ -312,7 +312,7 @@ void BossAttack::Update(float deltaTime)
 {
 	if (!m_patternPlaned)
 	{
-		m_patternDuration = m_bossPattern.GeneratePattern();
+		m_bossPattern.GeneratePattern();
 		m_patternPlaned = true;
 	}
 
@@ -320,8 +320,7 @@ void BossAttack::Update(float deltaTime)
 		return;
 
 	m_bossPattern.Update(deltaTime);
-	m_patternDuration -= deltaTime;
-	if (m_patternDuration <= 0.f)
+	if (m_bossPattern.IsPatternFinished())
 		*m_isAttackFinished = true;
 }
 
