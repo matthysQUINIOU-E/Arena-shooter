@@ -75,7 +75,7 @@ void Update()
 		{
 			animDeathTrigger = false;
 			HandleDeath();
-			GameManager::GetSceneManager().ChangeScene(SceneType::MenuScene);
+			GameManager::GetSceneManager().ChangeScene(SceneType::WinScene);
 		}
 
 		return;
@@ -85,6 +85,11 @@ void Update()
 	{
 		if (animHitProgress < animHitDuration)
 		{
+			if (animHitProgress == 0.f)
+			{
+				AudioUse::Play("dragon_roar");
+			}
+
 			animHitProgress += GameManager::DeltaTime();
 			m_pOwner->GetComponent<MeshRenderer>()->pMaterial->albedoTextureID = GameManager::s_pInstance->m_pRedTexture->GetTextureID();
 		}

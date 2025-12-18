@@ -319,9 +319,9 @@ void BossLoadAttack::Reset()
 	m_attackLoadTime = 0.f;
 }
 
-BossAttack::BossAttack(gce::GameObject* owner, gce::GameObject* player, bool* isAttackFinished):
-	m_bossPattern(owner, player)
+BossAttack::BossAttack(BossPattern* pPattern, bool* isAttackFinished)
 {
+	m_bossPattern = pPattern;
 	m_isAttackFinished = isAttackFinished;
 	m_patternPlaned = false;
 }
@@ -330,15 +330,15 @@ void BossAttack::Update(float deltaTime)
 {
 	if (!m_patternPlaned)
 	{
-		m_bossPattern.GeneratePattern();
+		m_bossPattern->GeneratePattern();
 		m_patternPlaned = true;
 	}
 
 	if (*m_isAttackFinished) 
 		return;
 
-	m_bossPattern.Update(deltaTime);
-	if (m_bossPattern.IsPatternFinished())
+	m_bossPattern->Update(deltaTime);
+	if (m_bossPattern->IsPatternFinished())
 		*m_isAttackFinished = true;
 }
 

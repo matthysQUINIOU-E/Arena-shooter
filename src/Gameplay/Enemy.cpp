@@ -46,7 +46,7 @@ void Enemy::CreateDragon()
         EntityWrapper& dragon = EntityWrapper::Create();
         dragon.SetProperties("Dragon", { Tag::TEnemy }, { 0, 15, 0 }, { 0, 0, 0 });
         dragon.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/dragon/dragon.obj"), "res/Assets/dragon/dragon_base_color.png");
-        dragon.AddScript<HealthBehavior>()->SetMaxHP(1500);
+        dragon.AddScript<HealthBehavior>()->SetMaxHP(1);
         dragon.AddScript<DragonHpBehavior>();
         dragon.AddComponent<gce::BoxCollider>();
         dragon.AddScript<DragonBehavior>();

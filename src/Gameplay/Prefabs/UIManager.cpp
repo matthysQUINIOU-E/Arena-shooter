@@ -5,6 +5,7 @@
 #include "Scripts/UIGameplayBehavior.hpp"
 #include "Scripts/UIMenuBehavior.hpp"
 #include "Scripts/UIGameOverBehavior.hpp"
+#include "Scripts/UIWinBehavior.hpp";
 
 void UIManager::Init()
 {
@@ -12,6 +13,7 @@ void UIManager::Init()
 	owner.AddScript<UIGameplayBehavior>();
 	owner.AddScript<UIMenuBehavior>();
 	owner.AddScript<UIGameOverBehavior>();
+	owner.AddScript<UIWinBehavior>();
 }
 
 bool UIManager::IsSceneType(SceneType type)

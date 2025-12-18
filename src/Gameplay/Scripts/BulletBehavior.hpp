@@ -8,6 +8,7 @@
 #include "../Prefabs/BulletPool.h"
 #include "../Scripts/HealthBehavior.hpp"
 #include "../Scripts/EnemyHpBehavior.hpp"
+#include "../Scripts/DragonHpBehavior.hpp"
 
 #include <limits>
 #include "Scripts/DestructibleBehavior.hpp"
@@ -257,6 +258,11 @@ void Update()
 		if (pCollided->HasTags({ Tag::TEnemy }))
 		{
 			if (auto animation = pCollided->GetScript<EnemyHpBehavior>())
+			{
+				animation->TriggerHitAnim();
+			}
+
+			if (auto animation = pCollided->GetScript<DragonHpBehavior>())
 			{
 				animation->TriggerHitAnim();
 			}

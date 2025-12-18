@@ -128,14 +128,14 @@ private:
 class BossAttack : public Actione
 {
 public:
-	BossAttack() :m_bossPattern(nullptr,nullptr){}
-	BossAttack(gce::GameObject* owner, gce::GameObject* player, bool* isAttackFinished);
+	BossAttack() {};
+	BossAttack(BossPattern* pPattern, bool* isAttackFinished);
 
 	void Update(float deltaTime) override;
 	void Reset() override;
 
 private:
-	BossPattern m_bossPattern;
+	BossPattern* m_bossPattern;
 	bool m_patternPlaned;
 	bool* m_isAttackFinished;
 };

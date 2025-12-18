@@ -17,7 +17,7 @@
 
 using namespace gce;
 
-DECLARE_SCRIPT(UIGameOverBehavior, ScriptFlag::Start | ScriptFlag::Update)
+DECLARE_SCRIPT(UIWinBehavior, ScriptFlag::Start | ScriptFlag::Update)
 
 UIManager* pUIManager = nullptr;
 
@@ -29,6 +29,9 @@ EntityWrapper* pParchemin = nullptr;
 EntityWrapper* pButtonPlay = nullptr;
 EntityWrapper* pButtonExit = nullptr;
 
+EntityWrapper* pScore = nullptr;
+std::wstring scoreTxt;
+
 std::wstring NOTHING = L"";
 
 //Functions
@@ -36,11 +39,6 @@ std::wstring NOTHING = L"";
 static void OnTriggerButtonPlay()
 {
 	GameManager::GetSceneManager().ChangeScene(SceneType::GamePlayScene);
-}
-
-static void OnTriggerButtonSettings()
-{
-
 }
 
 static void OnTriggerButtonExit()
@@ -61,7 +59,7 @@ void Start()
 	pParchemin->AddUIButton({ middle.x, middle.y }, { 0, 0 }, { 581, 1026 }, "res/2D_Assets/Menu/parchemin.png");
 
 	pTitle = &EntityWrapper::Create();
-	pTitle->AddUIButton({ middle.x, 250 }, { 0, 0 }, { 892 * 0.75f, 280 * 0.75f }, "res/2D_Assets/Menu/gameover_title.png");
+	pTitle->AddUIButton({ middle.x, 250 }, { 0, 0 }, { 882 * 0.75f, 283 * 0.75f }, "res/2D_Assets/Win/victory.png");
 
 	//PLAY
 	pButtonPlay = &EntityWrapper::Create();
@@ -70,20 +68,35 @@ void Start()
 	//EXIT
 	pButtonExit = &EntityWrapper::Create();
 	pButtonExit->AddUIButton({ middle.x, middle.y + 150 }, { 0, 0 }, { 312, 99 }, "res/2D_Assets/Menu/exit.png", "res/2D_Assets/Menu/exit_survol.png")->AddListener(OnTriggerButtonExit);
+
+	//Score
+	pScore = &EntityWrapper::Create();
+	pScore->AddDynamicTextRenderer(scoreTxt, { middle.x - 450, middle.y - 200, middle.x, 0 }, gce::Color::Black, { 0.75, 0.75 });
+	scoreTxt = std::to_wstring(ScoreManager::GetScore());
 }
 
 void Update()
 {
-	bool display = pUIManager->IsSceneType(SceneType::GameOverScene);
+	bool display = pUIManager->IsSceneType(SceneType::WinScene);
 
 	if (display == true)
 		ShowMouseCursor();
 
 	pBackground->SetActive(display);
 	pParchemin->SetActive(display);
+
 	pTitle->SetActive(display);
+
 	pButtonPlay->SetActive(display);
 	pButtonExit->SetActive(display);
+
+	pScore->SetActive(display);
+
+	if (display == true)
+	{
+		scoreTxt = L"Score : " + std::to_wstring(ScoreManager::GetScore());
+		pScore->GetComponent<TextRenderer>()->text = scoreTxt;
+	}
 }
 
 END_SCRIPT

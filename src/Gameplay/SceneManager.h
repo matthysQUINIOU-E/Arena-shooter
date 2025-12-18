@@ -20,10 +20,8 @@ enum SceneType
 {
 	MenuScene,
 	GamePlayScene,
-	PauseScene,
 	GameOverScene,
-	ArsenalScene,
-	Options,
+	WinScene,
 	Count
 };
 

@@ -154,7 +154,7 @@ void SceneManager::Init()
 	m_pUIManager = new UIManager();
 	m_pUIManager->Init();
 	
-	ChangeScene(SceneType::GameOverScene);
+	ChangeScene(SceneType::WinScene);
 }
 
 void SceneManager::ChangeScene(SceneType newType)
@@ -232,9 +232,9 @@ void SceneManager::LoadSounds()
 	AddSound("harpy_hitplayer", L"res/Audio/harpy_hitplayer.wav", gce::Category::SFX, 50);
 	AddSound("harpy_death", L"res/Audio/harpy_death.wav", gce::Category::SFX, 50);
 
-	AddSound("dragon_roar", L"res/Audio/dragon_roar.wav", gce::Category::SFX, 100);
-	AddSound("dragon_wander", L"res/Audio/dragon_wander.wav", gce::Category::SFX, 100);
-	AddSound("fireball", L"res/Audio/fireball.wav", gce::Category::SFX, 100);
+	AddSound("dragon_roar", L"res/Audio/dragon_roar.wav", gce::Category::SFX, 35);
+	AddSound("dragon_wander", L"res/Audio/dragon_wander.wav", gce::Category::SFX, 75);
+	AddSound("fireball", L"res/Audio/fireball.wav", gce::Category::SFX, 40);
 }
 
 void SceneManager::LinkObjectToScene(gce::GameObject* obj, SceneType scene)

@@ -38,7 +38,7 @@ public:
 	float m_baseWaveTimer = 120.f;
 	float m_waveTimer = 0.f;
 
-	int m_maxWave = 5;
+	int m_maxWave = 1;
 	int m_curentWave = 0;
 
 	std::unordered_map<Tag,std::vector<Agent*>> m_ennemiesFreePool;

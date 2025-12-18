@@ -32,6 +32,23 @@ BossPattern::BossPattern(gce::GameObject* boss, gce::GameObject* player)
 	//m_laserRotationSpeed = 0.7f;
 }
 
+BossPattern::~BossPattern()
+{
+	for (size_t i = 0; i < m_fireballPool.size(); i++)
+	{
+		m_fireballPool[i]->Destroy();
+	}
+
+	m_fireballPool.clear();
+
+	for (gce::GameObject* go : m_launchedFireball)
+	{
+		go->Destroy();
+	}
+
+	m_launchedFireball.clear();
+}
+
 void BossPattern::Update(float deltaTime)
 {
 	m_timeSincePatternStart += deltaTime;
@@ -64,6 +81,8 @@ void BossPattern::Update(float deltaTime)
 
 void BossPattern::GeneratePattern()
 {
+	AudioUse::Play("dragon_wander");
+
 	m_attackToLaunchQueue = std::priority_queue<std::pair<float, BossTypeAttack>, std::vector<std::pair<float, BossTypeAttack>>, AttackTimeComparator>();
 
 	m_timeSincePatternStart = 0.0f;
@@ -127,6 +146,8 @@ void BossPattern::LaunchFireball()
 
 	m_launchedFireball.insert(fireball);
 	m_mapFireballDir[fireball] = dir;
+
+	AudioUse::Play("fireball");
 }
 
 /*

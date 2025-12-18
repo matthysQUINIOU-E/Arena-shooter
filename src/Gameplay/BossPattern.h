@@ -17,6 +17,12 @@ public:
 	void GeneratePattern();
 	bool IsPatternFinished();
 
+	~BossPattern();
+
+public:
+	gce::GameObject* m_boss;
+	gce::GameObject* m_player;
+
 private:
 	void LaunchFireball();
 	// void LaunchLaser();
@@ -36,9 +42,6 @@ private:
 
 	float m_timeSincePatternStart;
 	std::priority_queue<std::pair<float, BossTypeAttack>, std::vector<std::pair<float, BossTypeAttack>>, AttackTimeComparator> m_attackToLaunchQueue;
-
-	gce::GameObject* m_boss;
-	gce::GameObject* m_player;
 
 	std::vector<gce::GameObject*> m_fireballPool;
 	// std::vector<gce::GameObject*> m_laserPool;

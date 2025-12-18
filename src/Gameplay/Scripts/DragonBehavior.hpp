@@ -39,6 +39,7 @@ RotateAround m_rotateAround;
 BossLoadAttack m_bossLoadAttack;
 BossAttack m_bossAttack;
 
+BossPattern m_bossPattern = BossPattern(m_pOwner, m_player);
 
 void Start()
 {
@@ -62,7 +63,10 @@ void Start()
 	m_rotateTowardTarget = RotateTowardTarget(m_pOwner, &m_targetPos, &m_isRotationFinished, m_rotationSpeed);
 	m_rotateAround = RotateAround(m_pOwner, m_player, &m_targetPos, &m_isRotationFinished, m_circlePoints, m_speed, m_idleRange);
 	m_bossLoadAttack = BossLoadAttack(&m_isAttackLoaded, m_timeBetweenPaterns, m_player, &m_targetPos);
-	m_bossAttack = BossAttack(m_pOwner, m_player, &m_isAttackFinished); 
+
+	m_bossPattern.m_boss = m_pOwner;
+	m_bossPattern.m_player = m_player;
+	m_bossAttack = BossAttack(&m_bossPattern, &m_isAttackFinished); 
 
 	m_stateMachine.AddStateAction(State::BOSS_IDLE, m_rotateAround);
 	m_stateMachine.AddStateAction(State::BOSS_IDLE, m_rotateTowardTarget);
