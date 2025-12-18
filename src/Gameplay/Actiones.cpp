@@ -72,7 +72,24 @@ void MeleeAttack::Update(float deltaTime)
 		(*m_attackLaunched) = false;
 		m_currentAttackFrame = 0.f;
 		if (m_agent->GetDistanceFromTarget() <= m_hitRange)
+		{
+			switch (m_agent->GetUniqueTag({ Tag::TMogwai, Tag::TJiangshi, Tag::TGuHuoNiao }))
+			{
+			case Tag::TMogwai:
+				AudioUse::Play("mogwai_hitplayer");
+				break;
+			case Tag::TJiangshi:
+				AudioUse::Play("jiangshi_hitplayer");
+				break;
+			case Tag::TGuHuoNiao:
+				AudioUse::Play("harpy_hitplayer");
+				break;
+			default:
+				break;
+			}
+
 			GameManager::GetSceneManager().GetFirstGameObject({ Tag::TPlayer })->GetScript<HealthBehavior>()->TakeDamage(m_damage);
+		}
 	}
 
 	if (!m_attackReady && !(*m_attackLaunched))
@@ -131,6 +148,7 @@ void DistanceAttack::Update(float deltaTime)
 
 		gce::GameObject* proj = m_projectiles->back();
 		EnemyProjectileBehavior* epb = proj->GetScript<EnemyProjectileBehavior>();
+		epb->SetThrower(m_agent);
 		epb->Shoot(m_agent->transform.GetWorldPosition(), m_agent->GetTarget()->transform.GetWorldPosition());
 
 		m_projectiles->pop_back();
@@ -141,7 +159,7 @@ void DistanceAttack::Update(float deltaTime)
 		switch (m_agent->GetUniqueTag({ Tag::TMogwai, Tag::TJiangshi, Tag::TGuHuoNiao }))
 		{
 		case Tag::TMogwai:
-			AudioUse::Play("woosh");
+			AudioUse::Play("knife_sharpen");
 			break;
 		case Tag::TJiangshi:
 			break;

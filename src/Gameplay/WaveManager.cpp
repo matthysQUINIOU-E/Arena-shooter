@@ -130,6 +130,7 @@ void WaveManager::TryNextWave()
 	m_waveTimer = m_baseWaveTimer;
 	m_curentWave++;
 	m_currentEnnemiesToSpawn += GetEnnemiesNumberForWave(m_curentWave);
+	m_currentMaxEnnemiesToSpawn = m_currentEnnemiesToSpawn;
 	m_baseSpawnTimer = (m_baseWaveTimer * 0.25) / m_currentEnnemiesToSpawn;
 }
 
@@ -159,6 +160,10 @@ void WaveManager::TrySpawn()
 	
 	int tagIndex = m_ennemyTagDistrubution(m_rng);
 	Tag tag = m_ennemyTag[tagIndex];
+
+	if (m_ennemiesFreePool[tag].empty())
+		return;
+
 	Agent* ennemy = m_ennemiesFreePool[tag].back();
 
 	m_ennemiesSpawnedPool.insert(ennemy);

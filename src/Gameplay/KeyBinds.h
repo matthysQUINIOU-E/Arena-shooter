@@ -17,14 +17,8 @@ enum class KeyAction
 	InventorySlot2,
 	InventorySlot3,
 	InventorySlot4,
-	InventorySlot5,
-
 
 	ToggleFullScreen,
-
-	// DEBUG FEATURES // TODO REMOVE AT THE END
-	Crash,
-	LockUnlockMouse,
 };
 
 class KeyBinds

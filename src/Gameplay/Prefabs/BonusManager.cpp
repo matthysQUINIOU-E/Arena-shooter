@@ -8,7 +8,7 @@ EntityWrapper* BonusManager::CreateNem(gce::Vector3f32 pos)
     EntityWrapper& nem = EntityWrapper::Create();
     nem.SetProperties("Nem", { Tag::TCollectible, Tag::THeal, Tag::TNem }, pos, { 0, 0, 0 }, { 8, 8, 8 });
     nem.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/nem/nem.obj"), "res/Assets/nem/nem_base_color.png");
-    nem.AddScript<BonusManagerBehavior>()->SetProperties(10);
+    nem.AddScript<BonusManagerBehavior>()->SetProperties(20);
     return &nem;
 }
 

@@ -13,6 +13,7 @@
 #include "Scripts/JiangshiBehavior.hpp"
 
 #include <CollectibleMunitionManager.h>
+#include "../Prefabs/ScoreManager.h"
 
 using namespace gce;
 
@@ -44,7 +45,6 @@ void HandleDeathAnimation()
 
 void HandleDeath()
 {
-	AudioUse::Play("vineboom");
 	CollectibleMunitionManager::CreateRandomMunition(m_pOwner->transform.GetWorldPosition() + gce::Vector3f32{0.f,0.5f,0.f});
 	m_pOwner->RemoveComponent<BoxCollider>();
 
@@ -80,6 +80,25 @@ void Update()
 {
 	if (animDeathTrigger)
 	{
+		if (animDeathProgress == 0.f)
+		{
+			switch (m_pOwner->GetUniqueTag({ Tag::TMogwai, Tag::TJiangshi, Tag::TGuHuoNiao }))
+			{
+			case Tag::TMogwai:
+				AudioUse::Play("mogwai_death");
+				break;
+			case Tag::TJiangshi:
+				AudioUse::Play("jiangshi_death");
+				break;
+			case Tag::TGuHuoNiao:
+				AudioUse::Play("harpy_death");
+				break;
+
+			default:
+				AudioUse::Play("vineboom");
+			}
+		}
+
 		if (animDeathProgress < animDeathDuration)
 		{
 			animDeathProgress += GameManager::DeltaTime();

@@ -20,7 +20,7 @@ int maxCapacity = 0;
 
 void SetAmmoType(Tag type) { typeOfAmmo = type; }
 
-const bool& IsWeaponEmpty() const
+const bool& IsWeaponHasAmmo() const
 {
 	if (ammosLeft <= 0)
 		return false;

@@ -44,10 +44,12 @@ void GenerateHeal()
 	}
 	CDTime = 60.f;
 }
+
 void Start()
 {
 
 }
+
 void Update()
 {
 	if (init == false)

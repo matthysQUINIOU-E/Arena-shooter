@@ -6,6 +6,10 @@
 #include "Components.h"
 #include "Prefabs/EntityWrapper.h"
 
+#include "Scripts/WeaponMagazineBehavior.hpp"
+#include "Scripts/GunBehavior.hpp"
+#include "Scripts/HealthBehavior.hpp"
+
 #include "GameManager.h"
 #include "SceneManager.h"
 #include "Prefabs/InventoryManager.h"
@@ -18,15 +22,29 @@ DECLARE_SCRIPT(UIGameOverBehavior, ScriptFlag::Start | ScriptFlag::Update)
 UIManager* pUIManager = nullptr;
 
 //Members
+EntityWrapper* pBackground = nullptr;
 EntityWrapper* pTitle = nullptr;
+EntityWrapper* pParchemin = nullptr;
 
 EntityWrapper* pButtonPlay = nullptr;
-EntityWrapper* pPlay = nullptr;
+EntityWrapper* pButtonExit = nullptr;
 
-EntityWrapper* pButtonMenu = nullptr;
-EntityWrapper* pMenu = nullptr;
+EntityWrapper* pScore = nullptr;
+std::wstring scoreTxt;
 
 std::wstring NOTHING = L"";
+
+//pScore->SetActive(display);
+//
+//if (display == true)
+//{
+//	scoreTxt = L"Score : " + std::to_wstring(ScoreManager::GetScore());
+//	pScore->GetComponent<TextRenderer>()->text = scoreTxt;
+//}
+//
+//pScore = &EntityWrapper::Create();
+//pScore->AddDynamicTextRenderer(scoreTxt, { middle.x - 400, middle.y - 100, middle.x, 0 }, gce::Color::Black, { 0.6, 0.6 });
+//scoreTxt = std::to_wstring(ScoreManager::GetScore());
 
 //Functions
 
@@ -35,31 +53,38 @@ static void OnTriggerButtonPlay()
 	GameManager::GetSceneManager().ChangeScene(SceneType::GamePlayScene);
 }
 
-static void OnTriggerButtonMenu()
+static void OnTriggerButtonSettings()
+{
+
+}
+
+static void OnTriggerButtonExit()
 {
 	GameManager::GetSceneManager().ChangeScene(SceneType::MenuScene);
 }
 
 void Start()
 {
+	gce::Vector2f32 middle = { WINDOW_WIDTH / 2.f, WINDOW_HEIGHT / 2.f };
+
 	pUIManager = GameManager::GetSceneManager().GetUIManager();
 
+	pBackground = &EntityWrapper::Create();
+	pBackground->AddUIButton(middle, { 0, 0 }, { 1920, 1080 }, "res/2D_Assets/Menu/menu_bg.png");
+
+	pParchemin = &EntityWrapper::Create();
+	pParchemin->AddUIButton({ middle.x, middle.y }, { 0, 0 }, { 581, 1026 }, "res/2D_Assets/Menu/parchemin.png");
+
 	pTitle = &EntityWrapper::Create();
-	pTitle->AddStaticTextRenderer(L"Game Over >W<", { 800, 350, 0, 0 }, gce::Color::Magenta);
+	pTitle->AddUIButton({ middle.x, 250 }, { 0, 0 }, { 892 * 0.75f, 280 * 0.75f }, "res/2D_Assets/Menu/gameover_title.png");
 
 	//PLAY
 	pButtonPlay = &EntityWrapper::Create();
-	pButtonPlay->AddUIButton({ 960, 540 }, { 0, 0 }, { 300, 150 }, "res/Texture/jaune.jpg")->AddListener(OnTriggerButtonPlay);
+	pButtonPlay->AddUIButton({ middle.x, middle.y }, { 0, 0 }, { 312, 99 }, "res/2D_Assets/Menu/play.png", "res/2D_Assets/Menu/play_survol.png")->AddListener(OnTriggerButtonPlay);
 
-	pPlay = &EntityWrapper::Create();
-	pPlay->AddStaticTextRenderer(L"Try Again", { 850, 500,0, 0 }, gce::Color::Black);
-
-	//MENU
-	pButtonMenu = &EntityWrapper::Create();
-	pButtonMenu->AddUIButton({ 960, 750 }, { 0, 0 }, { 300, 150 }, "res/Texture/jaune.jpg")->AddListener(OnTriggerButtonMenu);
-
-	pMenu = &EntityWrapper::Create();
-	pMenu->AddStaticTextRenderer(L"Give Up :C", { 840, 710, 0, 0 }, gce::Color::Black);
+	//EXIT
+	pButtonExit = &EntityWrapper::Create();
+	pButtonExit->AddUIButton({ middle.x, middle.y + 150 }, { 0, 0 }, { 312, 99 }, "res/2D_Assets/Menu/exit.png", "res/2D_Assets/Menu/exit_survol.png")->AddListener(OnTriggerButtonExit);
 }
 
 void Update()
@@ -69,13 +94,11 @@ void Update()
 	if (display == true)
 		ShowMouseCursor();
 
+	pBackground->SetActive(display);
+	pParchemin->SetActive(display);
 	pTitle->SetActive(display);
-
 	pButtonPlay->SetActive(display);
-	pPlay->SetActive(display);
-
-	pButtonMenu->SetActive(display);
-	pMenu->SetActive(display);
+	pButtonExit->SetActive(display);
 }
 
 END_SCRIPT

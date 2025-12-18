@@ -80,6 +80,35 @@ gce::GameObject* CheckCollision()
 		}
 	}
 
+	for (gce::GameObject* go : GameManager::GetSceneManager().GetAllGameObjects({ Tag::TDestructible }))
+	{
+		if (!go || !go->IsActive())
+			continue;
+
+		auto& transform2 = go->transform;
+
+		gce::Vector3f32 pos2 = transform2.GetWorldPosition();
+		gce::Vector3f32 scale2 = transform2.GetWorldScale();
+
+		MeshRenderer* pMesh2 = go->GetComponent<MeshRenderer>();
+		if (!pMesh2)
+			continue;
+
+		auto& geo2 = pMesh2->pGeometry;
+
+		gce::Vector3f32 min2 = pos2 + geo2->min * scale2;
+		gce::Vector3f32 max2 = pos2 + geo2->max * scale2;
+
+		// Test AABB
+		bool collision =
+			(min1.x <= max2.x && max1.x >= min2.x) &&
+			(min1.y <= max2.y && max1.y >= min2.y) &&
+			(min1.z <= max2.z && max1.z >= min2.z);
+
+		if (collision)
+			return go;
+	}
+
 	return nullptr;
 }
 
@@ -174,6 +203,9 @@ void Update()
 
 	if (isHitting)
 	{
+		if(unloadProgress == 0.f)
+			AudioUse::Play("spear_attack");
+
 		if (unloadProgress < unloadSpeed)
 		{
 			unloadProgress += dt;
@@ -188,6 +220,7 @@ void Update()
 
 				if (auto health = pCollided->GetScript<HealthBehavior>())
 				{
+					AudioUse::Play("spear_hit");
 					health->TakeDamage(damage);
 				}
 			}
