@@ -5,6 +5,8 @@
 #include "Scripts/MogwaiBehavior.hpp"
 #include "Scripts/HealthBehavior.hpp"
 #include "Scripts/EnemyHpBehavior.hpp"
+#include "Scripts/DragonHpBehavior.hpp"
+#include "Scripts/DragonBehavior.hpp"
 
 void Enemy::CreateMogwai(Agent& agent)
 {
@@ -39,6 +41,20 @@ void Enemy::CreateGuHuoNiao(Agent& agent)
     agent.AddScript<GuHuoNiaoBehavior>();
 }
 
+void Enemy::CreateDragon()
+{
+        EntityWrapper& dragon = EntityWrapper::Create();
+        dragon.SetProperties("Dragon", { Tag::TEnemy }, { 0, 15, 0 }, { 0, 0, 0 }, { 2, 2, 2 });
+        dragon.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/dragon/dragon.obj"), "res/Assets/dragon/dragon_base_color.png");
+        dragon.AddScript<HealthBehavior>()->SetMaxHP(10);
+        dragon.AddScript<DragonHpBehavior>();
+        dragon.AddComponent<gce::BoxCollider>();
+        dragon.AddScript<DragonBehavior>();
+        GameManager::GetSceneManager().LinkObjectToScene(&dragon, SceneType::GamePlayScene);
+        return;
+
+}
+
 Agent& Enemy::CreateEnemy(gce::GameObject* target, Tag enemyType)
 {
     Agent& agent = Agent::Create();
@@ -59,6 +75,8 @@ Agent& Enemy::CreateEnemy(gce::GameObject* target, Tag enemyType)
     case Tag::TGuHuoNiao:
         CreateGuHuoNiao(agent);
         break;
+    case Tag::TDragon:
+        CreateDragon();
     default:
         CreateJiangshi(agent);
         break;

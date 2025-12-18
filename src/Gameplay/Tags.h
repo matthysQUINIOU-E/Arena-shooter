@@ -41,5 +41,6 @@ enum class Tag // Game Objects Tags
     //Mobs
     TMogwai,
     TJiangshi,
-    TGuHuoNiao
+    TGuHuoNiao,
+    TDragon
 };

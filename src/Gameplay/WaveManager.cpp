@@ -4,6 +4,7 @@
 #include <Enemy.h>
 #include "Scripts/HealthBehavior.hpp"
 
+
 WaveManager* WaveManager::s_instance = nullptr;
 
 WaveManager* WaveManager::GetInstance()
@@ -71,6 +72,7 @@ void WaveManager::SetEnemyTarget()
 
 WaveManager::WaveManager()
 {
+	
 	std::random_device rand = std::random_device();
 	m_rng = std::mt19937(rand());
 	m_ennemyTag = { Tag::TMogwai, Tag::TJiangshi, Tag::TGuHuoNiao };
@@ -136,8 +138,16 @@ void WaveManager::TrySpawn()
 	if (GameManager::GetSceneManager().GetSceneType() != SceneType::GamePlayScene)
 		return;
 
+
 	if (m_currentEnnemiesToSpawn == 0 || m_currentEnnemiesAlives >= m_maxSimultanateEnnemies)
 		return; 
+	if (m_curentWave == m_maxWave)
+	{
+		gce::GameObject* player = gce::GameManager::GetSceneManager().GetFirstGameObject({ Tag::TPlayer });
+		CreateEnnemy(Tag::TDragon, player);
+		m_currentEnnemiesToSpawn = 0;
+		return;
+	}
 
 	if (m_spawnTimer < m_baseSpawnTimer)
 	{
