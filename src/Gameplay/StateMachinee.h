@@ -10,9 +10,10 @@ enum class State
 	MELEE_ATTACK,
 	DISTANCE_ATTACK,
 	MOVE,
-	BOSS_MOVE,
+
+	BOSS_IDLE,
+	BOSS_PREPARE_TO_ATTACK,
 	BOSS_ATTACK,
-	BOSS_ATTACK2,
 };
 
 class StateMachinee

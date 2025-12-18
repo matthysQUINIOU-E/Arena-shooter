@@ -1,5 +1,6 @@
 #pragma once
 #include "Agent.h"
+#include "BossPattern.h"
 
 class Actione
 {
@@ -68,4 +69,73 @@ private:
 	bool m_attackReady;
 	std::vector<gce::GameObject*>* m_projectiles;
 	std::unordered_set<gce::GameObject*> m_lauchedProjectiles;
+};
+
+class RotateTowardTarget : public Actione
+{
+public:
+	RotateTowardTarget() {}
+	RotateTowardTarget(gce::GameObject* owner, gce::Vector3f32* target, bool* rotationFinised, float rotationSpeed);
+
+	void Update(float deltaTime) override;
+	void Reset() override;
+private:
+	gce::GameObject* m_owner;
+	gce::Vector3f32* m_target;
+	bool* m_rotationFinised;
+	float m_rotationSpeed;
+};
+
+class RotateAround : public Actione
+{
+public:
+	RotateAround() {}
+	RotateAround(gce::GameObject* owner, gce::GameObject* target, gce::Vector3f32* translateTarget, bool* isRotationFinished, int circlePoints, float speed, float radius);
+
+	void Update(float deltaTime) override;
+	void Reset() override;
+private:
+	void ChangeTarget();
+private:
+	gce::GameObject* m_owner;
+	gce::GameObject* m_target;
+	gce::Vector3f32* m_translateTarget;
+	bool* m_isRotationFinished;
+	float m_stepRadian;
+	float m_speed;
+	float m_radius;
+	bool m_isTranslateTargetSet;
+	gce::Vector3f32 m_direction;
+	float32 m_distanceToTravel;
+};
+
+class BossLoadAttack : public Actione
+{
+public:
+	BossLoadAttack() {}
+	BossLoadAttack(bool* isAttackLoaded, float attackLoadTime, gce::GameObject* player, gce::Vector3f32* target);
+
+	void Update(float deltaTime) override;
+	void Reset() override;
+private:
+	bool* m_isAttackLoaded;
+	float m_baseAttackLoadTime;
+	float m_attackLoadTime;
+	gce::GameObject* m_player;
+	gce::Vector3f32* m_target;
+};
+
+class BossAttack : public Actione
+{
+public:
+	BossAttack() :m_bossPattern(nullptr,nullptr){}
+	BossAttack(gce::GameObject* owner, gce::GameObject* player, bool* isAttackFinished);
+
+	void Update(float deltaTime) override;
+	void Reset() override;
+
+private:
+	BossPattern m_bossPattern;
+	bool m_patternPlaned;
+	bool* m_isAttackFinished;
 };

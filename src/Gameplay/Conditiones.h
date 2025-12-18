@@ -45,3 +45,36 @@ private:
 	bool m_attacking;
 	float m_distanceRange;
 };
+
+class IsPatternFinished : public Conditione
+{
+public:
+	IsPatternFinished() {}
+	IsPatternFinished(bool* isPatternFinished);
+	
+	bool Get() override;
+private:
+	bool* m_isPatternFinished;
+};
+
+class IsRotationFinished : public Conditione
+{
+public:
+	IsRotationFinished() {}
+	IsRotationFinished(bool* isRotationFinished);
+
+	bool Get() override;
+private:
+	bool* m_isRotationFinished;
+};
+
+class IsAttackLoaded : public Conditione
+{
+public:
+	IsAttackLoaded() {}
+	IsAttackLoaded(bool* isAttackLoaded);
+
+	bool Get() override;
+private:
+	bool* m_isAttackLoaded;
+};

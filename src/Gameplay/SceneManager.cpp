@@ -57,13 +57,6 @@ void SceneManager::InitGamePlay()
 	EntityWrapper& entityWrapper = EntityWrapper::Create();
 	entityWrapper.AddScript<WaveManagerBehavior>();
 	LinkObjectToScene(&entityWrapper, SceneType::GamePlayScene);
-
-	//EntityWrapper& dragon = EntityWrapper::Create();
-	//dragon.SetProperties("Dragon", { Tag::TEnemy }, { 0, 15, 0 }, { 0, 0, 0 }, { 2, 2, 2 });
-	//dragon.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/dragon/dragon.obj"), "res/Assets/dragon/dragon_base_color.png");
-	//dragon.AddComponent<gce::BoxCollider>();
-	//dragon.AddScript<DragonBehavior>();
-	//LinkObjectToScene(&dragon, SceneType::GamePlayScene);
 }
 
 void SceneManager::UnInitGamePlay()
@@ -203,7 +196,7 @@ void SceneManager::AddSound(const char* name, std::wstring path, gce::Category c
 
 void SceneManager::LoadSounds()
 {
-	AudioUse::SetMasterVolume(100); // Volume général : maximum 2^24
+	AudioUse::SetMasterVolume(100); // Volume gï¿½nï¿½ral : maximum 2^24
 
 	AddSound("vineboom", L"res/Audio/vineboom.mp3", gce::Category::SFX, 300);
 	AddSound("gun", L"res/Audio/gun.wav", gce::Category::SFX, 15);

@@ -35,3 +35,33 @@ bool CantAttack::Get()
 {
 	return !m_agent->IsTargetInRange() || (m_agent->GetStopRange() == m_distanceRange && (*m_ammo) == 0);
 }
+
+IsPatternFinished::IsPatternFinished(bool* isPatternFinished)
+{
+	m_isPatternFinished = isPatternFinished;
+}
+
+bool IsPatternFinished::Get()
+{
+	return *m_isPatternFinished;
+}
+
+IsRotationFinished::IsRotationFinished(bool* isRotationFinished)
+{
+	m_isRotationFinished = isRotationFinished;
+}
+
+bool IsRotationFinished::Get()
+{
+	return *m_isRotationFinished;
+}
+
+IsAttackLoaded::IsAttackLoaded(bool* isAttackLoaded)
+{
+	m_isAttackLoaded = isAttackLoaded;
+}
+
+bool IsAttackLoaded::Get()
+{
+	return *m_isAttackLoaded;
+}
