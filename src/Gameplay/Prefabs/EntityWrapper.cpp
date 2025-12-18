@@ -100,7 +100,7 @@ gce::PhysicComponent* EntityWrapper::AddPhysics(float32 mass, float32 gravitySca
 	return component;
 }
 
-gce::TextRenderer* EntityWrapper::AddStaticTextRenderer(std::wstring txt, gce::RectanglePosF dimensions, gce::Color txtColor, std::wstring fontName)
+gce::TextRenderer* EntityWrapper::AddStaticTextRenderer(std::wstring txt, gce::RectanglePosF dimensions, gce::Color txtColor, gce::Vector2f32 scale, std::wstring fontName)
 {
 	gce::TextRenderer* component = AddComponent<gce::TextRenderer>();
 
@@ -110,11 +110,12 @@ gce::TextRenderer* EntityWrapper::AddStaticTextRenderer(std::wstring txt, gce::R
 	std::wstring* pTxt = new std::wstring(txt);
 	component->text = *pTxt;
 	component->rectPosF = new gce::RectanglePosF(dimensions);
+	component->scale = scale;
 
 	return component;
 }
 
-gce::TextRenderer* EntityWrapper::AddDynamicTextRenderer(std::wstring& txt, gce::RectanglePosF dimensions, gce::Color txtColor, std::wstring fontName)
+gce::TextRenderer* EntityWrapper::AddDynamicTextRenderer(std::wstring& txt, gce::RectanglePosF dimensions, gce::Color txtColor, gce::Vector2f32 scale, std::wstring fontName)
 {
 	gce::TextRenderer* component = AddComponent<gce::TextRenderer>();
 
@@ -122,6 +123,7 @@ gce::TextRenderer* EntityWrapper::AddDynamicTextRenderer(std::wstring& txt, gce:
 	component->pBrush = new gce::ColorBrush(txtColor);
 	component->text = txt;
 	component->rectPosF = new gce::RectanglePosF(dimensions);
+	component->scale = scale;
 
 	return component;
 }
@@ -151,14 +153,15 @@ gce::UIButton* EntityWrapper::AddUIButton(gce::Vector2f32 pos, gce::Vector2f32 r
 	}
 	else
 	{
-		component->pBitMapBrush = new gce::BitMapBrush(textureBrushPath);
+		auto bitmap = new gce::BitMapBrush(textureBrushPath);
+		component->pBitMapBrush = bitmap;
 
 		if (textureHoverBrushPath == "")
 		{
 			component->pHoverBitMapBrush = component->pBitMapBrush;
 		}
 		else
-			component->pHoverBitMapBrush = new gce::BitMapBrush(textureHoverBrushPath);
+			component->pHoverBitMapBrush = bitmap;
 	}
 
 	return component;

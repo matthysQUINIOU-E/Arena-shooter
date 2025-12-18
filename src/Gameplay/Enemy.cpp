@@ -60,7 +60,7 @@ Agent& Enemy::CreateEnemy(gce::GameObject* target, Tag enemyType)
         CreateGuHuoNiao(agent);
         break;
     default:
-        CreateGuHuoNiao(agent);
+        CreateJiangshi(agent);
         break;
     }
 

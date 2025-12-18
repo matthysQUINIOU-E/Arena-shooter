@@ -7,7 +7,7 @@
 
 using namespace gce;
 
-DECLARE_SCRIPT(HealthBehavior, ScriptFlag::Start | ScriptFlag::Update)
+DECLARE_SCRIPT(HealthBehavior, ScriptFlag::Start)
 
 int health = 1;
 int maxHealth = 1;
@@ -46,18 +46,6 @@ void FillHP()
 
 void Start()
 {
-}
-
-void Update()
-{
-	/*if (IsAlive() == false)
-	{
-		std::cout << m_pOwner->GetName() << " is dead !\n";
-	}
-	else
-	{
-		std::cout << "PV : " << health << "/" << maxHealth << std::endl;
-	}*/
 }
 
 END_SCRIPT

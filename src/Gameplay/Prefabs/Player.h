@@ -13,6 +13,7 @@ class Player
 	EntityWrapper* m_pGameObject;
 public:
 	void Create();
+	void Reset();
 
 	EntityWrapper* GetGameObject() { return m_pGameObject; }
 };

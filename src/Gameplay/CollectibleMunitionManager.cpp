@@ -56,7 +56,7 @@ void CollectibleMunitionManager::MunitionTook(gce::GameObject* munition)
 
 void CollectibleMunitionManager::Reset()
 {
-	std::vector<gce::GameObject*> ammos = gce::GameManager().s_pInstance->GetSceneManager().GetAllGameObjects({ Tag::TCollectibleAmmo });
+	std::vector<gce::GameObject*> ammos = gce::GameManager::GetSceneManager().GetAllGameObjects({ Tag::TCollectibleAmmo });
 	for (size_t i = 0; i < ammos.size(); i++)
 	{
 		gce::GameObject* ammo = ammos[i];

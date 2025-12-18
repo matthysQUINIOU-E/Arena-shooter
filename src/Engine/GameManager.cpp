@@ -75,7 +75,7 @@ namespace gce {
         m_lifespanSystem.HandleCreations();
         m_lifespanSystem.HandleDeletions();
 
-        while (m_pWindow->IsOpen())
+        while (m_pWindow->IsOpen() && m_running)
         {
             m_deltaTime = m_chrono.Reset();
             HandleFPS();

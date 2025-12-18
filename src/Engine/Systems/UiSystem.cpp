@@ -78,7 +78,7 @@ void UiSystem::HandleUiRendering()
 		if ( pTextRenderer->IsActive() == false || pTextRenderer->m_created == false ) continue;
 
 		pWindow->SetActiveBrush( *pTextRenderer->pBrush );
-		pWindow->DrawTextUI( pTextRenderer->text, *pTextRenderer->pFont, *pTextRenderer->rectPosF );
+		pWindow->DrawTextUI( pTextRenderer->text, *pTextRenderer->pFont, *pTextRenderer->rectPosF, pTextRenderer->scale );
 	}
 
 	for (UiImage* pImage : UiImage::s_list)
