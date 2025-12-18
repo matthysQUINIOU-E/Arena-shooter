@@ -180,11 +180,10 @@ void RotateTowardTarget::Update(float deltaTime)
 	if (*m_rotationFinised)
 		return;
 
-	const gce::Vector3f32 ownerPos =
-		m_owner->transform.GetWorldPosition();
+	const gce::Vector3f32 ownerPos = m_owner->transform.GetWorldPosition();
 
-	gce::Vector3f32 forward =
-		m_owner->transform.GetWorldForward();
+	gce::Vector3f32 forward = m_owner->transform.GetWorldForward();
+	forward = -forward;
 	forward.y = 0.f;
 	if (forward.Norm() < 0.0001f) return;
 	forward.SelfNormalize();
@@ -197,8 +196,7 @@ void RotateTowardTarget::Update(float deltaTime)
 	float dot = gce::Clamp(forward.DotProduct(toTarget), -1.f, 1.f);
 	float angle = acosf(dot);
 
-	float sign =
-		(forward.CrossProduct(toTarget).y >= 0.f) ? 1.f : -1.f;
+	float sign = (forward.CrossProduct(toTarget).y >= 0.f) ? 1.f : -1.f;
 
 	float deltaYaw = angle * sign;
 
@@ -229,6 +227,7 @@ RotateAround::RotateAround(gce::GameObject* owner, gce::GameObject* target, gce:
 	m_stepRadian = (2.f * gce::PI)/circlePoints;
 	m_speed = speed;
 	m_radius = radius;
+	m_isTranslateTargetSet = false;
 }
 
 void RotateAround::Update(float deltaTime)

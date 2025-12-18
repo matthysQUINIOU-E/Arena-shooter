@@ -14,8 +14,6 @@ bool m_isRotationFinished;
 bool m_isAttackLoaded;
 bool m_isAttackFinished;
 
-gce::GameObject* m_player;
-
 float m_speed;
 float m_rotationSpeed;
 
@@ -36,7 +34,7 @@ std::vector<gce::GameObject*> m_fireBalls;
 std::unordered_set<gce::GameObject*> m_launchedFireBalls;
 std::vector<gce::GameObject*> m_laser;
 
-gce::GameObject* m_Player;
+gce::GameObject* m_player;
 gce::Vector3f32 m_targetPos;
 
 StateMachinee m_stateMachine;
@@ -62,7 +60,7 @@ void Start()
 	m_speed = 10.f;
 	m_rotationSpeed = 3.f;
 
-	m_idleRange = 30.f;
+	m_idleRange = 10.f;
 	m_circlePoints = 30;
 	m_timeBetweenPaterns = 8.f;
 
@@ -80,7 +78,7 @@ void Start()
 	m_isAttackLoadedC = IsAttackLoaded(&m_isAttackLoaded);
 
 	m_rotateTowardTarget = RotateTowardTarget(m_pOwner, &m_targetPos, &m_isRotationFinished, m_rotationSpeed);
-	m_rotateAround = RotateAround(m_pOwner, m_Player, &m_targetPos, &m_isRotationFinished, m_circlePoints, m_speed, m_idleRange);
+	m_rotateAround = RotateAround(m_pOwner, m_player, &m_targetPos, &m_isRotationFinished, m_circlePoints, m_speed, m_idleRange);
 	m_bossLoadAttack = BossLoadAttack(&m_isAttackLoaded, m_timeBetweenPaterns, m_player, &m_targetPos);
 	m_bossAttack = BossAttack(m_pOwner, &m_isAttackFinished); //TODO complete
 
