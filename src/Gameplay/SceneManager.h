@@ -32,6 +32,8 @@ namespace gce {
 	class GameObject;
 }
 
+constexpr int FULLSCORE = 1000;
+
 class SceneManager
 {
 	std::vector<gce::GameObject*> m_Map; // All the objects imported by the json

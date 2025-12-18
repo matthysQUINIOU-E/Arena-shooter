@@ -150,6 +150,10 @@ void WaveManager::TrySpawn()
 	
 	int tagIndex = m_ennemyTagDistrubution(m_rng);
 	Tag tag = m_ennemyTag[tagIndex];
+
+	if (m_ennemiesFreePool[tag].empty())
+		return;
+
 	Agent* ennemy = m_ennemiesFreePool[tag].back();
 
 	m_ennemiesSpawnedPool.insert(ennemy);

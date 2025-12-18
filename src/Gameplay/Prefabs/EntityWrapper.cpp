@@ -161,7 +161,7 @@ gce::UIButton* EntityWrapper::AddUIButton(gce::Vector2f32 pos, gce::Vector2f32 r
 			component->pHoverBitMapBrush = component->pBitMapBrush;
 		}
 		else
-			component->pHoverBitMapBrush = bitmap;
+			component->pHoverBitMapBrush = new gce::BitMapBrush(textureHoverBrushPath);
 	}
 
 	return component;

@@ -19,6 +19,7 @@
 #include "../Prefabs/CrosshairManager.h"
 #include "../Prefabs/UIWeaponManager.h"
 #include "../WaveManager.h"
+#include "../Prefabs/ScoreManager.h"
 
 using namespace gce;
 
@@ -27,9 +28,8 @@ DECLARE_SCRIPT(UIGameplayBehavior, ScriptFlag::Start | ScriptFlag::Update)
 UIManager* pUIManager = nullptr;
 
 //Members
-EntityWrapper* pFpsUI = nullptr;
-std::wstring fpsTxt;
-float mRefreshProgress = 0.f;
+EntityWrapper* pScoreUI = nullptr;
+std::wstring scoreTxt;
 
 EntityWrapper* pAmmoUI = nullptr;
 std::wstring ammoTxt;
@@ -101,19 +101,10 @@ void UpdateTakeDamageUI()
 	}
 }
 
-void UpdateFpsUI()
+void UpdateScoreUI()
 {
-	if (mRefreshProgress < 0)
-	{
-		mRefreshProgress = 0.5f;
-
-		fpsTxt = L"FPS : " + std::to_wstring((int)GameManager::FPS());
-		pFpsUI->UpdateDynamicText(fpsTxt);
-	}
-	else
-	{
-		mRefreshProgress -= GameManager::DeltaTime();
-	}
+	scoreTxt = L"Score : " + std::to_wstring(ScoreManager::GetScore());
+	pScoreUI->UpdateDynamicText(scoreTxt);
 }
 void UpdateAmmosUI()
 {
@@ -238,8 +229,8 @@ void Start()
 {
 	pUIManager = GameManager::GetSceneManager().GetUIManager();
 
-	pFpsUI = &EntityWrapper::Create();
-	pFpsUI->AddDynamicTextRenderer(fpsTxt, { 1350, 10, 300, 300 }, gce::Color::Black, {1, 1});
+	pScoreUI = &EntityWrapper::Create();
+	pScoreUI->AddDynamicTextRenderer(scoreTxt, { WINDOW_WIDTH - 500, 10, 500, 300 }, gce::Color::Black, {0.6, 0.6});
 
 	pAmmoUI = &EntityWrapper::Create();
 	gce::Vector3f32 ammoPos = { WINDOW_WIDTH - 575, WINDOW_HEIGHT - 120, 0.f };
@@ -280,7 +271,7 @@ void Update()
 
 	pAmmoUI->SetActive(display);
 	pTotalAmmoUI->SetActive(display);
-	pFpsUI->SetActive(display);
+	pScoreUI->SetActive(display);
 	crosshair.SetActive(display);
 	hpBar.SetActive(display);
 	dashBar.SetActive(display);
@@ -291,7 +282,7 @@ void Update()
 
 	if (display == true)
 	{
-		UpdateFpsUI();
+		UpdateScoreUI();
 		UpdateAmmosUI();
 		UpdateTotalAmmoUI();
 		UpdateCrosshair();

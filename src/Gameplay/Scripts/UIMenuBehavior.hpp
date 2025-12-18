@@ -22,6 +22,7 @@ DECLARE_SCRIPT(UIMenuBehavior, ScriptFlag::Start | ScriptFlag::Update)
 UIManager* pUIManager = nullptr;
 
 //Members
+EntityWrapper* pBackground = nullptr;
 EntityWrapper* pTitle = nullptr;
 EntityWrapper* pParchemin = nullptr;
 
@@ -54,12 +55,15 @@ void Start()
 
 	pUIManager = GameManager::GetSceneManager().GetUIManager();
 
+	pBackground = &EntityWrapper::Create();
+	pBackground->AddUIButton(middle, { 0, 0 }, { 1920, 1080 }, "res/2D_Assets/Menu/menu_bg.png");
+
 	pParchemin = &EntityWrapper::Create();
 	pParchemin->AddUIButton({ middle.x, middle.y }, { 0, 0 }, { 581, 1026 }, "res/2D_Assets/Menu/parchemin.png");
 
 	pTitle = &EntityWrapper::Create();
-	pTitle->AddStaticTextRenderer(L"Legend of Zhu Min : God Legacy", {1000, 250, -450, 0}, gce::Color::Magenta);
-
+	pTitle->AddUIButton({ middle.x, 250 }, { 0, 0 }, { 500, 500 }, "res/2D_Assets/Menu/title.png");
+	
 	//PLAY
 	pButtonPlay = &EntityWrapper::Create();
 	pButtonPlay->AddUIButton({ middle.x, middle.y - 100}, { 0, 0 }, { 312, 99 }, "res/2D_Assets/Menu/play.png", "res/2D_Assets/Menu/play_survol.png")->AddListener(OnTriggerButtonPlay);
@@ -80,6 +84,7 @@ void Update()
 	if (display == true)
 		ShowMouseCursor();
 
+	pBackground->SetActive(display);
 	pParchemin->SetActive(display);
 	pTitle->SetActive(display);
 	pButtonPlay->SetActive(display);

@@ -216,15 +216,15 @@ void Shoot()
 	switch (m_pOwner->GetUniqueTag({ Tag::TMusket, Tag::TBlunderBuss, Tag::TStarwheel }))
 	{
 	case Tag::TMusket:
-		SetWeaponProperties(bulletScript, *pCurrent, 35.f, 4.f, { 5.f, 5.f, 5.f }, 20, 0.075f, 3.f);
+		SetWeaponProperties(bulletScript, *pCurrent, 35.f, 4.f, { 6.f, 6.f, 6.f }, 20, 0.075f, 3.f);
 		AudioUse::Play("riffle");
 		break;
 	case Tag::TBlunderBuss:
-		SetWeaponProperties(bulletScript, *pCurrent, 35.f, 1.f, { 7.f, 7.f, 3.5f }, 50, 0.30f, 1.5f);
+		SetWeaponProperties(bulletScript, *pCurrent, 35.f, 1.f, { 8.f, 8.f, 4.f }, 50, 0.30f, 1.5f);
 		AudioUse::Play("shotgun");
 		break;
 	case Tag::TStarwheel:
-		SetWeaponProperties(bulletScript, *pCurrent, 35.f, 4.f, { 3.f, 3.f, 6.f }, 10, 0.04f, 4.f);
+		SetWeaponProperties(bulletScript, *pCurrent, 35.f, 4.f, { 4.f, 4.f, 6.f }, 15, 0.04f, 4.f);
 		AudioUse::Play("gun");
 		break;
 	}

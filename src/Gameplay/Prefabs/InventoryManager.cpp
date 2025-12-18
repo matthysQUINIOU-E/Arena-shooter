@@ -106,7 +106,7 @@ gce::GameObject* InventoryManager::CreateStarwheel()
 	ammoManagerScript->SetMaxCapacity(20);
 
 	auto gunBehavior = starwheel.AddScript<GunBehavior>();
-	gunBehavior->SetUnloadSpeed(0.15);
+	gunBehavior->SetUnloadSpeed(0.2);
 	gunBehavior->SetReloadTime(1.5f);
 	gunBehavior->SetAmmoManagerScript(ammoManagerScript);
 

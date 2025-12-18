@@ -108,11 +108,6 @@ void DeathAnimation()
 
 void LookAround()
 {
-	if (GetKeyDown(KeyBinds::GetKeyBind(KeyAction::LockUnlockMouse)))
-	{
-		stopLookAround = !stopLookAround;
-	}
-
 	if (m_pOwner->GetChildren().Empty() || stopLookAround == true)
 	{
 		ShowMouseCursor();
@@ -184,7 +179,7 @@ void BasicControls() // Move + Jump
 			gce::Force f;
 
 			f.direction = { 0, 1, 0 };
-			f.norm = 5000;
+			f.norm = 3000;
 			f.useApplicationPoint = true;
 			f.relativeApplicationPoint = { 0, 0, 0 };
 
@@ -284,10 +279,6 @@ void HandleWeapon()
 	{
 		GameManager::GetSceneManager().GetInventoryManager()->SetEquipedObjectByIndex(3);
 	}
-	else if (GetKeyDown(KeyBinds::GetKeyBind(KeyAction::InventorySlot5)))
-	{
-		GameManager::GetSceneManager().GetInventoryManager()->SetEquipedObjectByIndex(4);
-	}
 }
 
 void HandleInput()
@@ -309,9 +300,6 @@ void Start()
 
 void Update()
 {
-	if (GetKeyDown(Keyboard::K))
-		isDead = true;
-
 	if (isDead)
 	{
 		DeathAnimation();

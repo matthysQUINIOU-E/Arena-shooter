@@ -3,6 +3,7 @@
 #include "Scripts/PlayerBehavior.hpp"
 #include "EntityWrapper.h"
 #include "../Scripts/HealthBehavior.hpp"
+#include "ScoreManager.h"
 
 void Player::Create()
 {

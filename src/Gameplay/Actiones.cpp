@@ -73,6 +73,21 @@ void MeleeAttack::Update(float deltaTime)
 		m_currentAttackFrame = 0.f;
 		if (m_agent->GetDistanceFromTarget() <= m_hitRange)
 		{
+			switch (m_agent->GetUniqueTag({ Tag::TMogwai, Tag::TJiangshi, Tag::TGuHuoNiao }))
+			{
+			case Tag::TMogwai:
+				AudioUse::Play("mogwai_hitplayer");
+				break;
+			case Tag::TJiangshi:
+				AudioUse::Play("jiangshi_hitplayer");
+				break;
+			case Tag::TGuHuoNiao:
+				AudioUse::Play("harpy_hitplayer");
+				break;
+			default:
+				break;
+			}
+
 			GameManager::GetSceneManager().GetFirstGameObject({ Tag::TPlayer })->GetScript<HealthBehavior>()->TakeDamage(m_damage);
 		}
 	}

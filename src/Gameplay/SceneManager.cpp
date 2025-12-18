@@ -22,6 +22,8 @@
 #include "Prefabs/BulletPool.h"
 
 #include "CollectibleMunitionManager.h"
+#include "Prefabs/ScoreManager.h"
+
 #include "Utils.h"
 #include "Agent.h"
 #include <ranges>
@@ -64,6 +66,8 @@ void SceneManager::InitGamePlay()
 	dragon.AddComponent<gce::BoxCollider>();
 	dragon.AddScript<DragonBehavior>();
 	LinkObjectToScene(&dragon, SceneType::GamePlayScene);
+
+	ScoreManager::Set(FULLSCORE);
 }
 
 void SceneManager::UnInitGamePlay()
@@ -157,7 +161,7 @@ void SceneManager::Init()
 	m_pUIManager = new UIManager();
 	m_pUIManager->Init();
 	
-	ChangeScene(SceneType::GamePlayScene);
+	ChangeScene(SceneType::GameOverScene);
 }
 
 void SceneManager::ChangeScene(SceneType newType)
@@ -223,23 +227,22 @@ void SceneManager::LoadSounds()
 
 	AddSound("ux_button", L"res/Audio/ux_button.wav", gce::Category::SFX, 100);
 
-	AddSound("mogwai_hitplayer", L"res/Audio/mogwai_hitplayer.wav", gce::Category::SFX, 100);
+	AddSound("mogwai_hitplayer", L"res/Audio/mogwai_hitplayer.wav", gce::Category::SFX, 50);
 	AddSound("mogwai_death", L"res/Audio/mogwai_death.wav", gce::Category::SFX, 50);
 	AddSound("knife_sharpen", L"res/Audio/knife_sharpen.wav", gce::Category::SFX, 100);
 	AddSound("knife_hit", L"res/Audio/knife_hit.wav", gce::Category::SFX, 100);
 
-	AddSound("jiangshi_hitplayer", L"res/Audio/jiangshi_hitplayer.wav", gce::Category::SFX, 100);
+	AddSound("jiangshi_hitplayer", L"res/Audio/jiangshi_hitplayer.wav", gce::Category::SFX, 50);
 	AddSound("jiangshi_death", L"res/Audio/jiangshi_death.wav", gce::Category::SFX, 50);
 
 	AddSound("harpy_attack", L"res/Audio/harpy_attack.wav", gce::Category::SFX, 20);
-	AddSound("harpy_hitplayer", L"res/Audio/harpy_hitplayer.wav", gce::Category::SFX, 100);
+	AddSound("harpy_hitplayer", L"res/Audio/harpy_hitplayer.wav", gce::Category::SFX, 50);
 	AddSound("harpy_death", L"res/Audio/harpy_death.wav", gce::Category::SFX, 50);
 
 	AddSound("dragon_roar", L"res/Audio/dragon_roar.wav", gce::Category::SFX, 100);
 	AddSound("dragon_wander", L"res/Audio/dragon_wander.wav", gce::Category::SFX, 100);
 	AddSound("fireball", L"res/Audio/fireball.wav", gce::Category::SFX, 100);
 }
-
 
 void SceneManager::LinkObjectToScene(gce::GameObject* obj, SceneType scene)
 {

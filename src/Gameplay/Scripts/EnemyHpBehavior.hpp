@@ -13,6 +13,7 @@
 #include "Scripts/JiangshiBehavior.hpp"
 
 #include <CollectibleMunitionManager.h>
+#include "../Prefabs/ScoreManager.h"
 
 using namespace gce;
 
