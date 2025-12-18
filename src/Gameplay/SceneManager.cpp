@@ -138,7 +138,7 @@ void SceneManager::Init()
 	m_pEmpty->AddScript<SceneManagerBehavior>();
 
 	//MAP
-	for (gce::GameObject* go : ImportBlenderScene(L"scene_v2.json"))
+	for (gce::GameObject* go : ImportBlenderScene(L"scene_base.json"))
 	{
 		go->AddTags({ Tag::TMapObject });
 		go->SetActive(false);

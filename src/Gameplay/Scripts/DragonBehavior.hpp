@@ -12,13 +12,16 @@ DECLARE_SCRIPT(DragonBehavior, ScriptFlag::Start | ScriptFlag::Update | ScriptFl
 
 bool m_isRotationFinished;
 bool m_isAttackLoaded;
-bool m_isAttckFinished;
+bool m_isAttackFinished;
 
 gce::GameObject* m_player;
 
 float m_speed;
+float m_rotationSpeed;
 
-float m_idleRange = 10.f;
+float m_idleRange;
+int m_circlePoints;
+float m_timeBetweenPaterns;
 
 int m_MaxFireBall;
 int m_FireBallDamage;
@@ -29,186 +32,74 @@ int m_laserDamage;
 float m_damageTickFrequency;
 float m_laserRotationSpeed;
 
-std::vector<gce::GameObject*> m_FireBalls;
+std::vector<gce::GameObject*> m_fireBalls;
 std::unordered_set<gce::GameObject*> m_launchedFireBalls;
-std::unordered_map<int, gce::Vector3f32> m_PointPosition;
-std::unordered_map<int ,float > m_PointValue;
+std::vector<gce::GameObject*> m_laser;
+
 gce::GameObject* m_Player;
-gce::GameObject* m_Lazer;
-gce::Vector3f32 m_TargetForward;
+gce::Vector3f32 m_targetPos;
+
 StateMachinee m_stateMachine;
-ReloadAmmo m_reloadAmmo;
-void SetRotateToPlayer()
-{
-	m_TargetForward = m_pOwner->transform.GetWorldPosition();
-	m_TargetForward.y = m_Player->transform.GetWorldPosition().y;
-	m_TargetForward -= m_Player->transform.GetWorldPosition();
-}
-void SetRotateToTangeante()
-{
-	gce::Vector3f32 Distance = m_PointPosition[m_Step]- m_pOwner->transform.GetWorldPosition()  ;
-	float normalize = Distance.Norm();
-	if (normalize >= -2 && normalize <= 2)
-		m_Step++;
-	if (m_Step > 29)
-	{
-		m_Step = 0;
-		m_Angle += m_PointValue[m_Step];
-	}
 
-	gce::Vector3f32 Rayon = m_PointPosition[m_Step] - m_Player->transform.GetWorldPosition();
-	m_TargetForward.x = Rayon.z ;
-	m_TargetForward.y = 0;
-	m_TargetForward.z = Rayon.x * -1;
-}
-void CreatePointInCircle()
-{
-	int point = 30;
-	for (int i = 0; i < point; ++i)
-	{
-		float theta = m_Angle + i * (2.0f * gce::PI / point);
-		Vector3f32 point;
-		point.x = m_Player->transform.GetWorldPosition().x + m_DetectionRadius * cos(theta);
-		point.y = m_pOwner->transform.GetWorldPosition().y;
-		point.z = m_Player->transform.GetWorldPosition().z + m_DetectionRadius * sin(theta);
-		float angle = atan2(point.z - m_Player->transform.GetWorldPosition().z , point.x - m_Player->transform.GetWorldPosition().x);
-		m_PointPosition[i] = point;
+IsPatternFinished m_isPatternFinishedC;
+IsRotationFinished m_isRotationFinishedC;
+IsAttackLoaded m_isAttackLoadedC;
 
-	}
-	m_Step = 0;
-}
-void DragonRoamming()
-{
-	gce::Vector3f32 dir = {};
-	dir = m_pOwner->transform.GetWorldPosition() - m_PointPosition[m_Step];
-	gce::Vector3f32 finalDir = {};
+RotateTowardTarget m_rotateTowardTarget;
+RotateAround m_rotateAround;
+BossLoadAttack m_bossLoadAttack;
+BossAttack m_bossAttack;
 
-	if (dir.x > 0.1f)
-		finalDir.x = -1.0f;
-	else if (dir.x < 0.1f)
-		finalDir.x = 1.0f;
-	//if (dir.y > 0)
-	//	finalDir.y = -1.0f;
-	//else if (dir.y < 0.5f)
-	//	finalDir.y = 1.0f;
-	if (dir.z > 0.1f)
-		finalDir.z = -1.0f;
-	else if (dir.z < 0.1f)
-		finalDir.z = 1.0f;
 
-	float dt = GameManager::DeltaTime();
-	float speed = 2.f;
-
-	m_pOwner->transform.WorldTranslate((finalDir * speed * dt));
-}
-void DragonRotateTowardDirection()
-{
-
-	gce::Vector3f32 currentForward = m_pOwner->transform.GetWorldForward();
-	currentForward.y = 0.f;
-	float rotationSpeed = 3.f;
-	if (currentForward.Norm() < 0.0001f)
-		return;
-
-	currentForward.SelfNormalize();
-
-	
-	m_TargetForward.SelfNormalize();
-
-	float dot = gce::Clamp(currentForward.DotProduct(m_TargetForward), -1.f, 1.f);
-	float angle = acosf(dot);
-
-	gce::Vector3f32 cross = currentForward.CrossProduct(m_TargetForward);
-	float sign = (cross.y >= 0.f) ? 1.f : -1.f;
-
-	float deltaYaw = angle * sign;
-
-	float maxStep = rotationSpeed * gce::GameManager::DeltaTime();
-	float step = gce::Clamp(deltaYaw, -maxStep, maxStep);
-
-	m_pOwner->transform.WorldRotate({ 0.f, step, 0.f });
-
-	if (fabs(deltaYaw) < 0.001f)
-		m_IsRotating = false;
-	else 
-		m_IsRotating = true;
-}
-void Move()
-{
-	gce::Vector3f32 dir = {};
-	dir = m_pOwner->transform.GetWorldPosition()  - m_Player->transform.GetWorldPosition();
-	gce::Vector3f32 finalDir = {};
-
-	if (dir.x > 0.1f)
-		finalDir.x = -1.0f;
-	else if (dir.x < 0.1f)
-		finalDir.x = 1.0f;
-	//if (dir.y > 0)
-	//	finalDir.y = -1.0f;
-	//else if (dir.y < 0.5f)
-	//	finalDir.y = 1.0f;
-	if (dir.z > 0.1f)
-		finalDir.z = -1.0f;
-	else if (dir.z < 0.1f)
-		finalDir.z = 1.0f;
-
-	float dt = GameManager::DeltaTime();
-	float speed = 2.f;
-
-	m_pOwner->transform.WorldTranslate((finalDir * speed * dt));
-}
-void CalculateNormal()
-{
-	gce::Vector3f32 dir = m_pOwner->transform.GetWorldPosition();
-	dir.y = m_Player->transform.GetWorldPosition().y;
-	dir -= m_Player->transform.GetWorldPosition();
-	float distance = dir.Norm();
-	if (distance <= m_DetectionRadius)
-	{
-		if (m_EnnemiOnRange)
-		{
-			m_Angle = std::atan2f(dir.z, dir.x);
-			CreatePointInCircle();
-		}
-		m_EnnemiOnRange = true;
-		
-	}
-	else
-		m_EnnemiOnRange = false;
-}
 void Start()
 {
-	m_MaxFireBall = 5;
-	m_rangeDistanceAttack = 10.f;
-	m_FireBallDamage = 15;
-	m_projectileLifeTime = 3.f;
-	m_distanceAttackCooldown = 3.5f;
-	m_projectileSpeed = 45.f;
-	m_inAttack = false;
-	EntityWrapper& ew = EntityWrapper::Create();
-	ew.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/FireBall/fireball.obj"), "res/Assets/FireBall/fireball_base_color.png"); 
-	EnemyProjectileBehavior* epb = ew.AddScript<EnemyProjectileBehavior>();
-	epb->m_baseLifeTime = m_projectileLifeTime;
-	epb->m_speed = m_projectileSpeed;
-	epb->m_damage = m_projectileSpeed;
-	m_Player = GameManager::GetSceneManager().GetFirstGameObject({ Tag::TPlayer }); 
-	m_FireBalls.push_back(&ew);
-	SetRotateToPlayer();
+	m_isRotationFinished = false;
+	m_isAttackLoaded = false;
+	m_isAttackFinished = false;
+
+	m_player = GameManager::GetSceneManager().GetFirstGameObject({ Tag::TPlayer });
+
+	m_speed = 10.f;
+	m_rotationSpeed = 3.f;
+
+	m_idleRange = 30.f;
+	m_circlePoints = 30;
+	m_timeBetweenPaterns = 8.f;
+
+	m_MaxFireBall;
+	m_FireBallDamage;
+	m_fireBallLifeTime;
+	m_fireBallSpeed;
+
+	m_laserDamage;
+	m_damageTickFrequency;
+	m_laserRotationSpeed;
+
+	m_isPatternFinishedC = IsPatternFinished(&m_isAttackFinished);
+	m_isRotationFinishedC = IsRotationFinished(&m_isRotationFinished);
+	m_isAttackLoadedC = IsAttackLoaded(&m_isAttackLoaded);
+
+	m_rotateTowardTarget = RotateTowardTarget(m_pOwner, &m_targetPos, &m_isRotationFinished, m_rotationSpeed);
+	m_rotateAround = RotateAround(m_pOwner, m_Player, &m_targetPos, &m_isRotationFinished, m_circlePoints, m_speed, m_idleRange);
+	m_bossLoadAttack = BossLoadAttack(&m_isAttackLoaded, m_timeBetweenPaterns, m_player, &m_targetPos);
+	m_bossAttack = BossAttack(m_pOwner, &m_isAttackFinished); //TODO complete
+
+	m_stateMachine.AddStateAction(State::BOSS_IDLE, m_rotateAround);
+	m_stateMachine.AddStateAction(State::BOSS_IDLE, m_rotateTowardTarget);
+	m_stateMachine.AddStateAction(State::BOSS_IDLE, m_bossLoadAttack);
+	m_stateMachine.AddStateCondition(State::BOSS_IDLE, State::BOSS_PREPARE_TO_ATTACK, m_isAttackLoadedC);
+
+	m_stateMachine.AddStateAction(State::BOSS_PREPARE_TO_ATTACK, m_rotateTowardTarget);
+	m_stateMachine.AddStateCondition(State::BOSS_PREPARE_TO_ATTACK, State::BOSS_ATTACK, m_isRotationFinishedC);
+
+	m_stateMachine.AddStateAction(State::BOSS_ATTACK, m_bossAttack);
+	m_stateMachine.AddStateCondition(State::BOSS_ATTACK, State::BOSS_IDLE, m_isPatternFinishedC);
+
+	m_stateMachine.SetState(State::BOSS_IDLE);
 }
 
 void Update()
 {
-	CalculateNormal();
-	DragonRotateTowardDirection();
-	if (m_EnnemiOnRange)
-	{
-		SetRotateToTangeante();
-		DragonRoamming();
-	}
-	else
-	{
-		Move();
-		SetRotateToPlayer();
-	}
+	m_stateMachine.Update();
 }
 END_SCRIPT

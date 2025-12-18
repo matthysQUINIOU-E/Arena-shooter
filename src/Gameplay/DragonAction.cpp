@@ -10,7 +10,7 @@ DragonShoot::DragonShoot(gce::GameObject* dragon ,int* ammo, float CDtime)
 
 void DragonShoot::Update(float deltaTime)
 {
-
+	/*
 	if (*m_ammo > 0 && m_AttackReady)
 	{
 		if (m_AttackReady && (*m_ammo) > 0)
@@ -34,6 +34,7 @@ void DragonShoot::Update(float deltaTime)
 		}
 
 	}
+	*/
 }
 
 DragonLaser::DragonLaser(GameObject* Dragon, float ShootTime, float m_LazerPlayerDistance)

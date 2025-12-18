@@ -14,7 +14,6 @@ enum class State
 	BOSS_IDLE,
 	BOSS_PREPARE_TO_ATTACK,
 	BOSS_ATTACK,
-	BOSS_PREPARE_IDLE,
 };
 
 class StateMachinee
