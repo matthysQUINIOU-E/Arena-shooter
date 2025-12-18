@@ -174,6 +174,9 @@ void Update()
 
 	if (isHitting)
 	{
+		if(unloadProgress == 0.f)
+			AudioUse::Play("spear_attack");
+
 		if (unloadProgress < unloadSpeed)
 		{
 			unloadProgress += dt;
@@ -188,6 +191,7 @@ void Update()
 
 				if (auto health = pCollided->GetScript<HealthBehavior>())
 				{
+					AudioUse::Play("spear_hit");
 					health->TakeDamage(damage);
 				}
 			}

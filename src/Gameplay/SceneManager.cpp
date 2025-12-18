@@ -59,7 +59,7 @@ void SceneManager::InitGamePlay()
 	LinkObjectToScene(&entityWrapper, SceneType::GamePlayScene);
 
 	EntityWrapper& dragon = EntityWrapper::Create();
-	dragon.SetProperties("Dragon", { Tag::TEnemy }, { 0, 15, 0 }, { 0, 0, 0 }, { 2, 2, 2 });
+	dragon.SetProperties("Dragon", { Tag::TEnemy }, { 0, 15, 0 }, { 0, 0, 0 }, { 1, 1, 1 });
 	dragon.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/dragon/dragon.obj"), "res/Assets/dragon/dragon_base_color.png");
 	dragon.AddComponent<gce::BoxCollider>();
 	dragon.AddScript<DragonBehavior>();
@@ -205,16 +205,41 @@ void SceneManager::LoadSounds()
 {
 	AudioUse::SetMasterVolume(100); // Volume général : maximum 2^24
 
-	AddSound("vineboom", L"res/Audio/vineboom.mp3", gce::Category::SFX, 300);
+	AddSound("game_theme", L"res/Audio/game_theme.wav", gce::Category::MUSIC, 100);
+	AddSound("boss_theme", L"res/Audio/boss_theme.wav", gce::Category::MUSIC, 100);
+
+	AddSound("woosh", L"res/Audio/woosh.mp3", gce::Category::SFX, 50);
+	AddSound("reloaded", L"res/Audio/reloaded.mp3", gce::Category::SFX, 50);
 	AddSound("gun", L"res/Audio/gun.wav", gce::Category::SFX, 15);
 	AddSound("riffle", L"res/Audio/riffle.wav", gce::Category::SFX, 15);
-	AddSound("shotgun", L"res/Audio/shotgun.wav", gce::Category::SFX, 200);
+	AddSound("shotgun", L"res/Audio/shotgun.wav", gce::Category::SFX, 100);
+	AddSound("spear_attack", L"res/Audio/spear_attack.mp3", gce::Category::SFX, 50);
+	AddSound("spear_hit", L"res/Audio/spear_hit.mp3", gce::Category::SFX, 100);
 
-	AddSound("dash", L"res/Audio/dash.wav", gce::Category::SFX, 300);
+	AddSound("ammo_pickup", L"res/Audio/ammo_pickup.wav", gce::Category::SFX, 50);
+	AddSound("out_of_ammo", L"res/Audio/out_of_ammo.wav", gce::Category::SFX, 100);
+
+	AddSound("dash", L"res/Audio/dash.wav", gce::Category::SFX, 400);
+
+	AddSound("ux_button", L"res/Audio/ux_button.wav", gce::Category::SFX, 100);
+
+	AddSound("mogwai_hitplayer", L"res/Audio/mogwai_hitplayer.wav", gce::Category::SFX, 100);
+	AddSound("mogwai_death", L"res/Audio/mogwai_death.wav", gce::Category::SFX, 50);
+	AddSound("knife_sharpen", L"res/Audio/knife_sharpen.wav", gce::Category::SFX, 100);
+	AddSound("knife_hit", L"res/Audio/knife_hit.wav", gce::Category::SFX, 100);
+
+	AddSound("jiangshi_hitplayer", L"res/Audio/jiangshi_hitplayer.wav", gce::Category::SFX, 100);
+	AddSound("jiangshi_death", L"res/Audio/jiangshi_death.wav", gce::Category::SFX, 50);
 
 	AddSound("harpy_attack", L"res/Audio/harpy_attack.wav", gce::Category::SFX, 20);
-	AddSound("woosh", L"res/Audio/woosh.mp3", gce::Category::SFX, 20);
+	AddSound("harpy_hitplayer", L"res/Audio/harpy_hitplayer.wav", gce::Category::SFX, 100);
+	AddSound("harpy_death", L"res/Audio/harpy_death.wav", gce::Category::SFX, 50);
+
+	AddSound("dragon_roar", L"res/Audio/dragon_roar.wav", gce::Category::SFX, 100);
+	AddSound("dragon_wander", L"res/Audio/dragon_wander.wav", gce::Category::SFX, 100);
+	AddSound("fireball", L"res/Audio/fireball.wav", gce::Category::SFX, 100);
 }
+
 
 void SceneManager::LinkObjectToScene(gce::GameObject* obj, SceneType scene)
 {

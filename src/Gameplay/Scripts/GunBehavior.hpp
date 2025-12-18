@@ -71,6 +71,11 @@ void HandleReloadingAnimation(float dt)
 
 	float value = (2.f * gce::PI / reloadTime) * turns;
 
+	if (reloadProgressTime == 0.f)
+	{
+		
+	}
+
 	m_pOwner->transform.LocalRotate({ value * dt, 0, 0 });
 }
 void HandleRecoilAnimation(float dt)
@@ -96,8 +101,13 @@ void HandleRecoilAnimation(float dt)
 }
 void HandleEmptyAnimation(MeshRenderer* pMesh)
 {
-	if (pMagazineBehavior->IsWeaponEmpty() == false)
+	if (pMagazineBehavior->IsWeaponHasAmmo() == false)
 	{
+		if (GetButtonDown(Mouse::LEFT))
+		{
+			AudioUse::Play("out_of_ammo");
+		}
+
 		unloadSpeed = unloadSpeed;
 		pMesh->pMaterial->useTextureAlbedo = 0;
 	}
@@ -139,7 +149,7 @@ void TriggerReload()
 		m_pOwner->transform.SetLocalRotation(defaultRotation);
 
 		totalRecoil = 0.f;
-		isReloading = true;
+		isReloading = true; 
 		reloadProgressTime = 0.f;
 	}
 }
@@ -178,7 +188,7 @@ void Shoot()
 		return;
 
 	//Conditions to shoot
-	if (isReloading || pMagazineBehavior->IsWeaponEmpty() == false)
+	if (isReloading || pMagazineBehavior->IsWeaponHasAmmo() == false)
 		return;
 
 	//Cap the shooting speed
@@ -206,15 +216,15 @@ void Shoot()
 	switch (m_pOwner->GetUniqueTag({ Tag::TMusket, Tag::TBlunderBuss, Tag::TStarwheel }))
 	{
 	case Tag::TMusket:
-		SetWeaponProperties(bulletScript, *pCurrent, 35.f, 2.f, { 5.f, 5.f, 5.f }, 20, 0.075f, 3.f);
+		SetWeaponProperties(bulletScript, *pCurrent, 35.f, 4.f, { 5.f, 5.f, 5.f }, 20, 0.075f, 3.f);
 		AudioUse::Play("riffle");
 		break;
 	case Tag::TBlunderBuss:
-		SetWeaponProperties(bulletScript, *pCurrent, 35.f, 1.f, { 7.f, 7.f, 3.5f }, 50, 0.25f, 1.5f);
+		SetWeaponProperties(bulletScript, *pCurrent, 35.f, 1.f, { 7.f, 7.f, 3.5f }, 50, 0.30f, 1.5f);
 		AudioUse::Play("shotgun");
 		break;
 	case Tag::TStarwheel:
-		SetWeaponProperties(bulletScript, *pCurrent, 35.f, 2.f, { 3.f, 3.f, 6.f }, 10, 0.05f, 4.f);
+		SetWeaponProperties(bulletScript, *pCurrent, 35.f, 4.f, { 3.f, 3.f, 6.f }, 10, 0.04f, 4.f);
 		AudioUse::Play("gun");
 		break;
 	}

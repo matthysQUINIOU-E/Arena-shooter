@@ -1,7 +1,7 @@
 #include "BulletPool.h"
 #include "../Scripts/BulletBehavior.hpp"
 
-int BulletPool::m_maxAmount = 10;
+int BulletPool::m_maxAmount = 15;
 std::queue<EntityWrapper*> BulletPool::m_bulletsFreePool = {};
 
 void BulletPool::SetActive(gce::GameObject* e, bool state)

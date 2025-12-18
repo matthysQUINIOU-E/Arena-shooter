@@ -251,9 +251,11 @@ void Start()
 	hpBar.InitFilledBar1("res/2D_Assets/Gameplay/hpBar.png", {405, 53}, { 190, 69}, { 0.5, 0.5 });
 	hpBar.InitFrame("res/2D_Assets/Gameplay/hpBar_frame.png", { 569, 204 }, { 160, 60 }, { 0.5, 0.5 });
 
-	dashBar.InitFilledBar1("res/2D_Assets/Gameplay/dashBar.png", { 416, 63 }, { 218, 170 }, { 0.4, 0.4 });
-	dashBar.InitFilledBar2("res/2D_Assets/Gameplay/dashBar_full.png", { 416, 63 }, { 218, 170 }, { 0.4, 0.4 });
-	dashBar.InitFrame("res/2D_Assets/Gameplay/dashBar_frame.png", { 704, 186 }, { 160, 160 }, { 0.4, 0.4 });
+	float middleX = WINDOW_WIDTH / 2.f;
+
+	dashBar.InitFilledBar1("res/2D_Assets/Gameplay/dash_filled1.png", { 607, 33 }, { middleX + 3, WINDOW_HEIGHT - 78 }, { 1, 1 });
+	dashBar.InitFilledBar2("res/2D_Assets/Gameplay/dash_filled2.png", { 607, 33 }, { middleX + 3, WINDOW_HEIGHT - 78 }, { 1, 1 });
+	dashBar.InitFrame("res/2D_Assets/Gameplay/dash_frame.png", { 639, 102 }, { middleX, WINDOW_HEIGHT - 100 }, { 1, 1 });
 
 	uiWeapon.Init();
 }

@@ -73,6 +73,8 @@ void CheckCollision()
 			Ammos* ammo = im->GetAmmos(m_ammoTag);
 			ammo->EarnAmmos(m_ammoEarn);
 			CollectibleMunitionManager::MunitionTook(m_pOwner);
+
+			AudioUse::Play("ammo_pickup");
 		}
 	}
 }

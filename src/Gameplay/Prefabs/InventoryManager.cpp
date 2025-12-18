@@ -37,7 +37,7 @@ gce::GameObject* InventoryManager::CreateMusket()
 
 	auto ammoManagerScript = musket.AddScript<WeaponMagazineBehavior>();
 	ammoManagerScript->SetAmmoType(Tag::TNormalAmmo);
-	ammoManagerScript->SetMaxCapacity(20);
+	ammoManagerScript->SetMaxCapacity(30);
 
 	auto gunBehavior = musket.AddScript<GunBehavior>();
 	gunBehavior->SetUnloadSpeed(0.25);
@@ -71,10 +71,10 @@ gce::GameObject* InventoryManager::CreateBlunderBuss()
 
 	auto ammoManagerScript = blunderbuss.AddScript<WeaponMagazineBehavior>();
 	ammoManagerScript->SetAmmoType(Tag::THeavyAmmo);
-	ammoManagerScript->SetMaxCapacity(10);
+	ammoManagerScript->SetMaxCapacity(8);
 
 	auto gunBehavior = blunderbuss.AddScript<GunBehavior>();
-	gunBehavior->SetUnloadSpeed(0.5);
+	gunBehavior->SetUnloadSpeed(0.75);
 	gunBehavior->SetReloadTime(1.5f);
 	gunBehavior->SetAmmoManagerScript(ammoManagerScript);
 
@@ -103,11 +103,11 @@ gce::GameObject* InventoryManager::CreateStarwheel()
 
 	auto ammoManagerScript = starwheel.AddScript<WeaponMagazineBehavior>();
 	ammoManagerScript->SetAmmoType(Tag::TLightAmmo);
-	ammoManagerScript->SetMaxCapacity(30);
+	ammoManagerScript->SetMaxCapacity(20);
 
 	auto gunBehavior = starwheel.AddScript<GunBehavior>();
 	gunBehavior->SetUnloadSpeed(0.15);
-	gunBehavior->SetReloadTime(1.f);
+	gunBehavior->SetReloadTime(1.5f);
 	gunBehavior->SetAmmoManagerScript(ammoManagerScript);
 
 	m_pSceneManager->LinkObjectToScene(&starwheel, SceneType::GamePlayScene);
@@ -143,7 +143,7 @@ gce::GameObject* InventoryManager::CreateMeleeWeapon()
 	melee.transform.SetLocalPosition({ 0.025f, -0.2f, 0.5f });
 	melee.AddMeshRenderer(gce::GeometryFactory::GetCustomGeometry("res/Assets/spear/spear.obj"), "res/Assets/spear/spear_base_color.png")->SetActive(true);
 	auto meleeBehavior = melee.AddScript<MeleeWeaponBehavior>();
-	meleeBehavior->SetMeleeWeaponProperties(35, 0.5f);
+	meleeBehavior->SetMeleeWeaponProperties(25, 0.5f);
 	meleeBehavior->SetDefaultRotation(xQ * yQ);
 
 	m_pSceneManager->LinkObjectToScene(&melee, SceneType::GamePlayScene);

@@ -12,6 +12,10 @@ using namespace gce;
 
 DECLARE_SCRIPT(EnemyProjectileBehavior, ScriptFlag::Start | ScriptFlag::Update)
 
+Agent* pThrower = nullptr;
+
+void SetThrower(Agent* pAgent) { pThrower = pAgent; }
+
 float m_baseLifeTime = 3.f;
 float m_lifeTime = 0.f;
 float m_speed = 75.f;
@@ -87,8 +91,26 @@ void Update()
 	if (gce::GameObject* pCollided = CheckCollision())
 	{
 		if (pCollided->HasTags({ Tag::TPlayer }))
+		{
+			if (pThrower)
+			{
+				switch (pThrower->GetUniqueTag({ Tag::TMogwai, Tag::TJiangshi, Tag::TGuHuoNiao }))
+				{
+				case Tag::TMogwai:
+					AudioUse::Play("knife_hit");
+					break;
+				case Tag::TJiangshi:
+					break;
+				case Tag::TGuHuoNiao:
+					break;
+				default:
+					break;
+				}
+			}
+		
 			pCollided->GetScript<HealthBehavior>()->TakeDamage(m_damage);
-
+		}
+		
 		m_pOwner->SetActive(false);
 	}
 }
@@ -107,9 +129,6 @@ void Shoot(gce::Vector3f32 from, gce::Vector3f32 toward)
 
 	gce::Quaternion rot = {};
 	rot.SetRotationEuler(pitch, yaw, 0.0f);
-
-	Quaternion flip = {};
-	flip.SetRotationEuler({0,  -gce::PI / 2, 0 });
 
 	m_pOwner->transform.SetWorldRotation(rot);
 
