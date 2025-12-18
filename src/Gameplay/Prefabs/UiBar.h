@@ -38,8 +38,8 @@ public:
 	void InitFilledBar2(const char* imgPath, gce::Vector2f32 imgDimensions, gce::Vector2f32 pos = { 0, 0 }, gce::Vector2f32 scale = { 1, 1 }, gce::Vector2f32 rotation = { 0, 0 });
 	void InitEmptyBar(const char* imgPath, gce::Vector2f32 imgDimensions, gce::Vector2f32 pos = { 0, 0 }, gce::Vector2f32 scale = { 1, 1 }, gce::Vector2f32 rotation = { 0, 0 });
 
-	void SetFilledBar1ByRatio(float current, float max);
-	void SetFilledBar2ByRatio(float current, float max);
+	void SetFilledBar1ByRatio(float current, float max, bool invert = false);
+	void SetFilledBar2ByRatio(float current, float max, bool invert = false);
 	void SetActive(bool state);
 };
 

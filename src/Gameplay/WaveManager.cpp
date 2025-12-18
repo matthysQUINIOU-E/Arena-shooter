@@ -128,6 +128,7 @@ void WaveManager::TryNextWave()
 	m_waveTimer = m_baseWaveTimer;
 	m_curentWave++;
 	m_currentEnnemiesToSpawn += GetEnnemiesNumberForWave(m_curentWave);
+	m_currentMaxEnnemiesToSpawn = m_currentEnnemiesToSpawn;
 	m_baseSpawnTimer = (m_baseWaveTimer * 0.25) / m_currentEnnemiesToSpawn;
 }
 

@@ -41,6 +41,7 @@ UIWeaponManager uiWeapon;
 CrosshairManager crosshair;
 
 UiBar hpBar;
+UiBar waveBar;
 UiBar dashBar;
 
 std::wstring NOTHING = L"";
@@ -53,8 +54,8 @@ float takeDamageProgressDuration;
 
 
 //TMP
-EntityWrapper* pDebugUI = nullptr;
-std::wstring debugTxt = L"";
+EntityWrapper* pWaveUI = nullptr;
+std::wstring waveTxt = L"";
 
 //Functions
 void UpdateTakeDamageUI()
@@ -219,6 +220,15 @@ void UpdateHpUI()
 		hpBar.SetFilledBar1ByRatio(health->health, health->maxHealth);
 	}
 }
+void UpdateWaveUI()
+{
+	auto wave = WaveManager::GetInstance();
+
+	if (wave)
+	{
+		waveBar.SetFilledBar1ByRatio(wave->m_currentEnnemiesAlives + wave->m_currentEnnemiesToSpawn, wave->m_currentMaxEnnemiesToSpawn, true);
+	}
+}
 void UpdateCrosshair()
 {
 	crosshair.Update();
@@ -244,14 +254,18 @@ void Start()
 	pTakeDamageUI->AddUIButton(takeDamagePos, { 0, 0 }, { WINDOW_WIDTH, WINDOW_HEIGHT }, "res/2D_Assets/Gameplay/takedamage_screen.png");
 	pTakeDamageUI->SetActive(false);
 
-	pDebugUI = &EntityWrapper::Create();
-	pDebugUI->AddDynamicTextRenderer(debugTxt, {20, 200, 750, 0}, gce::Color::Red, { 0.5f, 0.5f });
 	crosshair.Init();
 
 	hpBar.InitFilledBar1("res/2D_Assets/Gameplay/hpBar.png", {405, 53}, { 190, 69}, { 0.5, 0.5 });
 	hpBar.InitFrame("res/2D_Assets/Gameplay/hpBar_frame.png", { 569, 204 }, { 160, 60 }, { 0.5, 0.5 });
 
 	float middleX = WINDOW_WIDTH / 2.f;
+
+	waveBar.InitFilledBar1("res/2D_Assets/Gameplay/wave_bar.png", { 321, 23 }, { middleX + 2, 80 }, { 1.5, 1.5 });
+	waveBar.InitFrame("res/2D_Assets/Gameplay/wave_frame.png", { 325, 32 }, { middleX, 80 }, { 1.5, 1.5 });
+
+	pWaveUI = &EntityWrapper::Create();
+	pWaveUI->AddDynamicTextRenderer(waveTxt, { WINDOW_WIDTH / 2.f - 420, 10, WINDOW_WIDTH, 0 }, gce::Color::Red, { 0.5f, 0.5f });
 
 	dashBar.InitFilledBar1("res/2D_Assets/Gameplay/dash_filled1.png", { 607, 33 }, { middleX + 3, WINDOW_HEIGHT - 78 }, { 1, 1 });
 	dashBar.InitFilledBar2("res/2D_Assets/Gameplay/dash_filled2.png", { 607, 33 }, { middleX + 3, WINDOW_HEIGHT - 78 }, { 1, 1 });
@@ -270,8 +284,9 @@ void Update()
 	crosshair.SetActive(display);
 	hpBar.SetActive(display);
 	dashBar.SetActive(display);
+	waveBar.SetActive(display);
 
-	pDebugUI->SetActive(display);
+	pWaveUI->SetActive(display);
 	uiWeapon.SetActive(display);
 
 	if (display == true)
@@ -282,16 +297,15 @@ void Update()
 		UpdateCrosshair();
 		UpdateHpUI();
 		UpdateDashUI();
+		UpdateWaveUI();
 		UpdateTakeDamageUI();
 		uiWeapon.Update();
 
 		auto wave = WaveManager::GetInstance();
 
-		debugTxt = L"Time : " + std::to_wstring((int)wave->m_waveTimer) + L"\n"
-			+ L"Wave : " + std::to_wstring(wave->m_curentWave) + L"/" + std::to_wstring(wave->m_maxWave) + L"\n"
-			+ L"Enemies Alive/To Spawn :\n" + std::to_wstring(wave->m_currentEnnemiesAlives) + L" / " + std::to_wstring(wave->m_currentEnnemiesToSpawn);
+		waveTxt = L"Time : " + std::to_wstring((int)wave->m_waveTimer) + L" | Wave : " + std::to_wstring(wave->m_curentWave) + L"/" + std::to_wstring(wave->m_maxWave) + L"\n";
 
-		pDebugUI->GetComponent<TextRenderer>()->text = debugTxt;
+		pWaveUI->GetComponent<TextRenderer>()->text = waveTxt;
 	}
 	else
 	{

@@ -42,7 +42,7 @@ void UiBar::InitEmptyBar(const char* imgPath, gce::Vector2f32 imgDimensions, gce
 	m_emptyBar.second = TransformData(pos, imgDimensions * scale, rotation);
 }
 
-void UiBar::SetFilledBar1ByRatio(float current, float max)
+void UiBar::SetFilledBar1ByRatio(float current, float max, bool invert)
 {
 	auto obj = m_filledBar1.first;
 	auto data = m_filledBar1.second;
@@ -50,7 +50,16 @@ void UiBar::SetFilledBar1ByRatio(float current, float max)
 	if (obj == nullptr || obj->IsActive() == false)
 		return;
 
+	if (max == 0)
+		max = INT_MAX;
+
 	float ratio = std::clamp(current / max, 0.f, 1.f);
+
+	if (invert == true)
+	{
+		ratio = 1 - ratio;
+	}
+
 	float newScaleX = data.scale.x * ratio;
 	float deltaScale = (data.scale.x - newScaleX) * 0.5f;
 
@@ -58,7 +67,7 @@ void UiBar::SetFilledBar1ByRatio(float current, float max)
 	obj->transform.SetWorldPosition({ data.pos.x - deltaScale, data.pos.y, 0});
 }
 
-void UiBar::SetFilledBar2ByRatio(float current, float max)
+void UiBar::SetFilledBar2ByRatio(float current, float max, bool invert)
 {
 	auto obj = m_filledBar2.first;
 	auto data = m_filledBar2.second;
@@ -66,7 +75,16 @@ void UiBar::SetFilledBar2ByRatio(float current, float max)
 	if (obj == nullptr || obj->IsActive() == false)
 		return;
 
+	if (max == 0)
+		max = INT_MAX;
+
 	float ratio = std::clamp(current / max, 0.f, 1.f);
+
+	if (invert == true)
+	{
+		ratio = 1 - ratio;
+	}
+
 	float newScaleX = data.scale.x * ratio;
 	float deltaScale = (data.scale.x - newScaleX) * 0.5f;
 

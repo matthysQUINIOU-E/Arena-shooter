@@ -28,6 +28,7 @@ public:
 	int m_maxSimultanateEnnemies = 5;
 	bool m_isTargetSet = false;
 
+	int m_currentMaxEnnemiesToSpawn = 0;
 	int m_currentEnnemiesToSpawn = 0;
 	int m_currentEnnemiesAlives = 0;
 	
